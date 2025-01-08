@@ -9,7 +9,7 @@ Developed at Mississippi State University (MSU), the MSU Autonomous Vehicle Simu
 
 While MAVS is a fully functional standalone simulator, additional wrappers allow MAVS to be integrated with robotic development tools such the Robotic Operating System (ROS). 
 
-This documentation outlines building MAVS, running some example simulations, and interfacing with other software like ROS. 
+Full MAVS user documentation is available [here](https://mississippi-state-university-otm.github.io/MAVS/).
 
 ## License
 MAVS is licensed under the [MIT License](https://github.com/Mississippi-State-University-OTM/MAVS?tab=MIT-1-ov-file#readme).

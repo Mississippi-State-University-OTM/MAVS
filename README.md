@@ -12,7 +12,7 @@ While MAVS is a fully functional standalone simulator, additional wrappers allow
 This documentation outlines building MAVS, running some example simulations, and interfacing with other software like ROS. 
 
 ## License
-MAVS is licensed under the [MIT License](https://github.com/CGoodin/msu-autonomous-vehicle-simulator?tab=MIT-1-ov-file#readme).
+MAVS is licensed under the [MIT License](https://github.com/Mississippi-State-University-OTM/MAVS?tab=MIT-1-ov-file#readme).
 
 ## Citing MAVS
 If you use MAVS for your research, please cite one or more of the following publications.

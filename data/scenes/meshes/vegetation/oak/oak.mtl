@@ -1,0 +1,64 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 19.02.2019 10:53:43
+
+newmtl cgaxis_models_115_37_04
+	Ns 50.000000
+	Ni -1.600000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 0.500000 0.500000 0.500000
+	Ks 0.002510 0.002510 0.002510
+	Ke 0.000000 0.000000 0.000000
+	map_Kd cgaxis_models_115_37_04.bmp
+	map_bump cgaxis_models_115_37_04_bump.bmp
+	bump cgaxis_models_115_37_04_bump.bmp
+
+newmtl cgaxis_models_115_37_02
+	Ns 50.000000
+	Ni -1.010000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 0.500000 0.500000 0.500000
+	Ks 0.002510 0.002510 0.002510
+	Ke 0.000000 0.000000 0.000000
+	map_Kd leaf_02.bmp
+	map_d cgaxis_models_115_37_02_opacity.bmp
+	map_bump cgaxis_models_115_37_02_bump.bmp
+	bump cgaxis_models_115_37_02_bump.bmp
+
+newmtl cgaxis_models_115_37_01
+	Ns 50.000000
+	Ni -1.010000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 0.500000 0.500000 0.500000
+	Ks 0.002510 0.002510 0.002510
+	Ke 0.000000 0.000000 0.000000
+	map_Kd leaf_01.bmp
+	map_d cgaxis_models_115_37_01_opacity.bmp
+	map_bump cgaxis_models_115_37_01_bump.bmp
+	bump cgaxis_models_115_37_01_bump.bmp
+
+newmtl cgaxis_models_115_37_03
+	Ns 50.000000
+	Ni -1.600000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 0.500000 0.500000 0.500000
+	Ks 0.002510 0.002510 0.002510
+	Ke 0.000000 0.000000 0.000000
+	map_Kd cgaxis_models_115_37_03.bmp
+	map_bump cgaxis_models_115_37_03_bump.bmp
+	bump cgaxis_models_115_37_03_bump.bmp

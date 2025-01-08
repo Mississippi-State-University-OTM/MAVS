@@ -1,0 +1,29 @@
+{
+  "Soil Layer": {
+    "Texture File": "concrete_texture_tiled.bmp",
+    "Texture Size": 4.0,
+    "Material": {
+      "Spectrum File": "spectra/concrete.spec",
+      "Kd": [ 0.1, 0.1, 0.1 ]
+    }
+  },
+
+  "Grass Layer": {
+    "Texture File": "concrete_texture_tiled.bmp",
+    "Texture Size": 4.0,
+    "Material": {
+      "Spectrum File": "spectra/concrete.spec",
+      "Kd": [ 0.1, 0.1, 0.1 ]
+    }
+  },
+
+  "Undergrowth Layer": {
+    "Texture File": "pasture_texture_v1.bmp",
+    "Texture Size": 100.0,
+    "Material": {
+      "Spectrum File": "spectra/oat_grass.spec",
+      "Kd": [ 0.1, 0.1, 0.1 ]
+    }
+  }
+
+}

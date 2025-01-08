@@ -1,0 +1,21 @@
+[submodule "extern/embree"]
+	path = extern/embree
+	url = https://github.com/embree/embree.git
+[submodule "extern/glm"]
+	path = extern/glm
+	url = https://github.com/g-truc/glm.git
+[submodule "extern/rapidjson"]
+	path = extern/rapidjson
+	url = https://github.com/Tencent/rapidjson.git
+[submodule "extern/reactphysics3d"]
+	path = extern/reactphysics3d
+	url = https://github.com/DanielChappuis/reactphysics3d.git
+[submodule "extern/tinyxml2"]
+	path = extern/tinyxml2
+	url = https://github.com/leethomason/tinyxml2.git
+[submodule "extern/CImg"]
+	path = extern/CImg
+	url = https://github.com/dtschump/CImg.git
+[submodule "extern/TinyFileDialogs"]
+	path = extern/TinyFileDialogs
+	url = git://git.code.sf.net/p/tinyfiledialogs/code

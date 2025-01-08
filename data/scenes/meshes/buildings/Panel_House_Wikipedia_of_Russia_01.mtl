@@ -1,0 +1,34 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 28.12.2018 02:53:44
+
+newmtl Panel_House_Wikipedia_of_Russia_01_01_01
+	Ns 10.0000
+	Ni -1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 1.25 1.25 1.25
+	Kd 1.25 1.25 1.25
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka Panel_House_Wikipedia_of_Russia_01_01_01_Base_Color.bmp
+	map_Kd Panel_House_Wikipedia_of_Russia_01_01_01_Base_Color.bmp
+	map_bump Panel_House_Wikipedia_of_Russia_01_01_01_Normal.bmp
+	bump Panel_House_Wikipedia_of_Russia_01_01_01_Normal.bmp
+
+newmtl Panel_House_Wikipedia_of_Russia_01_01_02
+	Ns 10.0000
+	Ni -1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 1.25 1.25 1.25
+	Kd 1.25 1.25 1.25
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka Panel_House_Wikipedia_of_Russia_01_01_02_Base_Color.bmp
+	map_Kd Panel_House_Wikipedia_of_Russia_01_01_02_Base_Color.bmp
+	map_bump Panel_House_Wikipedia_of_Russia_01_01_02_Normal.bmp
+	bump Panel_House_Wikipedia_of_Russia_01_01_02_Normal.bmp

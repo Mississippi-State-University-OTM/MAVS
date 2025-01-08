@@ -1,0 +1,84 @@
+{
+
+  "Skid Steered": true,
+
+  "Chassis": {
+    "Sprung Mass": 280.0,
+    "CG Offset": 0.2,
+    "Dimensions": [ 1.35, 0.70, 0.30 ]
+  },
+
+  "Powertrain": {
+    "Final Drive Ratio": 1.0,
+    "Max Engine Torque": 200.0,
+    "Max Engine Rpm": 1000.0,
+    "Max Braking Torque": 450.0,
+    "Idle Rpm": 200.0,
+    "Speed Governor": 5.0
+  },
+
+  "Axles": [
+    {
+      "Longitudinal Offset": 0.465,
+      "Track Width": 1.14,
+      "Spring Constant": 37044.0,
+      "Damping Constant": 1058.4,
+      "Spring Length": 0.01,
+      "Steered": false,
+      "Powered": true,
+      "Max Steer Angle": 0.01,
+      "Unsprung Mass": 2.0,
+      "Tire": {
+        "Spring Constant": 20000.0,
+        "Damping Constant": 20000.0,
+        "Radius": 0.305,
+        "Width": 0.2286,
+        "Section Height": 0.12,
+        "High Slip Crossover Angle": 3.0,
+        "Viscous Friction Coefficient":  0.05
+      }
+    },
+    {
+      "Longitudinal Offset": -0.46,
+      "Track Width": 1.14,
+      "Spring Constant": 37044.0,
+      "Damping Constant": 1058.4,
+      "Spring Length": 0.01,
+      "Steered": false,
+      "Powered": true,
+      "Unsprung Mass": 2.0,
+      "Tire": {
+        "Spring Constant": 20000.0,
+        "Damping Constant": 20000.0,
+        "Radius": 0.305,
+        "Width": 0.2286,
+        "Section Height": 0.12,
+        "High Slip Crossover Angle": 3.0,
+        "Viscous Friction Coefficient": 0.05
+      }
+    }
+  ],
+
+  "Mesh": {
+    "File": "vehicles/warthog_cpu/clearpath_warthog_no_wheel.obj",
+    "Rotate Y to Z": false,
+    "Rotate X to Y": false,
+    "Rotate Y to X": false,
+    "Offset": [ 0.0, 0.0, -0.2 ],
+    "Scale": [ 1.0, 1.0, 1.0 ]
+  },
+
+  "Tire Mesh": {
+    "File": "vehicles/warthog_cpu/clearpath_warthog_single_wheel.obj",
+    "Rotate Y to Z": false,
+    "Rotate X to Y": false,
+    "Rotate Y to X": false,
+    "Offset": [ 0.0, 0.0, 0.0 ],
+    "Scale": [ 1.0, 1.0, 1.0 ]
+  },
+
+  "Initial Pose": {
+    "Position": [ 0.0, 0.0, 0.0 ],
+    "Orientation": [ 1.0, 0.0, 0.0, 0.0 ]
+  }
+}

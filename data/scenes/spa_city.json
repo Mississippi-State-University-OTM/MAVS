@@ -1,0 +1,545 @@
+{
+  "Object Labels": "labels.json",
+
+  "Surface Mesh": [
+    {
+      "Mesh": "surfaces/surface.obj",
+      "Rotate Y to Z": false,
+      "YawPitchRoll": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Scale": [
+        0.15,
+        0.15,
+        0.1
+      ]
+    }
+  ],
+
+  "Objects": [
+    {
+      "Mesh": "surfaces/surface.obj",
+      "Rotate Y to Z": false,
+      "Instances": [
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 0.0, 0.0, 0.0 ],
+          "Scale": [ 0.15, 0.15, 0.1 ]
+        }
+      ]
+    },
+    {
+      "Mesh": "surfaces/road_surfaces/Road-2-Lane-X.obj",
+      "Rotate Y to Z": true,
+      "Instances": [
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 0.0, 0.0, -0.15 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        }
+      ]
+    },
+    {
+      "Mesh": "surfaces/road_surfaces/Road-2-Lane-Corner.obj",
+      "Rotate Y to Z": true,
+      "Instances": [
+        {
+          "YawPitchRoll": [ 0, 3.15159, 0 ],
+          "Position": [ -45.0, 60.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 60.0, -45.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, -1.570796, 0 ],
+          "Position": [ 75.0, 45.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 1.570796, 0 ],
+          "Position": [ -60.0, -30.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        }
+      ]
+    },
+    {
+      "Mesh": "surfaces/road_surfaces/Road-2-Lane-T.obj",
+      "Rotate Y to Z": true,
+      "Instances": [
+        {
+          "YawPitchRoll": [ 0, -1.570796, 0 ],
+          "Position": [ 75.0, 0.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 1.570796, 0 ],
+          "Position": [ -60.0, 15.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.14159, 0 ],
+          "Position": [ 15.0, 60.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0.0, 0 ],
+          "Position": [ 0.0, -45.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        }
+      ]
+    },
+    {
+      "Mesh": "surfaces/road_surfaces/Road-2-Lane-Straight.obj",
+      "Rotate Y to Z": true,
+      "Instances": [
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 15.0, 0.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 30.0, 0.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 45.0, 0.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -15.0, 0.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -30.0, 0.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -45.0, 0.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+
+
+
+
+
+
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 15.0, -45.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 30.0, -45.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 45.0, -45.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -15.0, -45.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -30.0, -45.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -45.0, -45.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+
+
+
+
+
+
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 15.0, 45.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 30.0, 45.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 45.0, 45.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -15.0, 45.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -30.0, 45.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -45.0, 45.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+
+
+
+
+
+
+        {
+          "YawPitchRoll": [ 0, 1.570796, 0 ],
+          "Position": [ 0.0, 30.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 1.570796, 0 ],
+          "Position": [ 0.0, 45.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+
+        {
+          "YawPitchRoll": [ 0, 1.570796, 0 ],
+          "Position": [ 0.0, 0.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 1.570796, 0 ],
+          "Position": [ 0.0, -15.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+
+
+        {
+          "YawPitchRoll": [ 0, 1.570796, 0 ],
+          "Position": [ 60.0, 30.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 1.570796, 0 ],
+          "Position": [ 60.0, 45.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+
+        {
+          "YawPitchRoll": [ 0, 1.570796, 0 ],
+          "Position": [ 60.0, 0.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 1.570796, 0 ],
+          "Position": [ 60.0, -15.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+
+
+
+
+        {
+          "YawPitchRoll": [ 0, 1.570796, 0 ],
+          "Position": [ -60.0, 30.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 1.570796, 0 ],
+          "Position": [ -60.0, 45.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+
+        {
+          "YawPitchRoll": [ 0, 1.570796, 0 ],
+          "Position": [ -60.0, 0.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 1.570796, 0 ],
+          "Position": [ -60.0, -15.0, -0.11 ],
+          "Scale": [ 0.0041666, 0.0041666, 0.0041666 ]
+        }
+
+      ]
+    },
+
+    {
+      "Mesh": "vegetation/oak/oak.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 1,
+        "Polygon": [
+          [ 63, 20 ],
+          [ 58, 20 ],
+          [ 63, 40 ],
+          [ 58, 40 ]
+        ],
+        "Scale": [ 0.5, 1.0 ]
+      }
+    },
+    {
+      "Mesh": "vegetation/oak/oak.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 1,
+        "Polygon": [
+          [ -39, -20 ],
+          [ -45, -20 ],
+          [ -45, -26 ],
+          [ -39, -26 ]
+        ],
+        "Scale": [ 0.5, 1.0 ]
+      }
+    },
+
+    {
+      "Mesh": "vegetation/oak/oak.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 1,
+        "Polygon": [
+          [ 40, -20 ],
+          [ 45, -20 ],
+          [ 45, -26 ],
+          [ 40, -26 ]
+        ],
+        "Scale": [ 0.5, 1.0 ]
+      }
+    },
+
+    {
+      "Mesh": "vegetation/oak/oak.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 1,
+        "Polygon": [
+          [ -40, 26.5 ],
+          [ -45, 26.5 ],
+          [ -45, 30 ],
+          [ -40, 30 ]
+        ],
+        "Scale": [ 0.5, 1.0 ]
+      }
+    },
+
+    {
+      "Mesh": "buildings/Apartment_Building_6_obj.obj",
+      "Rotate Y to Z": true,
+      "Instances": [
+        {
+          "YawPitchRoll": [ 0, 1.570796, 0 ],
+          "Position": [ 0.0, 80.0, 0.0 ],
+          "Scale": [ 0.04, 0.04, 0.04 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 1.570796, 0 ],
+          "Position": [ 0.0, -65.0, 0.0 ],
+          "Scale": [ 0.04, 0.04, 0.04 ]
+        }
+      ]
+    },
+
+
+
+    {
+      "Mesh": "buildings/Apartment_Building_26_obj.obj",
+      "Rotate Y to Z": true,
+      "Instances": [
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -8, 30.0, 0.0 ],
+          "Scale": [ 0.03, 0.03, 0.03 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -27, 30.0, 0.0 ],
+          "Scale": [ 0.03, 0.03, 0.03 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 25, 30.0, 0.0 ],
+          "Scale": [ 0.03, 0.03, 0.03 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 45, 30.0, 0.0 ],
+          "Scale": [ 0.03, 0.03, 0.03 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -8, -15.0, 0.0 ],
+          "Scale": [ 0.03, 0.03, 0.03 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -27, -15.0, 0.0 ],
+          "Scale": [ 0.03, 0.03, 0.03 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 24, -15.0, 0.0 ],
+          "Scale": [ 0.03, 0.03, 0.03 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 45, -15.0, 0.0 ],
+          "Scale": [ 0.03, 0.03, 0.03 ]
+        },
+
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -68, -37.5, 0.0 ],
+          "Scale": [ 0.03, 0.03, 0.03 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -68, 37.5, 0.0 ],
+          "Scale": [ 0.03, 0.03, 0.03 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 84.5, -37.5, 0.0 ],
+          "Scale": [ 0.03, 0.03, 0.03 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 84.5, 37.5, 0.0 ],
+          "Scale": [ 0.03, 0.03, 0.03 ]
+        },
+
+
+        {
+          "YawPitchRoll": [ 0, 1.5708, 0 ],
+          "Position": [ 55.0, -55, 0.0 ],
+          "Scale": [ 0.03, 0.03, 0.03 ]
+        },
+
+        {
+          "YawPitchRoll": [ 0, 1.5708, 0 ],
+          "Position": [ 55.0, 70.0, 0.0 ],
+          "Scale": [ 0.03, 0.03, 0.03 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 1.5708, 0 ],
+          "Position": [ -55.0, 70.0, 0.0 ],
+          "Scale": [ 0.03, 0.03, 0.03 ]
+        },
+
+        {
+          "YawPitchRoll": [ 0, 1.5708, 0 ],
+          "Position": [ -55.0, -55, 0.0 ],
+          "Scale": [ 0.03, 0.03, 0.03 ]
+        }
+
+      ]
+    },
+
+    {
+      "Mesh": "buildings/Panel_House_Wikipedia_of_Russia_01.obj",
+      "Rotate Y to Z": true,
+      "Instances": [
+        {
+          "YawPitchRoll": [ 0, 0.0, 0 ],
+          "Position": [ -70.0, 12.5, 0.0 ],
+          "Scale": [ 0.2, 0.2, 0.2 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0.0, 0 ],
+          "Position": [ -70.0, -12.5, 0.0 ],
+          "Scale": [ 0.2, 0.2, 0.2 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0.0, 0 ],
+          "Position": [ 85.0, 12.5, 0.0 ],
+          "Scale": [ 0.2, 0.2, 0.2 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0.0, 0 ],
+          "Position": [ 85.0, -12.5, 0.0 ],
+          "Scale": [ 0.2, 0.2, 0.2 ]
+        }
+      ]
+    },
+
+
+    {
+      "Mesh": "urban/road_signs/stop_sign.obj",
+      "Rotate Y to Z": true,
+      "Instances": [
+        {
+          "YawPitchRoll": [ 0, 1.570796, 0 ],
+          "Position": [ 2.75, 2.75, 0.0 ],
+          "Scale": [ 0.025, 0.025, 0.025 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.14159, 0 ],
+          "Position": [ 2.75, 12.25, 0.0 ],
+          "Scale": [ 0.025, 0.025, 0.025 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0.0, 0 ],
+          "Position": [ 12.25, 2.75, 0.0 ],
+          "Scale": [ 0.025, 0.025, 0.025 ]
+        },
+        {
+          "YawPitchRoll": [ 0, -1.570796, 0 ],
+          "Position": [ 12.25, 12.25, 0.0 ],
+          "Scale": [ 0.025, 0.025, 0.025 ]
+        }
+      ]
+    },
+    {
+      "Mesh": "urban/road_signs/yield_sign.obj",
+      "Rotate Y to Z": true,
+      "Instances": [
+        {
+          "YawPitchRoll": [ 0, 1.570796, 0 ],
+          "Position": [ 62.75, 2.75, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, -1.570796, 0 ],
+          "Position": [ -47.75, 12.25, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 12.25, 47.75, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.14159, 0 ],
+          "Position": [ 2.75, -32.75, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        }
+      ]
+    }
+  ]
+}

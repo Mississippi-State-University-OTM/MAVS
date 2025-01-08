@@ -1,0 +1,83 @@
+{
+
+  "Chassis": {
+    "Sprung Mass": 1140.6,
+    "CG Offset": 0.025,
+    "CG Lateral Offset": 0.0,
+    "Dimensions": [ 3.594, 1.2, 1.2 ],
+    "Drag Coefficient": 28.2
+  },
+
+  "Powertrain": {
+    "Final Drive Ratio": 1.5,
+    "Max Engine Torque": 420.0,
+    "Max Engine Rpm": 5000.0,
+    "Idle Rpm": 1225.0,
+    "Max Braking Torque": 1500.0
+  },
+
+  "Axles": [
+    {
+      "Longitudinal Offset": 1.57,
+      "Track Width": 1.302,
+      "Spring Constant": 77706.3,
+      "Damping Constant": 8657.1,
+      "Spring Length": 0.576,
+      "Steered": true,
+      "Powered": true,
+      "Max Steer Angle": 17.5,
+      "Unsprung Mass": 34.8,
+      "Tire": {
+        "Spring Constant": 100000.0,
+        "Damping Constant": 34003.0,
+        "Radius": 0.3302,
+        "Width": 0.2286,
+        "Section Height": 0.1651,
+        "High Slip Crossover Angle": 10.0,
+        "Viscous Friction Coefficient": 0.4
+      }
+    },
+    {
+      "Longitudinal Offset": -1.15,
+      "Track Width": 1.339,
+      "Spring Constant": 106085.9,
+      "Damping Constant": 11818.9,
+      "Spring Length": 0.524,
+      "Steered": false,
+      "Powered": true,
+      "Unsprung Mass": 34.8,
+      "Tire": {
+        "Spring Constant": 100000.0,
+        "Damping Constant": 34003.0,
+        "Radius": 0.3302,
+        "Width": 0.2286,
+        "Section Height": 0.1651,
+        "High Slip Crossover Angle": 10.0,
+        "Viscous Friction Coefficient": 0.4
+      }
+    }
+  ],
+
+  "Mesh": {
+    "File": "vehicles/mrzr4/mrzr_no_wheel_rot.obj",
+    "Rotate Y to Z": false,
+    "Rotate X to Y": false,
+    "Rotate Y to X": false,
+    "Offset": [ 0.0, 0.0, 0.0 ],
+    "Scale": [ 1.0, 1.0, 1.0 ]
+  },
+
+  "Tire Mesh": {
+    "File": "vehicles/mrzr4/mrzr_single_wheel.obj",
+    "Rotate Y to Z": true,
+    "Rotate X to Y": false,
+    "Rotate Y to X": false,
+    "Offset": [ 0.0, 0.0, 0.0 ],
+    "Scale": [ 1.0, 1.0, 1.0 ]
+  },
+
+  "Initial Pose": {
+    "Position": [ 0.0, 0.0, 0.0 ],
+    "Orientation": [ 1.0, 0.0, 0.0, 0.0 ]
+  }
+}

@@ -1,0 +1,13 @@
+# Created with Anim8or 0.98
+# Object "stop_sign":
+
+newmtl material01
+Ka 0.875 0.875 0.875
+Kd 0.875 0.875 0.875
+Ks 1 1 1
+Ns 752.6
+Ni -1.5
+map_Ka stop_sign_texture.bmp
+map_Kd stop_sign_texture.bmp
+map_Ks stop_sign_texture.bmp
+

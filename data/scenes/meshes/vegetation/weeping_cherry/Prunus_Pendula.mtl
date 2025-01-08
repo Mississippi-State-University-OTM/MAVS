@@ -1,0 +1,26 @@
+# Blender MTL File: 'Prunus_Pendula.blend'
+# Material Count: 2
+
+newmtl Material__2
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni -1.500000
+d 1.000000
+illum 1
+map_Bump prunus_pendula_branch_1_4_normal.bmp
+map_Kd prunus_pendula_branch_3_1_diffuse.bmp
+
+newmtl Material__3
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni -1.500000
+d 1.000000
+illum 1
+map_Kd Prunus_pendula_flower_01_diffuse_1.bmp
+map_d Prunus_pendula_flower_03_mask.bmp

@@ -1,0 +1,40 @@
+{
+  "Object Labels": "labels.json",
+
+  "Surface Mesh": [
+    {
+      "Mesh": "surfaces/pg_sw_corner/ground_points.obj",
+      "Rotate Y to Z": false,
+      "YawPitchRoll": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  ],
+
+  "Objects": [
+    {
+      "Mesh": "surfaces/pg_sw_corner/ground_points.obj",
+      "Rotate Y to Z": false,
+      "Smooth Normals": false,
+      "Instances": [
+        {
+          "Position": [ 0.0, 0.0, 0.0 ],
+          "YawPitchRoll": [ 0.0, 0.0, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+    "LocalOrigin":{
+	"Latitude": 32.3033,
+	"Longitude": 90.8742,
+	"Altitude": 73.152
+    },
+
+    "DateTime":{
+	"Year": 2004,
+	"Month": 6,
+	"Day": 5,
+	"Hour": 0,
+	"Minute": 0,
+	"Second": 0,
+	"TimeZone": 6
+    },
+
+    "AtmosphericTurbidity": 3.0,
+
+    "LocalAlbedo":{
+	"Red": 0.15,
+	"Green": 0.15,
+	"Blue": 0.15
+    }
+}

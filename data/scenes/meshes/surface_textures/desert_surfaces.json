@@ -1,0 +1,29 @@
+{
+  "Soil Layer": {
+    "Texture File": "ground00_seamless.bmp",
+    "Texture Size": 1.25,
+    "Material": {
+      "Spectrum File": "spectra/dark_silty_loam.spec",
+      "Kd": [ 0.1, 0.1, 0.1 ]
+    }
+  },
+
+  "Grass Layer": {
+    "Texture File": "dirt04_seamless.bmp",
+    "Texture Size": 1.25,
+    "Material": {
+      "Spectrum File": "spectra/gravelly_loam.spec",
+      "Kd": [ 0.1, 0.1, 0.1 ]
+    }
+  },
+
+  "Undergrowth Layer": {
+    "Texture File": "sand00_seamless.bmp",
+    "Texture Size": 1.25,
+    "Material": {
+      "Spectrum File": "spectra/brown_sandy_loam.spec",
+      "Kd": [ 0.1, 0.1, 0.1 ]
+    }
+  }
+
+}

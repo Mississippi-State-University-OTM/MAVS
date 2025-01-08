@@ -1,0 +1,20 @@
+{
+    "Actors": [
+        {
+            "Mesh": "vehicles/aventador/Lamborghini_Aventador.obj",
+            "Rotate Y to Z": true,
+            "Rotate X to Y": true,
+            "Rotate Y to X": false,
+            "Locked to Ground": true,
+            "Instances": [
+                {
+                    "Initial Position": [ 67.5, 7.5, 22.0 ],
+                    "Offset": [ 0.0, 0.0, 0.0 ],
+                    "Scale": [ 0.01, 0.01, 0.01 ],
+                    "Speed": 5.0,
+                    "Waypoints File": "waypoints/spa_city_outer_loop.json"
+                }
+            ]
+        }
+	]  
+}

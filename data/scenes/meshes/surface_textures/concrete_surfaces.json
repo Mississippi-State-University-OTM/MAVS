@@ -1,0 +1,29 @@
+{
+  "Soil Layer": {
+    "Texture File": "seamless_tarmac_texture.bmp",
+    "Texture Size": 2.5,
+    "Material": {
+      "Spectrum File": "spectra/concrete.spec",
+      "Kd": [ 0.1, 0.1, 0.1 ]
+    }
+  },
+
+  "Grass Layer": {
+    "Texture File": "road_texture.bmp",
+    "Texture Size": 5.0,
+    "Material": {
+      "Spectrum File": "spectra/gray_asphalt.spec",
+      "Kd": [ 0.1, 0.1, 0.1 ]
+    }
+  },
+
+  "Undergrowth Layer": {
+    "Texture File": "seamless_tarmac_texture.bmp",
+    "Texture Size": 2.5,
+    "Material": {
+      "Spectrum File": "spectra/concrete.spec",
+      "Kd": [ 0.1, 0.1, 0.1 ]
+    }
+  }
+
+}

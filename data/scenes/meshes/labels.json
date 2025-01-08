@@ -1,0 +1,413 @@
+{
+  "Label Colors": [
+    {
+      "Label": "obstacle",
+      "Color": [ 1.0, 0.0, 0.0 ],
+      "Label Number": 5
+    },
+    {
+      "Label": "high vegetation",
+      "Color": [ 0.572, 0.816, 0.314 ],
+      "Label Number": 3
+    },
+    {
+      "Label": "low vegetation",
+      "Color": [ 0.220, 0.341, 0.137 ],
+      "Label Number": 2
+    },
+    {
+      "Label": "rough trail",
+      "Color": [ 0.929, 0.490, 0.192 ],
+      "Label Number": 1
+    },
+    {
+      "Label": "smooth trail",
+      "Color": [ 1.0, 0.753, 0.0 ],
+      "Label Number": 4
+    },
+    {
+      "Label": "vehicle",
+      "Color": [ 0.439, 0.188, 0.627 ],
+      "Label Number": 6
+    },
+    {
+      "Label": "uav",
+      "Color": [ 0.439, 0.0, 1.0 ],
+      "Label Number": 14
+    },
+    {
+      "Label": "dust",
+      "Color": [ 0.439, 0.502, 0.565 ],
+      "Label Number": 7
+    },
+    {
+      "Label": "stop_sign",
+      "Color": [ 0.5, 0.0, 0.0 ],
+      "Label Number": 8
+    },
+    {
+      "Label": "yield_sign",
+      "Color": [ 0.85, 0.85, 0.0 ],
+      "Label Number": 9
+    },
+    {
+      "Label": "building",
+      "Color": [ 1.0, 0.0, 1.0 ],
+      "Label Number": 10
+    },
+    {
+      "Label": "pedestrian",
+      "Color": [ 1.0, 1.0, 0.0 ],
+      "Label Number": 11
+    },
+    {
+      "Label": "fence",
+      "Color": [ 0.63, 0.79, 0.22 ],
+      "Label Number": 12
+    },
+    {
+      "Label": "pothole",
+      "Color": [ 0.2, 0.4, 0.6 ],
+      "Label Number": 13
+    },
+    {
+      "Label": "barell",
+      "Color": [ 0.87, 0.14, 0.29 ],
+      "Label Number": 15
+    },
+    {
+      "Label": "cow",
+      "Color": [ 0.14, 0.29, 0.87 ],
+      "Label Number": 16
+    },
+    {
+      "Label": "snow",
+      "Color": [ 1.0, 1.0, 1.0 ],
+      "Label Number": 17
+    }
+  ],
+
+  "Labels": [
+    [ "snow_scenes/cows/tornado_cow.obj", "cow" ],
+    [ "snow_scenes/cows/tornado_cow2.obj", "cow" ],
+    [ "snow_scenes/cows/tornado_cow4.obj", "cow" ],
+    [ "snow_scenes/cows/LS13_01_Med.obj", "high vegetation" ],
+    [ "snow_scenes/cows/LS13_01_Long2.obj", "high vegetation" ],
+    [ "snow_scenes/cows/LS13_01_Long.obj", "high vegetation" ],
+    [ "snow_scenes/cows/LS13_01_BIG.obj", "high vegetation" ],
+    [ "snow_scenes/cows/LS13_01_8R.obj", "high vegetation" ],
+    [ "snow_scenes/cows/LS13_01_8.obj", "high vegetation" ],
+    [ "snow_scenes/cows/LS13_01_4.obj", "high vegetation" ],
+    [ "snow_scenes/cows/obj1.obj", "pedestrian" ],
+    [ "snow_scenes/cows/obj2.obj", "pedestrian" ],
+    [ "snow_scenes/cows/04.obj", "vehicle" ],
+    [ "snow_scenes/cows/05.obj", "vehicle" ],
+    [ "snow_scenes/cows/06.obj", "vehicle" ],
+    [ "snow_scenes/cows/07.obj", "vehicle" ],
+    [ "snow_scenes/cows/08.obj", "vehicle" ],
+    [ "snow_scenes/cows/09.obj", "vehicle" ],
+    [ "snow_scenes/cows/11.obj", "vehicle" ],
+    [ "snow_scenes/cows/16.obj", "vehicle" ],
+    [ "snow_scenes/cows/17.obj", "vehicle" ],
+    [ "snow_scenes/cows/18.obj", "vehicle" ],
+    [ "snow_scenes/cows/22.obj", "vehicle" ],
+    [ "snow_scenes/cows/30.obj", "vehicle" ],
+    [ "snow_scenes/cows/snow_surface_hm_smoothed.obj", "snow" ],
+    [ "snow_scenes/cows/snow_surface_hm_smoothed_0-1.obj", "snow" ],
+    [ "snow_scenes/cows/snow_surface_hm_smoothed_1-3.obj", "snow" ],
+    [ "snow_scenes/cows/snow_surface_hm_smoothed_5-8.obj", "snow" ],
+    [ "snow_scenes/cows/snow_surface_hm_smoothed_1p5.obj", "snow" ],
+    [ "surfaces/car_scene/cars_snow_surface_hm_smoothed.obj", "snow" ],
+    [ "surfaces/car_scene/cars_high2_snow_surface_hm_smoothed.obj", "snow" ],
+
+    [ "misc/rock_wall/WallRock_obj.obj", "obstacle" ],
+
+    [ "animations/male_asian/male_asian_frame1_center2.obj", "pedestrian" ],
+
+    [ "surfaces/czarnecki/scene_mesh_textured.obj", "rough trail" ],
+    [ "surfaces/arcscenetin_flipped_meters.obj", "rough trail" ],
+    [ "surfaces/sloped_surface.obj", "rough trail" ],
+    [ "surfaces/bumpy_surface_surface.obj", "rough trail" ],
+    [ "surfaces/Farm.obj", "rough trail" ],
+    [ "surfaces/lunar_surfaces/pgda_site1.obj", "rough trail" ],
+    [ "surfaces/lunar_surfaces/pgda_site4.obj", "rough trail" ],
+    [ "surfaces/valley/fixed_valley.obj", "rough trail" ],
+    [ "surfaces/test_track/test_track_mesh_textured_smoothed_simplified.obj", "rough trail" ],
+    [ "surfaces/utah_desert/utah_desert_scaled_translated.obj", "rough trail" ],
+
+    [ "buildings/Apartment_Building_26_obj.obj", "building" ],
+    [ "buildings/Apartment_Building_6_obj.obj", "building" ],
+    [ "urban/roadblock/crashbarrel1_rotated_scaled.obj", "barell" ],
+    [ "vegetation/Basic/BL04a.obj", "high vegetation" ],
+    [ "vegetation/Basic/BL04m.obj", "high vegetation" ],
+    [ "vegetation/Basic/BL04y.obj", "high vegetation" ],
+
+    [ "vegetation/Basic/BL05a.obj", "high vegetation" ],
+    [ "vegetation/Basic/BL05m.obj", "high vegetation" ],
+    [ "vegetation/Basic/BL05y.obj", "high vegetation" ],
+
+    [ "misc/checkerboard.obj", "obstacle" ],
+    [ "misc/CornellBox-CeilingLight.obj", "obstacle" ],
+    [ "misc/boxy.obj", "obstacle" ],
+    [ "misc/bunny.obj", "obstacle" ],
+    [ "misc/brick.obj", "obstacle" ],
+    [ "misc/Rock-3_scaled.obj", "obstacle" ],
+
+    [ "vegetation/USA_Conifers/CL13y.obj", "high vegetation" ],
+
+    [ "surfaces/desert_dis_surface.obj", "rough trail" ],
+    [ "surfaces/dis_forest_sparse_surface.obj", "rough trail" ],
+
+    [ "misc/cube.obj", "obstacle" ],
+    [ "misc/cylinder.obj", "obstacle" ],
+
+    [ "vegetation/USA_East/EA08a.obj", "high vegetation" ],
+    [ "vegetation/USA_East/EA08m.obj", "high vegetation" ],
+    [ "vegetation/USA_East/EA08y.obj", "high vegetation" ],
+
+    [ "vegetation/oak/oak.obj", "high vegetation" ],
+    [ "vegetation/oak/oak_autumn.obj", "high vegetation" ],
+
+    [ "vegetation/USA_East/EA10a.obj", "high vegetation" ],
+    [ "vegetation/USA_East/EA10m.obj", "high vegetation" ],
+    [ "vegetation/USA_East/EA10y.obj", "high vegetation" ],
+
+    [ "vegetation/USA_East/EA12a.obj", "high vegetation" ],
+    [ "vegetation/USA_East/EA12m.obj", "high vegetation" ],
+    [ "vegetation/USA_East/EA12y.obj", "high vegetation" ],
+
+    [ "vegetation/USA_East/EA13a.obj", "high vegetation" ],
+    [ "vegetation/USA_East/EA13m.obj", "high vegetation" ],
+    [ "vegetation/USA_East/EA13y.obj", "high vegetation" ],
+
+    [ "vegetation/USA_East/EA14a.obj", "high vegetation" ],
+    [ "vegetation/USA_East/EA14m.obj", "high vegetation" ],
+    [ "vegetation/USA_East/EA14y.obj", "high vegetation" ],
+
+    [ "vegetation/Europe/EU06a.obj", "high vegetation" ],
+    [ "vegetation/Europe/EU06m.obj", "high vegetation" ],
+    [ "vegetation/Europe/EU06y.obj", "high vegetation" ],
+
+    [ "vegetation/Europe/EU08a.obj", "high vegetation" ],
+    [ "vegetation/Europe/EU08m.obj", "high vegetation" ],
+    [ "vegetation/Europe/EU08y.obj", "high vegetation" ],
+
+    [ "vegetation/Europe/EU09a.obj", "high vegetation" ],
+    [ "vegetation/Europe/EU09m.obj", "high vegetation" ],
+    [ "vegetation/Europe/EU09y.obj", "high vegetation" ],
+
+    [ "vegetation/Europe/EU39a.obj", "high vegetation" ],
+    [ "vegetation/Europe/EU39m.obj", "high vegetation" ],
+    [ "vegetation/Europe/EU39y.obj", "high vegetation" ],
+
+    [ "vegetation/Europe/EU41_2.obj", "high vegetation" ],
+    [ "vegetation/Europe/EU41_6.obj", "high vegetation" ],
+    [ "vegetation/Europe/EU41_8.obj", "high vegetation" ],
+
+    [ "vegetation/Europe/EU60_1.obj", "high vegetation" ],
+    [ "vegetation/Europe/EU60_2.obj", "high vegetation" ],
+
+    [ "vegetation/Fruit/FR20a.obj", "high vegetation" ],
+    [ "vegetation/Fruit/FR20m.obj", "high vegetation" ],
+    [ "vegetation/Fruit/FR20y.obj", "high vegetation" ],
+
+    [ "vehicles/forester/forester_vehicle_m_rot.obj", "vehicle" ],
+    [ "vehicles/forester/forester_vehicle_aligned.obj", "vehicle" ],
+    [ "vehicles/forester/forester_single_wheel.obj", "vehicle" ],
+    [ "vehicles/forester/forester_vehicle_nowheel.obj", "vehicle" ],
+    [ "vehicles/forester/forester_vehicle_nowheel_rotated.obj", "vehicle" ],
+    [ "vehicles/mrzr4/mrzr4.obj", "vehicle" ],
+    [ "vehicles/mrzr4/mrzr_no_wheel_rot.obj", "vehicle" ],
+    [ "vehicles/mrzr4/mrzr_single_wheel.obj", "vehicle" ],
+    [ "vehicles/mrzr4/mrzr4_shifted2.obj", "vehicle" ],
+    [ "vehicles/warthog/warthog.obj", "vehicle" ],
+    [ "vehicles/warthog_cpu/warthog.obj", "vehicle" ],
+    [ "vehicles/warthog_cpu/clearpath_warthog_no_wheel.obj", "vehicle" ],
+    [ "vehicles/warthog_cpu/clearpath_warthog_single_wheel.obj", "vehicle" ],
+    [ "vehicles/l200/L200-Obj_rot_scale_trans2.obj", "vehicle" ],
+
+    [ "vehicles/piper_pa18/piper_pa18_rotated_v2.obj", "uav" ],
+
+    [ "vegetation/oat_grass/oat_grass_5.obj", "low vegetation" ],
+
+    [ "vegetation/Groundcover/GC08_1.obj", "low vegetation" ],
+    [ "vegetation/Groundcover/GC08_2.obj", "low vegetation" ],
+    [ "vegetation/Groundcover/GC08_3.obj", "low vegetation" ],
+
+    [ "vegetation/Groundcover/GC09_1.obj", "low vegetation" ],
+    [ "vegetation/Groundcover/GC09_2.obj", "low vegetation" ],
+    [ "vegetation/Groundcover/GC09_3.obj", "low vegetation" ],
+
+    [ "vegetation/Groundcover/GC14_1.obj", "low vegetation" ],
+    [ "vegetation/Groundcover/GC14_2.obj", "low vegetation" ],
+    [ "vegetation/Groundcover/GC14_3.obj", "low vegetation" ],
+
+    [ "vegetation/Groundcover/GC17_1.obj", "low vegetation" ],
+    [ "vegetation/Groundcover/GC17_2.obj", "low vegetation" ],
+    [ "vegetation/Groundcover/GC17_3.obj", "low vegetation" ],
+
+    [ "vegetation/Groundcover/GC18_1.obj", "low vegetation" ],
+    [ "vegetation/Groundcover/GC18_2.obj", "low vegetation" ],
+    [ "vegetation/Groundcover/GC18_3.obj", "low vegetation" ],
+
+    [ "vegetation/Groundcover/GC20_1.obj", "low vegetation" ],
+    [ "vegetation/Groundcover/GC20_2.obj", "low vegetation" ],
+    [ "vegetation/Groundcover/GC20_3.obj", "low vegetation" ],
+
+    [ "vegetation/misc/Grass_01.obj", "low vegetation" ],
+    [ "vegetation/misc/Grass_02.obj", "low vegetation" ],
+    [ "vegetation/grass/Grass_02.obj", "low vegetation" ],
+    [ "vegetation/misc/Grass_03.obj", "low vegetation" ],
+
+    [ "vegetation/fern/fern_1.obj", "low vegetation" ],
+    [ "vegetation/fern/fern_2.obj", "low vegetation" ],
+    [ "vegetation/fern/fern_3.obj", "low vegetation" ],
+
+    [ "vegetation/grass/grass_clump_1.obj", "low vegetation" ],
+    [ "vegetation/grass/grass_clump_2.obj", "low vegetation" ],
+    [ "vegetation/greater_celandine/greater_celandine_1.obj", "low vegetation" ],
+
+    [ "vegetation/misc/grass_blade_10mm.obj", "low vegetation" ],
+    [ "vegetation/misc/grass_blade_20mm.obj", "low vegetation" ],
+    [ "vegetation/misc/grass_blade_30mm.obj", "low vegetation" ],
+
+    [ "vegetation/Landscaping/LS13_01.obj", "high vegetation" ],
+
+    [ "vegetation/bamboo/bamboo.obj", "high vegetation" ],
+    [ "vegetation/weeping_cherry/weeping_cherry_tree.obj", "high vegetation" ],
+    [ "vegetation/peach_tree/peach_tree.obj", "high vegetation" ],
+    [ "vegetation/black_poplar/black_poplar_2.obj", "high vegetation" ],
+    [ "vegetation/oak/oak.obj", "high vegetation" ],
+    [ "vegetation/oak/oak_autumn.obj", "high vegetation" ],
+    [ "vegetation/oak_v5/oak_v5.obj", "high vegetation" ],
+    [ "vegetation/oak_v9/oak_v9.obj", "high vegetation" ],
+    [ "vegetation/pine_tree/pine_tree.obj", "high vegetation" ],
+
+    [ "vegetation/honey_locust/honey_locust_1.obj", "high vegetation" ],
+    [ "vegetation/honey_locust/honey_locust_2.obj", "high vegetation" ],
+    [ "vegetation/honey_locust/honey_locust_3.obj", "high vegetation" ],
+    [ "vegetation/honey_locust/honey_locust_4.obj", "high vegetation" ],
+    [ "vegetation/honey_locust/honey_locust_5.obj", "high vegetation" ],
+    [ "vegetation/honey_locust/honey_locust_6.obj", "high vegetation" ],
+
+    [ "vegetation/narrow_leaved_paperbark/narrow_leaved_paperbark_1.obj", "high vegetation" ],
+    [ "vegetation/narrow_leaved_paperbark/narrow_leaved_paperbark_2.obj", "high vegetation" ],
+    [ "vegetation/narrow_leaved_paperbark/narrow_leaved_paperbark_3.obj", "high vegetation" ],
+    [ "vegetation/narrow_leaved_paperbark/narrow_leaved_paperbark_4.obj", "high vegetation" ],
+    [ "vegetation/narrow_leaved_paperbark/narrow_leaved_paperbark_5.obj", "high vegetation" ],
+    [ "vegetation/narrow_leaved_paperbark/narrow_leaved_paperbark_6.obj", "high vegetation" ],
+
+    [ "vehicles/hmmwv/hmmwv.obj", "vehicle" ],
+    [ "vehicles/hmmwv/hmmwv_centered.obj", "vehicle" ],
+    [ "vehicles/hmmwv/hmmwv_body_rotated_scaled_shifted.obj", "vehicle" ],
+    [ "vehicles/hmmwv/hmmwv_wheel_rotated_scaled.obj", "vehicle" ],
+
+    [ "vehicles/jackal/jackal_no_tires_scaled_3.obj", "vehicle" ],
+    [ "vehicles/jackal/jackal_tire_scaled_2.obj", "vehicle" ],
+
+    [ "vehicles/L200/L200-OBJ.obj", "vehicle" ],
+    [ "vehicles/L200/L200-OBJ_rot_scale_trans2.obj", "vehicle" ],
+    [ "vehicles/aventador/Lamborghini_Aventador.obj", "vehicle" ],
+
+    [ "urban/street_signs/objFlag.obj", "obstacle" ],
+
+    [ "buildings/Panel_House_Wikipedia_of_Russia_01.obj", "building" ],
+
+    [ "urban/roadblock/RoadBlockade_01.obj", "obstacle" ],
+    [ "urban/roadblock/RoadBlockade_02.obj", "obstacle" ],
+
+    [ "surfaces/pg_sw_corner/ground_points.obj", "smooth trail" ],
+
+    [ "surfaces/road_surfaces/Road-2-Lane-X.obj", "smooth trail" ],
+    [ "surfaces/road_surfaces/Road-2-Lane-T.obj", "smooth trail" ],
+    [ "surfaces/road_surfaces/Road-2-Lane-Straight.obj", "smooth trail" ],
+    [ "surfaces/road_surfaces/Road-2-Lane-Corner.obj", "smooth trail" ],
+
+    [ "urban/road_signs/stop_sign.obj", "stop_sign" ],
+    [ "urban/road_signs/stop_sign_rotated.obj", "stop_sign" ],
+
+    [ "urban/road_signs/STLamp.obj", "obstacle" ],
+
+    [ "surfaces/surface.obj", "rough trail" ],
+
+    [ "vegetation/USA_Southwest/SW04_1.obj", "high vegetation" ],
+    [ "vegetation/USA_Southwest/SW04_2.obj", "high vegetation" ],
+    [ "vegetation/USA_Southwest/SW04_3.obj", "high vegetation" ],
+
+    [ "vegetation/USA_Conifers/CL13y.obj", "high vegetation" ],
+    [ "vegetation/USA_Conifers/CL13a.obj", "high vegetation" ],
+
+    [ "vegetation/USA_Southwest/SW05_1.obj", "high vegetation" ],
+    [ "vegetation/USA_Southwest/SW05_2.obj", "high vegetation" ],
+    [ "vegetation/USA_Southwest/SW05_3.obj", "high vegetation" ],
+    [ "vegetation/USA_Southwest/SW05_4.obj", "high vegetation" ],
+
+    [ "vegetation/USA_Southwest/SW11_1.obj", "high vegetation" ],
+    [ "vegetation/USA_Southwest/SW11_2.obj", "high vegetation" ],
+    [ "vegetation/USA_Southwest/SW11_3.obj", "high vegetation" ],
+    [ "vegetation/USA_Southwest/SW11_4.obj", "high vegetation" ],
+
+    [ "vegetation/USA_Southwest/SW15_1.obj", "low vegetation" ],
+    [ "vegetation/USA_Southwest/SW15_2.obj", "low vegetation" ],
+    [ "vegetation/USA_Southwest/SW15_3.obj", "low vegetation" ],
+
+    [ "vegetation/misc/Tree_V9_Final.obj", "high vegetation" ],
+
+    [ "misc/wall.obj", "obstacle" ],
+    [ "misc/Quad_Sphere_3k.obj", "obstacle" ],
+
+    [ "vegetation/USA_West/WE06a.obj", "high vegetation" ],
+    [ "vegetation/USA_West/WE06m.obj", "high vegetation" ],
+    [ "vegetation/USA_West/WE06y.obj", "high vegetation" ],
+
+    [ "vegetation/USA_West/WE20a.obj", "high vegetation" ],
+    [ "vegetation/USA_West/WE20m.obj", "high vegetation" ],
+    [ "vegetation/USA_West/WE20y.obj", "high vegetation" ],
+
+    [ "textured_surface", "rough trail" ],
+    [ "textured_trail", "smooth trail" ],
+
+    [ "pothole", "pothole" ],
+
+    [ "urban/road_signs/yield_sign.obj", "yield_sign" ],
+    [ "urban/road_signs/yield_sign_rotated.obj", "yield_sign" ],
+
+    [ "rural/red_barn/Rbarn15.obj", "building" ],
+    [ "rural/farmhouse/polHouse1.obj", "building" ],
+    [ "rural/shed/shed.obj", "building" ],
+    [ "rural/suburban_house/White_Suburban_House.obj", "building" ],
+    [ "rural/fence/fence_rotated_translated.obj", "fence" ],
+
+    [ "animations/GenericWalk/Walk_00_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_01_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_02_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_03_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_04_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_05_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_06_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_07_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_08_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_09_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_10_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_11_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_12_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_13_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_14_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_15_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_16_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_17_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_18_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_19_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_20_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_21_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_22_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_23_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_24_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_25_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_26_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_27_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_28_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_29_s.obj", "pedestrian" ],
+    [ "animations/GenericWalk/Walk_30_s.obj", "pedestrian" ]
+  ]
+}

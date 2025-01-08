@@ -1,0 +1,29 @@
+{
+  "LocalOrigin": {
+    "Latitude": 32.3033,
+    "Longitude": 90.8742,
+    "Altitude": 73.152
+  },
+
+  "DateTime": {
+    "Year": 2018,
+    "Month": 3,
+    "Day": 22,
+    "Hour": 12,
+    "Minute": 45,
+    "Second": 0,
+    "TimeZone": 6
+  },
+
+  "AtmosphericTurbidity": 10.0,
+
+  "Rain Rate": 5.0,
+
+  "Wind": [0 , 0 ],
+
+  "LocalAlbedo": {
+    "Red": 0.1,
+    "Green": 0.1,
+    "Blue": 0.1
+  }
+}

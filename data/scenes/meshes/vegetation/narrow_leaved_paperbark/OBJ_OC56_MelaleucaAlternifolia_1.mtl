@@ -1,0 +1,57 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 02.10.2021 13:51:29
+
+newmtl Bark03_SHD
+	Ns 10.0000
+	Ni -1.5
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Kd OC56_Bark03_dif_su.bmp
+
+newmtl Leaf02_su_SHD
+	Ns 10.0000
+	Ni -1.5
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Kd OC56_Leaf02Front_dif_su.bmp
+	map_d OC56_Leaf02_alp_su.bmp
+
+newmtl Fruit01_su_SHD
+	Ns 10.0000
+	Ni -1.5
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Kd OC56_Fruit01Front_dif_su.bmp
+	map_d OC56_Fruit01_alp_su.bmp
+
+newmtl Flower01_su_SHD
+	Ns 10.0000
+	Ni -1.5
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Kd OC56_Flower01Front_dif_su.bmp
+	map_d OC56_Flower01_alp_su.bmp

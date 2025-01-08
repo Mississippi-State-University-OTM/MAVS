@@ -1,0 +1,29 @@
+{
+    "Soil Layer": {
+        "Texture File": "SnowTexture.bmp",
+        "Texture Size": 2.5,
+        "Material": {
+            "Spectrum File": "spectra/dark_brown_clay.spec",
+            "Kd": [ 0.1, 0.1, 0.1 ]
+        }
+    },
+
+  "Grass Layer": {
+    "Texture File": "SnowTexture.bmp",
+    "Texture Size": 2.5,
+    "Material": {
+      "Spectrum File": "spectra/oat_grass.spec",
+      "Kd": [ 0.1, 0.1, 0.1 ]
+    }
+  },
+
+  "Undergrowth Layer": {
+    "Texture File": "SnowTexture.bmp",
+    "Texture Size": 100.0,
+    "Material": {
+      "Spectrum File": "spectra/oat_grass.spec",
+      "Kd": [ 0.1, 0.1, 0.1 ]
+    }
+  }
+
+}

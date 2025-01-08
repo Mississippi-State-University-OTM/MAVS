@@ -1,0 +1,54 @@
+{
+  "Object Labels": "labels.json",
+
+  "Layered Surface": {
+    "Mesh": "surfaces/surface.obj",
+    "Scale": [1.0, 1.0, 1.0],
+    "Trail": {
+      "Trail Width": 2.0,
+      "Track Width": 0.6,
+      "Wheelbase": 1.25,
+      "Path": "waypoints/vehicle2_pos_1.vprp"
+    },
+    "Layers": "surface_textures/road_surfaces.json"
+  },
+
+  "Surface Mesh": [
+    {
+      "Mesh": "surfaces/surface.obj",
+      "Rotate Y to Z": false,
+      "YawPitchRoll": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  ],
+
+  "Objects": [
+    {
+      "Mesh": "misc/cube.obj",
+      "Random": {
+        "Offset": [ 0.0, 0.0, -0.1 ],
+        "Number": 3000,
+        "Polygon": [
+          [ -1000, -1000 ],
+          [ -1000, 1000 ],
+          [ 1000, 1000 ],
+          [ 1000, -1000 ]
+        ],
+        "Scale": [ 1.0, 5.0 ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+QS VANE REPLAY FILE
+Version: 1
+Replay Type: PositionReplay
+Vehicle File: Generic4x4.vehicle.xml
+Vehicle Objects: 0
+#Start Date: 03/20/2018
+#Start Time: 08:20:25
+@Data
+0.01:-1000.0 0.0 2.0:1.0 0.0 0.0 0.0
+0.02:1000.0 0.0 2.0:1.0 0.0 0.0 0.0
+@END OF REPLAY FILE

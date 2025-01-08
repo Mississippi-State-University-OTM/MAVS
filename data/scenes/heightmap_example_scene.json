@@ -1,0 +1,25 @@
+{
+  "Object Labels": "labels.json",
+
+  "Layered Surface": {
+    "Heightmap": {
+      "Map": "surfaces/mountain_heights.bmp",
+      "Resolution": 10.0,
+      "Scale": 10.0
+    },
+    "Trail": {
+      "Trail Width": 4.5,
+      "Track Width": 0.45,
+      "Wheelbase": 2.0,
+      "Path": [
+        "waypoints/brownfield_main_trail.vprp",
+        "waypoints/brownfield_powerlinetrail.vprp",
+        "waypoints/brownfield_shortcut.vprp",
+        "waypoints/brownfield_southeastcorner.vprp",
+        "waypoints/brownfield_suggestion1.vprp",
+        "waypoints/brownfield_suggestion2.vprp"
+      ]
+    },
+    "Layers": "surface_textures/meadow_surfaces.json"
+  }
+}

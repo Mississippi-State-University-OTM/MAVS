@@ -1,0 +1,20 @@
+{
+    "Actors": [
+        {
+            "Mesh": "vehicles/L200/L200-OBJ.obj",
+            "Rotate Y to Z": true,
+            "Rotate X to Y": true,
+            "Rotate Y to X": false,
+            "Locked to Ground": true,
+            "Instances": [
+                {
+                    "Initial Position": [ 30.0, 5.125, 2.0 ],
+                    "Offset": [ 0.0, 0.0, 0.0 ],
+                    "Scale": [ 0.06, 0.06, 0.06 ],
+                    "Speed": 5.0,
+                    "Waypoints File": "waypoints/spa_city_top_block.json"
+                }
+            ]
+        }
+    ]
+}

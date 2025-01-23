@@ -24,33 +24,33 @@ If you use MAVS for your research, please cite one or more of the following publ
 The MAVS is a software library that can be incorporated into a variety of applications through its applicaton programming interface (API). Please see the [API documentation](https://cgoodin.gitlab.io/msu-autonomous-vehicle-simulator/) for information on developing applications with MAVS.
 
 ## Building Mavs
-See instructions [for building MAVS](docs/MavsBuildInstructions.md).
+See instructions [for building MAVS](https://mississippi-state-university-otm.github.io/MAVS/docs/MavsBuildInstructions.html).
 
 ## Running the Mavs Gui
-On Linux systems with Python3 installed, MAVS simulations can be run with a [TKinter-based GUI](docs/Gui/RunningMavsGUI). The MAVS GUI can be used to set up and run sensor simulations in [randomized scenes](docs/Gui/GeneratingRandomDataWithGUI.md).
+On Linux systems with Python3 installed, MAVS simulations can be run with a [TKinter-based GUI](https://mississippi-state-university-otm.github.io/MAVS/docs/Gui/RunningMavsGUI). The MAVS GUI can be used to set up and run sensor simulations in [randomized scenes](https://mississippi-state-university-otm.github.io/MAVS/docs/Gui/GeneratingRandomDataWithGUI.html).
 
 ## Using the MAVS C++ API
-Portions of the MAVS API can be accessed in [MATLAB](docs/Interfaces/MavsMatlab) or [Python](docs/Interfaces/MavsPython.md) through the C interfaces.
+Portions of the MAVS API can be accessed in [MATLAB](https://www.mathworks.com/matlabcentral/fileexchange/136754-mavs-matlab) or [Python](https://mississippi-state-university-otm.github.io/MAVS/docs/Interfaces/MavsPython.html) through the C interfaces.
 
 ## MAVS-ROS Package
-The mavs_ros package has example [ROS-nodes](docs/Interfaces/MavsROS.md) built around MAVS simulation capabilities. 
+The mavs_ros package has example [ROS-nodes](https://mississippi-state-university-otm.github.io/MAVS/docs/Interfaces/MavsROS.html) built around MAVS simulation capabilities. 
 
 ## Running simulations from the command line
-Several MAVS executables can be run [from the commmand line.](docs/RunningASimulation.md)
+Several MAVS executables can be run [from the commmand line.](https://mississippi-state-university-otm.github.io/MAVS/docs/RunningASimulation.html)
 
 ## MAVS Input Files
-MAVS primarily uses [json input files](docs/MavsSimulationInputsFiles.md). 
+MAVS primarily uses [json input files](https://mississippi-state-university-otm.github.io/MAVS/docs/MavsSimulationInputsFiles.html). 
 
 ## MAVS Sensor Models
-MAVS features several different types of sensors including [cameras](docs/Sensors/MavsCamera.md), [LIDAR](docs/Sensors/MavsLidar.md), GPS, [RADAR](docs/Sensors/MavsRadar.md) and [IMUs](docs/Sensors/MavsImu.md).
+MAVS features several different types of sensors including [cameras](https://mississippi-state-university-otm.github.io/MAVS/docs/Sensors/MavsCamera.html), [LIDAR](https://mississippi-state-university-otm.github.io/MAVS/docs/Sensors/MavsLidar.html), GPS, [RADAR](https://mississippi-state-university-otm.github.io/MAVS/docs/Sensors/MavsRadar.html) and [IMUs](https://mississippi-state-university-otm.github.io/MAVS/docs/Sensors/MavsImu.html).
 
-MAVS can also be used to render [photorealistic images](docs/Sensors/MavsPathTracer.md).
+MAVS can also be used to render [photorealistic images](https://mississippi-state-university-otm.github.io/MAVS/docs/Sensors/MavsPathTracer.html).
 
 ## MAVS Vehicle Models
-MAVS has a built-in [vehicle simulator](docs/Vehicles/MavsVehicles.md) and can also be linked to the [Chrono vehicle dynamics](docs/MavsBuildInstructions.md)
+MAVS has a built-in [vehicle simulator](https://mississippi-state-university-otm.github.io/MAVS/docs/Vehicles/MavsVehicles.html) and can also be linked to the [Chrono vehicle dynamics](https://mississippi-state-university-otm.github.io/MAVS/docs/MavsBuildInstructions.html)
 
 ## Examples and Utilities
-MAVS comes with several [example codes](docs/Examples/MavsExamples.md) and [utilitys](docs/Utilities/MavsUtils.md) that demonstrate how to implement various features through the API.
+MAVS comes with several [example codes](https://mississippi-state-university-otm.github.io/MAVS/docs/Examples/MavsExamples.html) and [utilities](https://mississippi-state-university-otm.github.io/MAVS/docs/Utilities/MavsUtils.html) that demonstrate how to implement various features through the API.
 
 ## Features
 MAVS can automatically generate random ecosystems complete with trails and realistic vegetation.

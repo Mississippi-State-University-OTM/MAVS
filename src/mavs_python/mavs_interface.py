@@ -3988,7 +3988,8 @@ class MavsSimulation(object):
         self.UnloadScene()
         self.scenefile = scenefile
         self.LoadScene()
-        self.env.load_block(self.env_block)
+        if (self.env_block):
+            self.env.load_block(self.env_block)
         self.vehicle.UnloadVehicle()
         self.vehicle = MavsRp3d()
         startheight = mavs_lib.GetSurfaceHeight(self.scene.scene,ctypes.c_float(self.start_pos[0]),ctypes.c_float(self.start_pos[1])) + 3.0
@@ -4070,7 +4071,10 @@ class MavsSimulation(object):
         else:
             print("WARNING: NO POSE FILE GIVEN, SIMULATION MAY CRASH!!!")
         #---- Load the waypoints  -----
-        self.waypoints.Load(self.posefile)
+        if (self.posetype=="json"):
+            self.waypoints.LoadJson(self.posefile)
+        else:
+            self.waypoints.Load(self.posefile)
         # load the starting pose
         if "Starting Pose" in data:
             if "Position" in data["Starting Pose"]:

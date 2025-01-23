@@ -1,0 +1,15 @@
+# Blender MTL File: 'RoadBlockade_01.blend'
+# Material Count: 1
+
+newmtl RoadBlockade_01_Material
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni -1.000000
+d 1.000000
+illum 1
+Kd spectral spectra/concrete.spec
+map_Kd RoadBlockade_01_CM.bmp
+map_Bump RoadBlockade_01_NM.bmp

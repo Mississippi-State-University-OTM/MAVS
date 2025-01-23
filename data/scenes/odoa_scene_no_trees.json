@@ -1,0 +1,283 @@
+{
+  "Object Labels": "labels.json",
+
+  "Layered Surface": {
+    "Mesh": "surfaces/surface.obj",
+    "Trail": {
+      "Trail Width": 2.0,
+      "Track Width": 0.6,
+      "Wheelbase": 1.25,
+      "Path": "waypoints/x_axis_points.vprp"
+    },
+    "Layers": "surface_textures/road_surfaces.json"
+  },
+
+  "Surface Mesh": [
+    {
+      "Mesh": "surfaces/surface.obj",
+      "Rotate Y to Z": false,
+      "YawPitchRoll": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  ],
+
+  "Objects": [
+    {
+      "Mesh": "urban/roadblock/crashbarrel1_rotated_scaled.obj",
+      "Rotate Y to Z": false,
+      "Smooth Normals": false,
+      "Instances": [
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 0, 0, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        }
+      ]
+    },
+    {
+      "Mesh": "urban/roadblock/RoadBlockade_02.obj",
+      "Rotate Y to Z": true,
+      "Instances": [
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 0.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ 0.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -3.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ -3.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 3.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ 3.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -6.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ -6.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 6.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ 6.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+
+
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -9.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ -9.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 9.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ 9.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+
+
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -12.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ -12.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 12.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ 12.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -15.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ -15.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 15.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ 15.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+
+
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -18.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ -18.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 18.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ 18.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+
+
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -21.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ -21.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 21.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ 21.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+
+
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -24.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ -24.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 24.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ 24.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -27.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ -27.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 27.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ 27.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+
+
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -30.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ -30.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 30.0, -3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 3.1415, 0 ],
+          "Position": [ 30.0, 3.5, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        }
+
+      ]
+    }
+  ]
+}

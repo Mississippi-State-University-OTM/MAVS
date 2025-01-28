@@ -18,7 +18,7 @@ To run the python interface, you will also need to install [Python 3](https://ww
 The steps for cloning MAVS are the same on both Windows and Linux/Unix. First clone the MAVS repo and name it "mavs". On Linux systems, it is recommended that you install MAVS in your home directory. 
 ```bash
 cd ~
-git clone --recursive https://github.com/CGoodin/msu-autonomous-vehicle-simulator.git mavs
+git clone --recursive https://github.com/Mississippi-State-University-OTM/MAVS.git mavs
 ```
 MAVS has multiple dependencies configured as [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules), so you must include the --recursive command.
 

@@ -22,6 +22,7 @@ git clone --recursive https://github.com/Mississippi-State-University-OTM/MAVS.g
 ```
 MAVS has multiple dependencies configured as [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules), so you must include the --recursive command.
 
+
 ## Building MAVS on Linux
 This section outlines how to build MAVS using terminal commands on Linux. Aptitude is the package manager used in the example commands for installing system dependencies. Users of different package managers will need to determine how to ensure the same dependencies are installed on their own. MAVS has been installed and tested on both Ubuntu and CentOS systems.
 

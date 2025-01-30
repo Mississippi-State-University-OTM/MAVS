@@ -1,0 +1,15 @@
+#
+# Wavefront material file
+# Converted by Meshlab Group
+#
+
+newmtl material_0
+Ka 0.200000 0.200000 0.200000
+Kd 0.694118 0.694118 0.694118
+Ks 1.000000 1.000000 1.000000
+Tr 1.000000
+illum 2
+Ns 1.000000
+Ni -1.600000
+map_Kd rear_tire.bmp
+

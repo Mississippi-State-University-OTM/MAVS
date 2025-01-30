@@ -1359,7 +1359,7 @@ void Camera::AddLidarPointsToImage(std::vector<glm::vec4> registered_xyzi) {
 	int pixrad = (int)floor(0.5f*num_horizontal_pix_*num_vertical_pix_ / 1000000.0f);
 	for (int i = 0; i < (int)registered_xyzi.size(); i++) {
 		glm::vec3 p(registered_xyzi[i].x, registered_xyzi[i].y, registered_xyzi[i].z);
-		glm::vec3 v = p - position_; // (glm::vec3)pose.position;
+		/*glm::vec3 v = p - position_; // (glm::vec3)pose.position;
 		// check if point is behind me
 		if (glm::dot(v, look_to_) < 0.0f)continue;
 
@@ -1369,16 +1369,20 @@ void Camera::AddLidarPointsToImage(std::vector<glm::vec4> registered_xyzi) {
 		float dp = glm::length(v);
 		int px = (int)floor(( (fh * (x / dp)) + half_horizontal_dim_));
 		int py = (int)floor(( (fv * (y / dp)) + half_vertical_dim_));
+		*/
+		glm::ivec2 pix;
+		bool in_image = WorldToPixel(p, pix);
 		// if in frame, render
-		if (px>=0 && px<num_horizontal_pix_ && py>=0 && py<num_vertical_pix_) {
-			int n = GetFlattenedIndex(px, py);
+		if (pix.x>=0 && pix.x<num_horizontal_pix_ && pix.y>=0 && pix.y<num_vertical_pix_) {
+			int n = GetFlattenedIndex(pix.x, pix.y);
+			float dp = glm::length(p - position_);
 			if (dp < range_buffer_[n]) {
 				mavs::utils::Color color = plotter.MorelandColormap(registered_xyzi[i].w, 0.0f, 1.0f);
 				if (pixrad <= 0) {
-					image_.draw_point(num_horizontal_pix_ - px, num_vertical_pix_ - py, (float *)&color);
+					image_.draw_point(num_horizontal_pix_ - pix.x, num_vertical_pix_ - pix.y, (float *)&color);
 				}
 				else {
-					image_.draw_circle(num_horizontal_pix_ - px, num_vertical_pix_ - py, pixrad, (float *)&color);
+					image_.draw_circle(num_horizontal_pix_ - pix.x, num_vertical_pix_ - pix.y, pixrad, (float *)&color);
 				}
 			}
 		}

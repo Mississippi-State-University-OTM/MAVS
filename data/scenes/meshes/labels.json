@@ -226,6 +226,10 @@
     [ "vehicles/warthog_cpu/clearpath_warthog_single_wheel.obj", "vehicle" ],
     [ "vehicles/l200/L200-Obj_rot_scale_trans2.obj", "vehicle" ],
 
+    [ "vehicles/army_truck/front_tire.obj", "vehicle" ],
+    [ "vehicles/army_truck/rear_tires.obj", "vehicle" ],
+    [ "vehicles/army_truck/armytruck_notires.obj", "vehicle" ],
+
     [ "vehicles/piper_pa18/piper_pa18_rotated_v2.obj", "uav" ],
 
     [ "vegetation/oat_grass/oat_grass_5.obj", "low vegetation" ],

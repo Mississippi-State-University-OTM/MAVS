@@ -1,0 +1,105 @@
+{
+
+  "Chassis": {
+    "Sprung Mass": 6500.0,
+    "CG Offset": 0.0,
+    "CG Lateral Offset": 0.0,
+    "Dimensions": [ 6.98, 2.36, 2.82 ],
+    "Drag Coefficient": 28.2
+  },
+
+  "Powertrain": {
+    "Final Drive Ratio": 3.3,
+    "Max Engine Torque": 583.0,
+    "Max Engine Rpm": 4500.0,
+    "Max Braking Torque": 3200.0,
+    "Idle Rpm": 1000.0
+  },
+
+  "Axles": [
+    {
+      "Longitudinal Offset": 2.60751,
+      "Track Width": 2.17,
+      "Spring Constant": 395404.0,
+      "Damping Constant": 52625.25,
+      "Spring Length": 0.55,
+      "Steered": true,
+      "Powered": true,
+      "Max Steer Angle": 17.5,
+      "Unsprung Mass": 68.0,
+      "Tire": {
+        "Spring Constant": 788970.0,
+        "Damping Constant": 76851.4,
+        "Radius": 0.535635,
+        "Width": 0.287,
+        "Section Height": 0.21,
+        "High Slip Crossover Angle": 5.0,
+        "Viscous Friction Coefficient": 0.05
+      }
+    },
+
+    {
+      "Longitudinal Offset": -0.6353,
+      "Track Width": 2.17,
+      "Spring Constant": 10.0,
+      "Damping Constant": 10.25,
+      "Spring Length": 0.55,
+      "Steered": false,
+      "Powered": true,
+      "Unsprung Mass": 0.01,
+      "Tire": {
+        "Spring Constant": 10.0,
+        "Damping Constant": 10.4,
+        "Radius": 0.535635,
+        "Width": 0.287,
+        "Section Height": 0.21,
+        "High Slip Crossover Angle": 5.0,
+        "Viscous Friction Coefficient": 0.05
+      }
+    },
+
+    {
+      "Longitudinal Offset": -1.906,
+      "Track Width": 2.17,
+      "Spring Constant": 395404.0,
+      "Damping Constant": 52625.25,
+      "Spring Length": 0.55,
+      "Steered": false,
+      "Powered": true,
+      "Unsprung Mass": 68.0,
+      "Tire": {
+        "Spring Constant": 788970.0,
+        "Damping Constant": 76851.4,
+        "Radius": 0.535635,
+        "Width": 0.287,
+        "Section Height": 0.21,
+        "High Slip Crossover Angle": 5.0,
+        "Viscous Friction Coefficient": 0.05
+      }
+    }
+
+  ],
+
+  "Mesh": {
+    "File": "vehicles/army_truck/armytruck_notires.obj",
+    "Rotate Y to Z": false,
+    "Rotate X to Y": false,
+    "Rotate Y to X": false,
+    "Offset": [ 0.0, 0.0, -1.0 ],
+    "Scale": [ 1.0, 1.0, 1.0 ]
+  },
+
+  "Tire Mesh": {
+    "File": "vehicles/army_truck/front_tire.obj",
+    "Rotate Y to Z": false,
+    "Rotate X to Y": false,
+    "Rotate Y to X": false,
+    "Offset": [ 0.0, 0.0, 0.0 ],
+    "Scale": [ 1.0, 1.0, 1.0 ]
+  },
+
+  "Initial Pose": {
+    "Position": [ 0.0, 0.0, 0.0 ],
+    "Orientation": [ 1.0, 0.0, 0.0, 0.0 ]
+  }
+}

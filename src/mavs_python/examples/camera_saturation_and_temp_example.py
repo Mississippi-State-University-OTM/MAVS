@@ -26,7 +26,8 @@ import time
 
 # Set the path to the mavs python api, mavs_interface.py
 # You will have to change this on your system.
-sys.path.append(r'C:\Users\cgoodin\Desktop\goodin_docs\repos\mavs\src\mavs_python')
+#sys.path.append(r'C:\Users\cgoodin\Desktop\goodin_docs\repos\mavs\src\mavs_python')
+sys.path.append(r'/cavs/projects/MAVS/software/mavs/src/mavs_python')
 
 # Load the mavs python modules
 import mavs_interface

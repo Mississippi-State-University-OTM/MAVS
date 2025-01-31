@@ -1405,7 +1405,7 @@ EXPORT_CMD void SetMavsCameraElectronics(mavs::sensor::Sensor* sens, float gamma
 
 EXPORT_CMD void SetMavsCameraTempAndSaturation(mavs::sensor::Sensor* sens, float temp, float sat) {
 	mavs::sensor::camera::Camera* camera = static_cast<mavs::sensor::camera::Camera *>(sens);
-	camera->AdjustSaturationAndTemperature(sat,temp);
+	camera->SetSaturationAndTemperature(sat,temp);
 	sens = camera;
 }
 

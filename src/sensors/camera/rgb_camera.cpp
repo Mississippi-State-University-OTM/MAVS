@@ -879,7 +879,7 @@ void RgbCamera::Update(environment::Environment* env, double dt) {
 
 	RenderFrame(env, dt);
 
-	AdjustSaturationAndTemperature(1.25f, 9500.0f);
+	AdjustSaturationAndTemperature();
 
 	CopyBufferToImage();
 

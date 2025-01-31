@@ -61,6 +61,8 @@ namespace camera {
 static const glm::vec3 zero(0.0f, 0.0f, 0.0f);
 
 Camera::Camera() {
+	img_saturation_ = 1.0f;
+	img_temperature_ = 6500.0f; // K
 	render_shadows_ = true;
 	updated_ = false;
 	raindrops_on_lens_ = false;
@@ -1235,21 +1237,77 @@ void Camera::ApplyRccbFilter() {
 	}
 }
 
-void Camera::AdjustSaturationAndTemperature(float saturation, float temperature) {
+glm::vec3 Camera::RgbToHsl(float r, float g, float b) {
+	// see: https://github.com/ratkins/RGBConverter/blob/master/RGBConverter.cpp
+	float rd = (float)r / 255.0f;
+	float gd = (float)g / 255.0f;
+	float bd = (float)b / 255.0f;
+	float max = std::max(std::max(rd, gd), bd);
+	float min = std::min(std::min(rd, gd), bd);
+	float h, s, l = (max + min) / 2;
+
+	if (max == min) {
+		h = s = 0.0f; // achromatic
+	}
+	else {
+		float d = max - min;
+		s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+		if (max == rd) {
+			h = (gd - bd) / d + (gd < bd ? 6 : 0);
+		}
+		else if (max == gd) {
+			h = (bd - rd) / d + 2;
+		}
+		else if (max == bd) {
+			h = (rd - gd) / d + 4;
+		}
+		h /= 6;
+	}
+	glm::vec3 hsl(h, s, l);
+	return hsl;
+}
+
+static float Hue2Rgb(float p, float q, float t) {
+	// see: https://github.com/ratkins/RGBConverter/blob/master/RGBConverter.cpp
+	if (t < 0.0f) t += 1.0f;
+	if (t > 1.0f) t -= 1.0f;
+	if (t < 1.0f / 6.0f) return p + (q - p) * 6.0f * t;
+	if (t < 1.0f / 2.0f) return q;
+	if (t < 2.0f / 3.0f) return p + (q - p) * (2.0f / 3.0f - t) * 6.0f;
+	return p;
+}
+
+glm::vec3 Camera::HslToRgb(float h, float s, float l) {
+	// see: https://github.com/ratkins/RGBConverter/blob/master/RGBConverter.cpp
+	float r, g, b;
+
+	if (s == 0.0f) {
+		r = g = b = l; // achromatic
+	}
+	else {
+		float q = l < 0.5f ? l * (1.0f + s) : l + s - l * s;
+		float p = 2.0f * l - q;
+		r = Hue2Rgb(p, q, h + 1.0f / 3.0f);
+		g = Hue2Rgb(p, q, h);
+		b = Hue2Rgb(p, q, h - 1.0f / 3.0f);
+	}
+	glm::vec3 rgb(255.0f * r, 255.0f * g, 255.0f * b);
+	return rgb;
+}
+
+void Camera::AdjustSaturationAndTemperature() {
 	// saturation
 	for (int i = 0; i < num_horizontal_pix_; i++) {
 		for (int j = 0; j < num_vertical_pix_; j++) {
-			for (int k = 0; k < 3; k++) {
-				float di = image_(i, j, k) - 128.0f;
-				di = saturation * di;
-				//image_(i, j, k) = std::max(0.0f,std::min(128.0f + di,255.0f));
-				image_(i, j, k) = 128.0f + di;
-			}
+			glm::vec3 hsl = RgbToHsl(image_(i, j, 0), image_(i, j, 1), image_(i, j, 2));
+			hsl[1] *= img_saturation_;
+			glm::vec3 rgb = HslToRgb(hsl[0], hsl[1], hsl[2]);
+			for (int k = 0; k < 3; k++) image_(i, j, k) = rgb[k];
 		}
 	}
 
 	// temperature
-	float t1 = (temperature - 6500.0f) / 10000.0f;
+	float t1 = (img_temperature_ - 6500.0f) / 10000.0f;
 	float t2 = t1 * t1;
 	float t3 = t2 * t1;
 	for (int i = 0; i < num_horizontal_pix_; i++) {
@@ -1260,7 +1318,6 @@ void Camera::AdjustSaturationAndTemperature(float saturation, float temperature)
 		}
 	}
 }
-
 
 bool Camera::WorldToPixel(glm::vec3 point_world, glm::ivec2 &pixel) {
 	glm::vec3 v = point_world - position_;

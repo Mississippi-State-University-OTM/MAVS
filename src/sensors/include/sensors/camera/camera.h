@@ -401,7 +401,17 @@ public:
 	*/
 	void ApplyRccbFilter();
 
-	void AdjustSaturationAndTemperature(float saturation, float temperature);
+	
+	/**
+	* Set the image saturation and temperature.
+	* Defaults are saturation = 1.0, temp = 6500. Temp = [4200,11200]
+	* \param saturation Desired image saturation
+	* \param temperature Desired color temperature
+	**/
+	void SetSaturationAndTemperature(float saturation, float temperature) {
+		img_saturation_ = saturation;
+		img_temperature_ = temperature;
+	}
 
 	void AddLidarPointsToImage(std::vector<glm::vec4> registered_xyzi);
 
@@ -409,6 +419,11 @@ public:
 	void UseBlur(bool blur_on) { blur_on_ = blur_on; }
 
 protected:
+
+	void AdjustSaturationAndTemperature();
+
+	glm::vec3 RgbToHsl(float r, float g, float b);
+	glm::vec3 HslToRgb(float h, float s, float l);
 
 	int GetFlattenedIndex(int i, int j) {
 		return  j + i * num_vertical_pix_;
@@ -480,6 +495,10 @@ protected:
 
 	std::vector<LensDrop> droplets_;
 	bool first_display_;
+
+	float img_saturation_;
+	float img_temperature_;
+
 private:
 	
 	int ncalled_;

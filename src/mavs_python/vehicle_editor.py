@@ -5,8 +5,11 @@ from pathlib import Path
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
-import Tooltip as tt
+import gui.Tooltip as tt
 import webbrowser 
+import mavs_python_paths
+
+mavs_data_path = mavs_python_paths.mavs_data_path
 
 root = tk.Tk()
 root.title("MAVS RP3D Vehicle Editor")
@@ -302,8 +305,7 @@ tire_notebook.grid(row=0,column=0,sticky='nw')
 
 # tab 5, meshes -----------------------------------------------------------------#
 def TireMeshCallBack():
-   home_dir = os.environ.get('HOME')
-   tm_file = tk.filedialog.askopenfilename(initialdir = home_dir)
+   tm_file = tk.filedialog.askopenfilename(initialdir = mavs_data_path+"/scenes/meshes/vehicles")
    tm_file_entry.delete(0, tk.END)
    tm_file_entry.insert(0,(os.path.basename(tm_file)))
 tm_file_label = ttk.Label(tab5, text='Tire Mesh')
@@ -318,8 +320,7 @@ tt.Tooltip(tm_file_entry,text=('Heightmap file (png. Must be located in the data
 tt.Tooltip(tm_file_select_button,text=('Select existing heightmap from database. Must be located in the data/heightmaps directory.'))
 
 def VehicleMeshCallBack():
-   home_dir = os.environ.get('HOME')
-   vm_file = tk.filedialog.askopenfilename(initialdir = home_dir)
+   vm_file = tk.filedialog.askopenfilename(initialdir = mavs_data_path+"/scenes/meshes/vehicles")
    vm_file_entry.delete(0, tk.END)
    vm_file_entry.insert(0,(os.path.basename(vm_file)))
 vm_file_label = ttk.Label(tab5, text='Vehicle Mesh')
@@ -393,90 +394,25 @@ def ResetEntry(entry_field, new_string):
     entry_field.insert(0,str(new_string))
     
 def ImportFile():
-   file = tk.filedialog.askopenfilename(initialdir="./inputs", filetypes=[("JSON","*.json")])
+   file = tk.filedialog.askopenfilename(initialdir=mavs_data_path+"/vehicles/rp3d_vehicles", filetypes=[("JSON","*.json")])
    f = open(file)
    data = json.load(f)
    f.close()
    
-   if "Ecosystem" in data:
-        if "Ecosystem File" in data["Ecosystem"]:
-            ResetEntry(ecofile_entry, data["Ecosystem"]["Ecosystem File"])
-        if "Species File" in data["Ecosystem"]:
-            ResetEntry(species_file_entry, data["Ecosystem"]["Species File"])
-        if "Max Stem Density (1/m2)" in data["Ecosystem"]:
-            ResetEntry(maxdens_entry, data["Ecosystem"]["Max Stem Density (1/m2)"])
-        if "Seeds Per Plant" in data["Ecosystem"]:
-            ResetEntry(seeds_entry, data["Ecosystem"]["Seeds Per Plant"])
-        if "Init Number Plants" in data["Ecosystem"]:
-            ResetEntry(init_entry, data["Ecosystem"]["Init Number Plants"])
+   if "Chassis" in data:
+        if "Sprung Mass" in data["Chassis"]:
+            ResetEntry(sprungmass_entry, data["Chassis"]["Sprung Mass"])
+        if "CG Offset" in data["Chassis"]:
+            ResetEntry(cg_vert_offset_entry, data["Chassis"]["CG Offset"])
+        if "CG Lateral Offset" in data["Chassis"]:
+            ResetEntry(cg_lat_offset_entry, data["Chassis"]["CG Lateral Offset"])
+        if "Dimensions" in data["Chassis"]:
+            ResetEntry(chass_x_entry, data["Chassis"]["Dimensions"][0])
+            ResetEntry(chass_y_entry, data["Chassis"]["Dimensions"][1])
+            ResetEntry(chass_z_entry, data["Chassis"]["Dimensions"][2])
+        if "Drag Coefficient" in data["Chassis"]:
+            ResetEntry(drag_coeff_entry, data["Chassis"]["Drag Coefficient"])
                         
-   if "Simulation Control" in data:
-        if "Sim Length (years)" in data["Simulation Control"]:
-            ResetEntry(simlen_entry, data["Simulation Control"]["Sim Length (years)"])
-        if "Time Step (hours)" in data["Simulation Control"]:
-            ResetEntry(simstep_entry, data["Simulation Control"]["Time Step (hours)"])
-        if "Time Bound" in data["Simulation Control"]:
-            timebound_var.set(data["Simulation Control"]["Time Bound"])
-        if "Initial Year Skip" in data["Simulation Control"]:
-            ResetEntry(yearskip_entry, data["Simulation Control"]["Initial Year Skip"])
-        if "Basal Area Start, Stop, Step" in data["Simulation Control"]:
-            ResetEntry(target_ba_entry_lo, data["Simulation Control"]["Basal Area Start, Stop, Step"][0])
-            ResetEntry(target_ba_entry_hi, data["Simulation Control"]["Basal Area Start, Stop, Step"][1])
-            ResetEntry(target_ba_entry_step, data["Simulation Control"]["Basal Area Start, Stop, Step"][2])
-        
-   if "Moisture Grid" in data:
-        if "Lower Left Corner (ENU)" in data["Moisture Grid"]:
-            ResetEntry(llc_x_entry, data["Moisture Grid"]["Lower Left Corner (ENU)"][0])
-            ResetEntry(llc_y_entry, data["Moisture Grid"]["Lower Left Corner (ENU)"][1])
-        if "Width (m)" in data["Moisture Grid"]:
-            ResetEntry(size_x_entry, data["Moisture Grid"]["Width (m)"])
-        if "Length (m)" in data["Moisture Grid"]:
-            ResetEntry(size_y_entry, data["Moisture Grid"]["Length (m)"])
-        if "Resolution (m)" in data["Moisture Grid"]:
-            ResetEntry(res_entry, data["Moisture Grid"]["Resolution (m)"])
-        if "Time Step (days)" in data["Moisture Grid"]:
-            ResetEntry(timestep_entry, data["Moisture Grid"]["Time Step (days)"])
-                
-   if "Surface Mesh" in data:
-        if "Heightmap" in data["Surface Mesh"]:
-            ResetEntry(hm_file_entry, data["Surface Mesh"]["Heightmap"] )
-        if "Resolution (m)" in data["Surface Mesh"]:
-            ResetEntry(surf_res_entry, data["Surface Mesh"]["Resolution (m)"])
-        if "Low Freq Mag (m)" in data["Surface Mesh"]:
-            ResetEntry(surf_lfm_entry, data["Surface Mesh"]["Low Freq Mag (m)"])
-        if "Low Freq Length (m)" in data["Surface Mesh"]:
-            ResetEntry(surf_lfw_entry, data["Surface Mesh"]["Low Freq Length (m)"])
-        if "High Freq Mag (m)" in data["Surface Mesh"]:
-            ResetEntry(surf_hfm_entry, data["Surface Mesh"]["High Freq Mag (m)"])
-        if "High Freq Length (m)" in data["Surface Mesh"]:
-            ResetEntry(surf_hfw_entry, data["Surface Mesh"]["High Freq Length (m)"])
-        
-   if "Masks" in data:
-        if "Road Mask" in data["Masks"]:
-            ResetEntry(mask_file_entry, data["Masks"]["Road Mask"])
-        if "Lower Left (ENU)" in data["Masks"]:
-            ResetEntry(mask_llc_x_entry, data["Masks"]["Lower Left (ENU)"][0])
-            ResetEntry(mask_llc_y_entry, data["Masks"]["Lower Left (ENU)"][1])
-        if "Pixel Dim (m)" in data["Masks"]:
-            ResetEntry(mask_res_entry, data["Masks"]["Pixel Dim (m)"])
-            
-   if "Trail" in data:
-        if "Trail Width (m)" in data["Trail"]:
-            ResetEntry(trail_width_entry, data["Trail"]["Trail Width (m)"])
-        if "Wheelbase (m)" in data["Trail"]:
-            ResetEntry(track_width_entry, data["Trail"]["Wheelbase (m)"])
-        if "Track Width (m)" in data["Trail"]:
-            ResetEntry(rut_width_entry, data["Trail"]["Track Width (m)"] )
-        if "Path Type" in data["Trail"]:
-            ResetEntry(path_type_entry, data["Trail"]["Path Type"])
-           
-   if "Weather" in data:
-        if "Rain Per Year (mm)" in data["Weather"]:
-            ResetEntry(rain_entry, data["Weather"]["Rain Per Year (mm)"])
-        if "Rain Days Per Year" in data["Weather"]:
-            ResetEntry(rain_days_entry, data["Weather"]["Rain Days Per Year"])            
-        if "Temperature (C)" in data["Weather"]:
-            ResetEntry(temperature_entry, data["Weather"]["Temperature (C)"])
 #--------END OF IMPORT EXISTING  FILE ----------------------------------------------------------#
    
 

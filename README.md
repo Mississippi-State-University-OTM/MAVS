@@ -7,7 +7,7 @@ Developed at Mississippi State University (MSU), the MSU Autonomous Vehicle Simu
 * A real-time simulator for evaluating the performance of autonomous perception and navigation software.
 * A physics-based sensor simulator for LIDAR, GPS, cameras, and other sensors.
 
-While MAVS is a fully functional standalone simulator, additional wrappers allow MAVS to be integrated with robotic development tools such the Robotic Operating System (ROS). 
+While MAVS is a fully functional standalone simulator, additional wrappers allow MAVS to be integrated with robotic development tools such the [Robotic Operating System (ROS)](https://github.com/CGoodin/mavs_ros) and [ROS-2](https://github.com/CGoodin/mavs-ros2). 
 
 Full MAVS user documentation is available [here](https://mississippi-state-university-otm.github.io/MAVS/).
 

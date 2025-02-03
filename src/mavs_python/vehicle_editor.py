@@ -182,52 +182,69 @@ mesh_notebook.add(tire_mesh_tab.tab, text="Tire Mesh")
     
 def ExportFile():
     data={}
-    eco_data = {}
-    eco_data["Ecosystem File"] = ecofile_entry.get()
-    eco_data["Species File"] = species_file_entry.get()
-    eco_data["Max Stem Density (1/m2)"] = float(maxdens_entry.get())
-    eco_data["Seeds Per Plant"] = int(seeds_entry.get())
-    eco_data["Init Number Plants"] = int(init_entry.get()) 
-    data["Ecosystem"] = eco_data
-    sim_data = {}
-    sim_data["Sim Length (years)"] = int(simlen_entry.get())
-    sim_data["Time Step (hours)"] = int(simstep_entry.get())
-    sim_data["Time Bound"] = bool(timebound_var.get())
-    sim_data["Initial Year Skip"] = int(yearskip_entry.get())
-    sim_data["Basal Area Start, Stop, Step"] = [int(target_ba_entry_lo.get()), int(target_ba_entry_hi.get()), int(target_ba_entry_step.get())]
-    data["Simulation Control"] = sim_data
-    moist_data = {}
-    moist_data["Lower Left Corner (ENU)"] = [float(llc_x_entry.get()), float(llc_y_entry.get())]
-    moist_data["Width (m)"] = float(size_x_entry.get())
-    moist_data["Length (m)"] = float(size_y_entry.get())
-    moist_data["Resolution (m)"] = float(res_entry.get())
-    moist_data["Time Step (days)"] = int(timestep_entry.get())
-    data["Moisture Grid"] = moist_data
-    surf_data = {}
-    surf_data["Heightmap"] = hm_file_entry.get()
-    surf_data["Resolution (m)"] = float(surf_res_entry.get())
-    surf_data["Low Freq Mag (m)"] = float(surf_lfm_entry.get())
-    surf_data["Low Freq Length (m)"] = float(surf_lfw_entry.get())
-    surf_data["High Freq Mag (m)"] = float(surf_hfm_entry.get())
-    surf_data["High Freq Length (m)"] = float(surf_hfw_entry.get())
-    data["Surface Mesh"] = surf_data
-    mask_data = {}
-    mask_data["Road Mask"] = mask_file_entry.get()
-    mask_data["Lower Left (ENU)"] = [float(mask_llc_x_entry.get()), float(mask_llc_y_entry.get())]
-    mask_data["Pixel Dim (m)"] = float(mask_res_entry.get())    
-    data["Masks"] = mask_data
-    trail_data = {}
-    trail_data["Trail Width (m)"] = float(trail_width_entry.get())
-    trail_data["Wheelbase (m)"] = float(track_width_entry.get())
-    trail_data["Track Width (m)"] = float(rut_width_entry.get())
-    trail_data["Path Type"] = path_type_entry.get()  
-    data["Trail"] = trail_data
-    weather_data = {}
-    weather_data["Rain Per Year (mm)"] = float(rain_entry.get())
-    weather_data["Rain Days Per Year"] = int(rain_days_entry.get())            
-    weather_data["Temperature (C)"] = float(temperature_entry.get())   
-    data["Weather"] = weather_data
+    chassis_data = {}
+    chassis_data["Sprung Mass"] = float(sprungmass_entry.get())
+    chassis_data["CG Offset"] = float(cg_vert_offset_entry.get())
+    chassis_data["CG Lateral Offset"] = float(cg_lat_offset_entry.get())
+    chassis_data["Dimensions"] = [float(chass_x_entry.get()), float(chass_y_entry.get()), float(chass_z_entry.get())]
+    chassis_data["Drag Coefficient"] = float(drag_coeff_entry.get())
+    data["Chassis"] = chassis_data
     
+    powertrain_data = {}
+    powertrain_data["Final Drive Ratio"] = float(fdr_entry.get())
+    powertrain_data["Max Engine Torque"] = float(max_torque_entry.get())
+    powertrain_data["Max Engine Rpm"] = float(max_rpm_entry.get())
+    powertrain_data["Max Braking Torque"] = float(brake_torque_entry.get())
+    powertrain_data["Idle Rpm"] = float(idle_rpm_entry.get())
+    data["Powertrain"] = powertrain_data
+   
+    axles =[]
+    for i in range(int(num_axle_var.get())):
+        ax_data = {}
+        ax_data["Longitudinal Offset"] = float(axle_tabs[i].long_offset_entry.get())
+        ax_data["Track Width"] = float(axle_tabs[i].track_width_entry.get())
+        ax_data["Spring Constant"] = float(axle_tabs[i].spring_const_entry.get())
+        ax_data["Spring Length"] = float(axle_tabs[i].spring_len_entry.get())
+        ax_data["Max Steer Angle"] = float(axle_tabs[i].steer_angle_entry.get())
+        ax_data["Unsprung Mass"] = float(axle_tabs[i].unsprung_entry.get())
+        ax_data["Damping Constant"] = float(axle_tabs[i].damp_const_entry.get())
+        ax_data["Steered"] = bool(axle_tabs[i].steered_var.get())
+        ax_data["Powered"] = bool(axle_tabs[i].powered_var.get())
+        tire_data = {}
+        tire_data["Spring Constant"] = float(tire_tabs[i].spring_cons_entry.get())
+        tire_data["Damping Constant"] = float(tire_tabs[i].damp_const_entry.get())
+        tire_data["Radius"] = float(tire_tabs[i].tire_rad_entry.get())
+        tire_data["Width"] = float(tire_tabs[i].tire_wid_entry.get())
+        tire_data["Section Height"] = float(tire_tabs[i].tire_sh_entry.get())
+        tire_data["High Slip Crossover Angle"] = float(tire_tabs[i].hsca_entry.get())
+        tire_data["Viscous Friction Coefficient"] = float(tire_tabs[i].vf_entry.get())
+        ax_data["Tires"] = tire_data
+        axles.append(ax_data)
+    data["Axles"] = axles
+    
+    mesh_data = {}
+    mesh_data["File"] = veh_mesh_tab.file_entry.get()
+    mesh_data["Rotate Y to Z"] = bool(veh_mesh_tab.rot_y_to_z_var.get())
+    mesh_data["Rotate X to Y"] = bool(veh_mesh_tab.rot_x_to_y_var.get())
+    mesh_data["Rotate Y to X"] = bool(veh_mesh_tab.rot_y_to_x_var.get())
+    mesh_data["Offset"] = [float(veh_mesh_tab.off_x_entry.get()),float(veh_mesh_tab.off_y_entry.get()), float(veh_mesh_tab.off_z_entry.get())]
+    mesh_data["Scale"] = [float(veh_mesh_tab.scale_x_entry.get()),float(veh_mesh_tab.scale_y_entry.get()), float(veh_mesh_tab.scale_z_entry.get())]
+    data["Mesh"] = mesh_data
+    
+    tire_mesh_data = {}
+    tire_mesh_data["File"] = tire_mesh_tab.file_entry.get()
+    tire_mesh_data["Rotate Y to Z"] = bool(tire_mesh_tab.rot_y_to_z_var.get())
+    tire_mesh_data["Rotate X to Y"] = bool(tire_mesh_tab.rot_x_to_y_var.get())
+    tire_mesh_data["Rotate Y to X"] = bool(tire_mesh_tab.rot_y_to_x_var.get())
+    tire_mesh_data["Offset"] = [float(tire_mesh_tab.off_x_entry.get()),float(tire_mesh_tab.off_y_entry.get()), float(tire_mesh_tab.off_z_entry.get())]
+    tire_mesh_data["Scale"] = [float(tire_mesh_tab.scale_x_entry.get()),float(tire_mesh_tab.scale_y_entry.get()), float(tire_mesh_tab.scale_z_entry.get())]
+    data["Tire Mesh"] = tire_mesh_data
+
+    init_pose_data = {}
+    init_pose_data["Position"] = [0.0, 0.0, 0.0]
+    init_pose_data["Orientation"] = [1.0, 0.0, 0.0, 0.0]
+    data["Initial Pose"] = init_pose_data
+
     file_out = tk.filedialog.asksaveasfilename(initialdir="./inputs", filetypes=[("JSON","*.json")])
     with open(file_out, 'w') as fout:
         json_dumps_str = json.dumps(data, indent=4)

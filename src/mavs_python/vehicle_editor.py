@@ -9,6 +9,8 @@ import gui.Tooltip as tt
 import webbrowser 
 import mavs_python_paths
 from gui.vehicle_tabs import SuspensionTab, TireTab, VisMeshTab
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 
 mavs_data_path = mavs_python_paths.mavs_data_path
 
@@ -364,8 +366,42 @@ def ImportFile():
             ResetEntry(tire_mesh_tab.scale_z_entry, data["Tire Mesh"]["Scale"][2])
                         
 #--------END OF IMPORT EXISTING  FILE ----------------------------------------------------------#
-   
 
+
+def ViewDebugCallback():
+    fig, ax = plt.subplots()
+    # Create a rectangle
+    lx = float(chass_x_entry.get())
+    ly = float(chass_y_entry.get())
+    lz = float(chass_z_entry.get())
+    z_low = 0.0
+    for i in range(len(axle_tabs)):
+        tire_radius = float(tire_tabs[i].tire_rad_entry.get())
+        spring_len = float(axle_tabs[i].spring_len_entry.get())
+        zc = tire_radius + spring_len
+        if (zc>z_low):
+            z_low = zc;
+    x_lo = -0.5*lx
+    x_hi = x_lo + lx
+    rect = patches.Rectangle((-0.5*lx, z_low), lx, lz, color='green')
+    z_hi = z_low + lz
+    ax.add_patch(rect)
+    for i in range(len(axle_tabs)):
+        tire_radius = float(tire_tabs[i].tire_rad_entry.get())
+        spring_len = float(axle_tabs[i].spring_len_entry.get())
+        x_off = float(axle_tabs[i].long_offset_entry.get())
+        ax.add_patch(plt.Circle((x_off, tire_radius), tire_radius, color='blue'))
+        ax.add_patch(plt.Rectangle((x_off-0.025, tire_radius), 0.05, spring_len, color='orange'))
+    z_cg = z_low + 0.5*lz +  float(cg_vert_offset_entry.get())   
+    ax.add_patch(plt.Circle((0.0, z_cg), 0.1, color='red'))    
+    plt.xlim(x_lo-0.5, x_hi+0.5)
+    plt.ylim(0, z_hi + 0.5)
+    # Show the plot
+    plt.show()
+
+view_debug_button = tk.Button(root, text ="View Vehicle", command = ViewDebugCallback)
+view_debug_button.grid(row=8,column=2,columnspan=3,sticky='ew')
+   
 menubar = tk.Menu(root)
 filemenu = tk.Menu(menubar, tearoff=0)
 filemenu.add_command(label="Import Vehicle File", command=ImportFile)

@@ -8,6 +8,7 @@ from tkinter import filedialog
 import gui.Tooltip as tt
 import webbrowser 
 import mavs_python_paths
+from gui.vehicle_tabs import SuspensionTab, TireTab, VisMeshTab
 
 mavs_data_path = mavs_python_paths.mavs_data_path
 
@@ -15,131 +16,8 @@ root = tk.Tk()
 root.title("MAVS RP3D Vehicle Editor")
 root.geometry("600x300")
 
-def SuspensionTab(tab_in,):
-    long_offset_label = ttk.Label(tab_in, text='Longitudinal Offset from CG (m)')
-    long_offset_label.grid(column=0, row=0,sticky='w')
-    long_offset_entry = tk.Entry(tab_in)
-    long_offset_entry.grid(column=1, row=0,sticky='w')
-    long_offset_entry.insert(0,"168")
-    tt.Tooltip(long_offset_label,text=('Growth simulation time step in hours'))
-    tt.Tooltip(long_offset_entry,text=('Growth simulation time step in hours'))
-    
-    track_width_label = ttk.Label(tab_in, text='Track Width (m)')
-    track_width_label.grid(column=0, row=1,sticky='w')
-    track_width_entry = tk.Entry(tab_in)
-    track_width_entry.grid(column=1, row=1,sticky='w')
-    track_width_entry.insert(0,"168")
-    tt.Tooltip(track_width_label,text=('Growth simulation time step in hours'))
-    tt.Tooltip(track_width_entry,text=('Growth simulation time step in hours'))
-    
-    spring_const_label = ttk.Label(tab_in, text='Spring Constant (N/m)')
-    spring_const_label.grid(column=0, row=2, sticky='w')
-    spring_const_entry = tk.Entry(tab_in)
-    spring_const_entry.grid(column=1, row=2,sticky='w')
-    spring_const_entry.insert(0,"168")
-    tt.Tooltip(spring_const_label,text=('Growth simulation time step in hours'))
-    tt.Tooltip(spring_const_entry,text=('Growth simulation time step in hours'))
-    
-    damp_const_label = ttk.Label(tab_in, text='Damping Constant (Ns/m)')
-    damp_const_label.grid(column=0, row=3, sticky='w')
-    damp_const_entry = tk.Entry(tab_in)
-    damp_const_entry.grid(column=1, row=3,sticky='w')
-    damp_const_entry.insert(0,"168")
-    tt.Tooltip(damp_const_label,text=('Suspension spring damping constant'))
-    tt.Tooltip(damp_const_entry,text=('Suspension spring damping constant'))
-    
-    spring_len_label = ttk.Label(tab_in, text='Spring Length (m)')
-    spring_len_label.grid(column=0, row=4, sticky='w')
-    spring_len_entry = tk.Entry(tab_in)
-    spring_len_entry.grid(column=1, row=4,sticky='w')
-    spring_len_entry.insert(0,"168")
-    tt.Tooltip(spring_len_label,text=('Growth simulation time step in hours'))
-    tt.Tooltip(spring_len_entry,text=('Growth simulation time step in hours'))
-    
-    steer_angle_label = ttk.Label(tab_in, text='Maximum Steer Angle (deg)')
-    steer_angle_label.grid(column=0, row=5, sticky='w')
-    steer_angle_entry = tk.Entry(tab_in)
-    steer_angle_entry.grid(column=1, row=5,sticky='w')
-    steer_angle_entry.insert(0,"168")
-    tt.Tooltip(steer_angle_label,text=('Growth simulation time step in hours'))
-    tt.Tooltip(steer_angle_entry,text=('Growth simulation time step in hours'))
-    
-    unsprung_label = ttk.Label(tab_in, text='Unsprung Mass (kg)')
-    unsprung_label.grid(column=0, row=5, sticky='w')
-    unsprung_entry = tk.Entry(tab_in)
-    unsprung_entry.grid(column=1, row=5,sticky='w')
-    unsprung_entry.insert(0,"168")
-    tt.Tooltip(unsprung_label,text=('Growth simulation time step in hours'))
-    tt.Tooltip(unsprung_entry,text=('Growth simulation time step in hours'))
-    
-    steered_var = tk.IntVar()
-    steered_var.set(True)
-    steered_checkbox = tk.Checkbutton(tab_in, text="Steered?", variable=steered_var)
-    steered_checkbox.grid(column=1,row=6,sticky='w')
-    tt.Tooltip(steered_checkbox,text=('Stop simlation after max number of years?'))
-    
-    powered_var = tk.IntVar()
-    powered_var.set(True)
-    powered_checkbox = tk.Checkbutton(tab_in, text="Powered?", variable=powered_var)
-    powered_checkbox.grid(column=1,row=7,sticky='w')
-    tt.Tooltip(powered_checkbox,text=('Stop simlation after max number of years?'))
-    
-def TireTab(tab_in,):
-    spring_cons_label = ttk.Label(tab_in, text='Spring Constant (N/m)')
-    spring_cons_label.grid(column=0, row=0,sticky='w')
-    spring_cons_entry = tk.Entry(tab_in)
-    spring_cons_entry.grid(column=1, row=0,sticky='w')
-    spring_cons_entry.insert(0,"168")
-    tt.Tooltip(spring_cons_label,text=('Growth simulation time step in hours'))
-    tt.Tooltip(spring_cons_entry,text=('Growth simulation time step in hours'))
-    
-    damp_const_label = ttk.Label(tab_in, text='Damping Constant (Ns/m)')
-    damp_const_label.grid(column=0, row=1, sticky='w')
-    damp_const_entry = tk.Entry(tab_in)
-    damp_const_entry.grid(column=1, row=1,sticky='w')
-    damp_const_entry.insert(0,"168")
-    tt.Tooltip(damp_const_label,text=('Tire damping constant'))
-    tt.Tooltip(damp_const_entry,text=('Tire damping constant'))
-    
-    tire_rad_label = ttk.Label(tab_in, text='Tire Radius (m)')
-    tire_rad_label.grid(column=0, row=2, sticky='w')
-    tire_rad_entry = tk.Entry(tab_in)
-    tire_rad_entry.grid(column=1, row=2,sticky='w')
-    tire_rad_entry.insert(0,"168")
-    tt.Tooltip(tire_rad_label,text=('Tire damping constant'))
-    tt.Tooltip(tire_rad_entry,text=('Tire damping constant'))
-    
-    tire_wid_label = ttk.Label(tab_in, text='Tire Width (m)')
-    tire_wid_label.grid(column=0, row=3, sticky='w')
-    tire_wid_entry = tk.Entry(tab_in)
-    tire_wid_entry.grid(column=1, row=3,sticky='w')
-    tire_wid_entry.insert(0,"168")
-    tt.Tooltip(tire_wid_label,text=('Tire damping constant'))
-    tt.Tooltip(tire_wid_entry,text=('Tire damping constant'))
-    
-    tire_sh_label = ttk.Label(tab_in, text='Section Height (m)')
-    tire_sh_label.grid(column=0, row=4, sticky='w')
-    tire_sh_entry = tk.Entry(tab_in)
-    tire_sh_entry.grid(column=1, row=4,sticky='w')
-    tire_sh_entry.insert(0,"168")
-    tt.Tooltip(tire_sh_label,text=('Tire damping constant'))
-    tt.Tooltip(tire_sh_entry,text=('Tire damping constant'))
-    
-    hsca_label = ttk.Label(tab_in, text='High Slip Crossover Angle (deg)')
-    hsca_label.grid(column=0, row=5, sticky='w')
-    hsca_entry = tk.Entry(tab_in)
-    hsca_entry.grid(column=1, row=5,sticky='w')
-    hsca_entry.insert(0,"168")
-    tt.Tooltip(hsca_label,text=('Tire damping constant'))
-    tt.Tooltip(hsca_entry,text=('Tire damping constant'))
-    
-    vf_label = ttk.Label(tab_in, text='Viscous Friction Coefficient')
-    vf_label.grid(column=0, row=5, sticky='w')
-    vf_entry = tk.Entry(tab_in)
-    vf_entry.grid(column=1, row=5,sticky='w')
-    vf_entry.insert(0,"168")
-    tt.Tooltip(vf_label,text=('Tire damping constant'))
-    tt.Tooltip(vf_entry,text=('Tire damping constant'))
+# recc spring constant = 90* vehicle mass
+# recc damping = sqrt(k*m) = 9.5*vehicle_mass
 
 # create the tab panes
 tabControl = ttk.Notebook(root)
@@ -202,20 +80,24 @@ drag_coeff_entry.insert(0,"168")
 tt.Tooltip(drag_coeff_label,text=('Growth simulation time step in hours'))
 tt.Tooltip(drag_coeff_entry,text=('Growth simulation time step in hours'))
 
+tire_tabs = []
+axle_tabs = []
 # Get desired number of axles
 def add_tabs():
-    new_tab = ttk.Frame(susp_notebook)
-    new_tire_tab = ttk.Frame(tire_notebook)
-    susp_notebook.add(new_tab, text=f"Axle {1+susp_notebook.index('end')}")
-    tire_notebook.add(new_tire_tab, text=f"Tire, Axle {1+susp_notebook.index('end')}")
-    SuspensionTab(new_tab)
-    TireTab(new_tire_tab)
+    new_tab = SuspensionTab(susp_notebook)
+    new_tire_tab = TireTab(tire_notebook)
+    susp_notebook.add(new_tab.tab, text=f"Axle {1+susp_notebook.index('end')}")
+    tire_notebook.add(new_tire_tab.tab, text=f"Tire, Axle {1+tire_notebook.index('end')}")
+    axle_tabs.append(new_tab)
+    tire_tabs.append(new_tire_tab)
 
 def remove_tabs():
     if susp_notebook.index('end') > 2:  # Prevent removing the last 2 tabs
-        susp_notebook.forget(susp_notebook.select())
+        susp_notebook.forget(susp_notebook.index('end')-1)
+        axle_tabs.pop()
     if tire_notebook.index('end') > 2:  # Prevent removing the last 2 tabs
-        tire_notebook.forget(tire_notebook.select())
+        tire_notebook.forget(tire_notebook.index('end')-1)
+        tire_tabs.pop()
         
 def num_axles_changed(*args):
     if (susp_notebook.index('end')<int(num_axle_var.get())):
@@ -280,59 +162,22 @@ tt.Tooltip(idle_rpm_label,text=('File that lists all the species present in the 
 tt.Tooltip(idle_rpm_entry,text=('File that lists all the species present in the ecosystem. Must be located in the data/ecosystem directory.'))
 #-------------------------------------------------------------------------------------------------#
 
-# tab 3, suspension properties ----------------------------------------------------------------------#
+# tabs 3 & 4, suspension and tire properties ----------------------------------------------------------------------#
 susp_notebook = ttk.Notebook(tab3)
-susp1 = ttk.Frame(susp_notebook)
-susp2 = ttk.Frame(susp_notebook)
-susp_notebook.add(susp1, text='Axle 1')
-susp_notebook.add(susp2, text='Axle 2')
-SuspensionTab(susp1)
-SuspensionTab(susp2)
 susp_notebook.grid(row=0,column=0,sticky='nw')
-#-------------------------------------------------------------------------------------------------#
-
-# tab 4, tire properties ----------------------------------------------------------------#
 tire_notebook = ttk.Notebook(tab4)
-tire1 = ttk.Frame(tire_notebook)
-tire2 = ttk.Frame(tire_notebook)
-tire_notebook.add(tire1, text='Tire, Axle 1')
-tire_notebook.add(tire2, text='Tire, Axle 2')
-TireTab(tire1)
-TireTab(tire2)
 tire_notebook.grid(row=0,column=0,sticky='nw')
-
+add_tabs()
+add_tabs()
 #-------------------------------------------------------------------------------------------------#
 
 # tab 5, meshes -----------------------------------------------------------------#
-def TireMeshCallBack():
-   tm_file = tk.filedialog.askopenfilename(initialdir = mavs_data_path+"/scenes/meshes/vehicles")
-   tm_file_entry.delete(0, tk.END)
-   tm_file_entry.insert(0,(os.path.basename(tm_file)))
-tm_file_label = ttk.Label(tab5, text='Tire Mesh')
-tm_file_label.grid(column=0, row=0,sticky='w')
-tm_file_entry = tk.Entry(tab5)
-tm_file_entry.grid(column=1, row=0,sticky='w')
-tm_file_entry.insert(0,"1kHM.png")
-tm_file_select_button = tk.Button(tab5, text ="Select Tire Mesh File", command = TireMeshCallBack)
-tm_file_select_button.grid(row=0,column=2,columnspan=1,sticky='ew')
-tt.Tooltip(tm_file_label,text=('Heightmap file (png). Must be located in the data/heightmaps directory.'))
-tt.Tooltip(tm_file_entry,text=('Heightmap file (png. Must be located in the data/masks directory.'))
-tt.Tooltip(tm_file_select_button,text=('Select existing heightmap from database. Must be located in the data/heightmaps directory.'))
-
-def VehicleMeshCallBack():
-   vm_file = tk.filedialog.askopenfilename(initialdir = mavs_data_path+"/scenes/meshes/vehicles")
-   vm_file_entry.delete(0, tk.END)
-   vm_file_entry.insert(0,(os.path.basename(vm_file)))
-vm_file_label = ttk.Label(tab5, text='Vehicle Mesh')
-vm_file_label.grid(column=0, row=1,sticky='w')
-vm_file_entry = tk.Entry(tab5)
-vm_file_entry.grid(column=1, row=1,sticky='w')
-vm_file_entry.insert(0,"1kHM.png")
-vm_file_select_button = tk.Button(tab5, text ="Select Vehicle Mesh File", command = VehicleMeshCallBack)
-vm_file_select_button.grid(row=1,column=2,columnspan=1,sticky='ew')
-tt.Tooltip(vm_file_label,text=('Heightmap file (png). Must be located in the data/heightmaps directory.'))
-tt.Tooltip(vm_file_entry,text=('Heightmap file (png. Must be located in the data/masks directory.'))
-tt.Tooltip(vm_file_select_button,text=('Select existing heightmap from database. Must be located in the data/heightmaps directory.'))
+mesh_notebook = ttk.Notebook(tab5)
+mesh_notebook.grid(row=0,column=0,sticky='nw')
+veh_mesh_tab = VisMeshTab(mesh_notebook, mavs_data_path)
+mesh_notebook.add(veh_mesh_tab.tab, text="Vehicle Mesh")
+tire_mesh_tab = VisMeshTab(mesh_notebook, mavs_data_path)
+mesh_notebook.add(tire_mesh_tab.tab, text="Tire Mesh")
 #-------------------------------------------------------------------------------------------------#
     
 def ExportFile():
@@ -394,12 +239,12 @@ def ResetEntry(entry_field, new_string):
     entry_field.insert(0,str(new_string))
     
 def ImportFile():
-   file = tk.filedialog.askopenfilename(initialdir=mavs_data_path+"/vehicles/rp3d_vehicles", filetypes=[("JSON","*.json")])
-   f = open(file)
-   data = json.load(f)
-   f.close()
+    file = tk.filedialog.askopenfilename(initialdir=mavs_data_path+"/vehicles/rp3d_vehicles", filetypes=[("JSON","*.json")])
+    f = open(file)
+    data = json.load(f)
+    f.close()
    
-   if "Chassis" in data:
+    if "Chassis" in data:
         if "Sprung Mass" in data["Chassis"]:
             ResetEntry(sprungmass_entry, data["Chassis"]["Sprung Mass"])
         if "CG Offset" in data["Chassis"]:
@@ -412,6 +257,94 @@ def ImportFile():
             ResetEntry(chass_z_entry, data["Chassis"]["Dimensions"][2])
         if "Drag Coefficient" in data["Chassis"]:
             ResetEntry(drag_coeff_entry, data["Chassis"]["Drag Coefficient"])
+    
+    if "Powertrain" in data:
+        if "Final Drive Ratio" in data["Powertrain"]:
+            ResetEntry(fdr_entry, data["Powertrain"]["Final Drive Ratio"])
+        if "Max Engine Torque" in data["Powertrain"]:
+            ResetEntry(max_torque_entry, data["Powertrain"]["Max Engine Torque"])
+        if "Max Engine Rpm" in data["Powertrain"]:
+            ResetEntry(max_rpm_entry, data["Powertrain"]["Max Engine Rpm"])
+        if "Max Braking Torque" in data["Powertrain"]:
+            ResetEntry(brake_torque_entry, data["Powertrain"]["Max Braking Torque"])
+        if "Idle Rpm" in data["Powertrain"]:
+            ResetEntry(idle_rpm_entry, data["Powertrain"]["Idle Rpm"])
+            
+    if "Axles" in data:
+        num_axles = len(data["Axles"])
+        num_axle_var.set(str(num_axles))
+        num_axles_changed()
+        for i in range(num_axles):
+            if "Longitudinal Offset" in data["Axles"][i]:
+                ResetEntry(axle_tabs[i].long_offset_entry, data["Axles"][i]["Longitudinal Offset"])
+            if "Track Width" in data["Axles"][i]:
+                ResetEntry(axle_tabs[i].track_width_entry, data["Axles"][i]["Track Width"])
+            if "Spring Constant" in data["Axles"][i]:
+                ResetEntry(axle_tabs[i].spring_const_entry, data["Axles"][i]["Spring Constant"])
+            if "Damping Constant" in data["Axles"][i]:
+                ResetEntry(axle_tabs[i].damp_const_entry, data["Axles"][i]["Damping Constant"])
+            if "Spring Length" in data["Axles"][i]:
+                ResetEntry(axle_tabs[i].spring_len_entry, data["Axles"][i]["Spring Length"])
+            if "Max Steer Angle" in data["Axles"][i]:
+                ResetEntry(axle_tabs[i].steer_angle_entry, data["Axles"][i]["Max Steer Angle"])
+            if "Unsprung Mass" in data["Axles"][i]:
+                ResetEntry(axle_tabs[i].unsprung_entry, data["Axles"][i]["Unsprung Mass"])
+            if "Steered" in data["Axles"][i]:
+                axle_tabs[i].steered_var.set(bool(data["Axles"][i]["Steered"]))
+            if "Powered" in data["Axles"][i]:
+                axle_tabs[i].powered_var.set(bool(data["Axles"][i]["Powered"]))
+            if "Tire" in data["Axles"][i]:
+                if "Spring Constant" in data["Axles"][i]["Tire"]:
+                    ResetEntry(tire_tabs[i].spring_cons_entry, data["Axles"][i]["Tire"]["Spring Constant"])
+                if "Damping Constant" in data["Axles"][i]["Tire"]:
+                    ResetEntry(tire_tabs[i].damp_const_entry, data["Axles"][i]["Tire"]["Damping Constant"])
+                if "Radius" in data["Axles"][i]["Tire"]:
+                    ResetEntry(tire_tabs[i].tire_rad_entry, data["Axles"][i]["Tire"]["Radius"])
+                if "Width" in data["Axles"][i]["Tire"]:
+                    ResetEntry(tire_tabs[i].tire_wid_entry, data["Axles"][i]["Tire"]["Width"])
+                if "Section Height" in data["Axles"][i]["Tire"]:
+                    ResetEntry(tire_tabs[i].tire_sh_entry, data["Axles"][i]["Tire"]["Section Height"])
+                if "High Slip Crossover Angle" in data["Axles"][i]["Tire"]:
+                    ResetEntry(tire_tabs[i].hsca_entry, data["Axles"][i]["Tire"]["High Slip Crossover Angle"])
+                if "Viscous Friction Coefficient" in data["Axles"][i]["Tire"]:
+                    ResetEntry(tire_tabs[i].vf_entry, data["Axles"][i]["Tire"]["Viscous Friction Coefficient"])
+                
+        
+    if "Mesh" in data:
+        if "File" in data["Mesh"]:
+            ResetEntry(veh_mesh_tab.file_entry, data["Mesh"]["File"])
+        if "Rotate Y to Z" in data["Mesh"]:
+            veh_mesh_tab.rot_y_to_z_var.set(bool( data["Mesh"]["Rotate Y to Z"]))
+        if "Rotate X to Y" in data["Mesh"]:
+            veh_mesh_tab.rot_x_to_y_var.set(bool( data["Mesh"]["Rotate X to Y"]))
+        if "Rotate Y to X" in data["Mesh"]:
+            veh_mesh_tab.rot_y_to_x_var.set(bool( data["Mesh"]["Rotate Y to X"]))
+        if "Offset" in data["Mesh"]:
+            ResetEntry(veh_mesh_tab.off_x_entry, data["Mesh"]["Offset"][0])
+            ResetEntry(veh_mesh_tab.off_y_entry, data["Mesh"]["Offset"][1])
+            ResetEntry(veh_mesh_tab.off_z_entry, data["Mesh"]["Offset"][2])
+        if "Scale" in data["Mesh"]:
+            ResetEntry(veh_mesh_tab.scale_x_entry, data["Mesh"]["Scale"][0])
+            ResetEntry(veh_mesh_tab.scale_y_entry, data["Mesh"]["Scale"][1])
+            ResetEntry(veh_mesh_tab.scale_z_entry, data["Mesh"]["Scale"][2])
+    
+    if "Tire Mesh" in data:
+        if "File" in data["Tire Mesh"]:
+            ResetEntry(tire_mesh_tab.file_entry, data["Tire Mesh"]["File"])
+        if "Rotate Y to Z" in data["Tire Mesh"]:
+            tire_mesh_tab.rot_y_to_z_var.set(bool( data["Tire Mesh"]["Rotate Y to Z"]))
+        if "Rotate X to Y" in data["Tire Mesh"]:
+            tire_mesh_tab.rot_x_to_y_var.set(bool( data["Tire Mesh"]["Rotate X to Y"]))
+        if "Rotate Y to X" in data["Tire Mesh"]:
+            tire_mesh_tab.rot_y_to_x_var.set(bool( data["Tire Mesh"]["Rotate Y to X"]))
+        if "Offset" in data["Tire Mesh"]:
+            ResetEntry(tire_mesh_tab.off_x_entry, data["Tire Mesh"]["Offset"][0])
+            ResetEntry(tire_mesh_tab.off_y_entry, data["Tire Mesh"]["Offset"][1])
+            ResetEntry(tire_mesh_tab.off_z_entry, data["Tire Mesh"]["Offset"][2])
+        if "Scale" in data["Tire Mesh"]:
+            ResetEntry(tire_mesh_tab.scale_x_entry, data["Tire Mesh"]["Scale"][0])
+            ResetEntry(tire_mesh_tab.scale_y_entry, data["Tire Mesh"]["Scale"][1])
+            ResetEntry(tire_mesh_tab.scale_z_entry, data["Tire Mesh"]["Scale"][2])
                         
 #--------END OF IMPORT EXISTING  FILE ----------------------------------------------------------#
    

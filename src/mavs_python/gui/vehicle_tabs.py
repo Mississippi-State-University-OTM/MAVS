@@ -19,8 +19,8 @@ class SuspensionTab():
         self.track_width_entry = tk.Entry(self.tab)
         self.track_width_entry.grid(column=1, row=1,sticky='w')
         self.track_width_entry.insert(0,"168")
-        tt.Tooltip(self.track_width_label,text=('Growth simulation time step in hours'))
-        tt.Tooltip(self.track_width_entry,text=('Growth simulation time step in hours'))
+        tt.Tooltip(self.track_width_label,text=('Distance between tire centers on the left and right side of the vehicle (meters)'))
+        tt.Tooltip(self.track_width_entry,text=('Distance between tire centers on the left and right side of the vehicle (meters)'))
     
         self.spring_const_label = ttk.Label(self.tab, text='Spring Constant (N/m)')
         self.spring_const_label.grid(column=0, row=2, sticky='w')

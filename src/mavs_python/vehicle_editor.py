@@ -7,6 +7,8 @@ from tkinter import ttk
 from tkinter import filedialog
 import gui.Tooltip as tt
 import webbrowser 
+# Load the mavs python modules
+import mavs_interface as mavs
 import mavs_python_paths
 from gui.vehicle_tabs import SuspensionTab, TireTab, VisMeshTab
 import matplotlib.pyplot as plt
@@ -41,8 +43,8 @@ sprungmass_label.grid(column=0, row=0,sticky='w')
 sprungmass_entry = tk.Entry(tab1)
 sprungmass_entry.grid(column=1, row=0,sticky='w')
 sprungmass_entry.insert(0,"300")
-tt.Tooltip(sprungmass_label,text=('Maximum length of the simulation in years'))
-tt.Tooltip(sprungmass_entry,text=('Maximum length of the simulation in years'))
+tt.Tooltip(sprungmass_label,text=('Chassis and frame mass (kg)'))
+tt.Tooltip(sprungmass_entry,text=('Chassis and frame mass (kg)'))
 
 cg_vert_offset_label = ttk.Label(tab1, text='CG Vertical Offset (m)')
 cg_vert_offset_label.grid(column=0, row=1,sticky='w')
@@ -182,7 +184,7 @@ tire_mesh_tab = VisMeshTab(mesh_notebook, mavs_data_path)
 mesh_notebook.add(tire_mesh_tab.tab, text="Tire Mesh")
 #-------------------------------------------------------------------------------------------------#
     
-def ExportFile():
+def WriteDataDict():
     data={}
     chassis_data = {}
     chassis_data["Sprung Mass"] = float(sprungmass_entry.get())
@@ -220,7 +222,7 @@ def ExportFile():
         tire_data["Section Height"] = float(tire_tabs[i].tire_sh_entry.get())
         tire_data["High Slip Crossover Angle"] = float(tire_tabs[i].hsca_entry.get())
         tire_data["Viscous Friction Coefficient"] = float(tire_tabs[i].vf_entry.get())
-        ax_data["Tires"] = tire_data
+        ax_data["Tire"] = tire_data
         axles.append(ax_data)
     data["Axles"] = axles
     
@@ -246,7 +248,10 @@ def ExportFile():
     init_pose_data["Position"] = [0.0, 0.0, 0.0]
     init_pose_data["Orientation"] = [1.0, 0.0, 0.0, 0.0]
     data["Initial Pose"] = init_pose_data
+    return data
 
+def ExportFile():
+    data = WriteDataDict()
     file_out = tk.filedialog.asksaveasfilename(initialdir="./inputs", filetypes=[("JSON","*.json")])
     with open(file_out, 'w') as fout:
         json_dumps_str = json.dumps(data, indent=4)
@@ -369,35 +374,42 @@ def ImportFile():
 
 
 def ViewDebugCallback():
-    fig, ax = plt.subplots()
-    # Create a rectangle
-    lx = float(chass_x_entry.get())
-    ly = float(chass_y_entry.get())
-    lz = float(chass_z_entry.get())
-    z_low = 0.0
-    for i in range(len(axle_tabs)):
-        tire_radius = float(tire_tabs[i].tire_rad_entry.get())
-        spring_len = float(axle_tabs[i].spring_len_entry.get())
-        zc = tire_radius + spring_len
-        if (zc>z_low):
-            z_low = zc;
-    x_lo = -0.5*lx
-    x_hi = x_lo + lx
-    rect = patches.Rectangle((-0.5*lx, z_low), lx, lz, color='green')
-    z_hi = z_low + lz
-    ax.add_patch(rect)
-    for i in range(len(axle_tabs)):
-        tire_radius = float(tire_tabs[i].tire_rad_entry.get())
-        spring_len = float(axle_tabs[i].spring_len_entry.get())
-        x_off = float(axle_tabs[i].long_offset_entry.get())
-        ax.add_patch(plt.Circle((x_off, tire_radius), tire_radius, color='blue'))
-        ax.add_patch(plt.Rectangle((x_off-0.025, tire_radius), 0.05, spring_len, color='orange'))
-    z_cg = z_low + 0.5*lz +  float(cg_vert_offset_entry.get())   
-    ax.add_patch(plt.Circle((0.0, z_cg), 0.1, color='red'))    
-    plt.xlim(x_lo-0.5, x_hi+0.5)
-    plt.ylim(0, z_hi + 0.5)
-    # Show the plot
-    plt.show()
+    data = WriteDataDict()
+    fname = "rp3d_dbg_tmp_zzz.json"
+    with open(fname, 'w') as fout:
+        json_dumps_str = json.dumps(data, indent=4)
+        print(json_dumps_str, file=fout)
+    mavs.ViewRp3dDebug(fname)
+    os.remove(fname)
+    # fig, ax = plt.subplots()
+    # # Create a rectangle
+    # lx = float(chass_x_entry.get())
+    # ly = float(chass_y_entry.get())
+    # lz = float(chass_z_entry.get())
+    # z_low = 0.0
+    # for i in range(len(axle_tabs)):
+    #     tire_radius = float(tire_tabs[i].tire_rad_entry.get())
+    #     spring_len = float(axle_tabs[i].spring_len_entry.get())
+    #     zc = tire_radius + spring_len
+    #     if (zc>z_low):
+    #         z_low = zc;
+    # x_lo = -0.5*lx
+    # x_hi = x_lo + lx
+    # rect = patches.Rectangle((-0.5*lx, z_low), lx, lz, color='green')
+    # z_hi = z_low + lz
+    # ax.add_patch(rect)
+    # for i in range(len(axle_tabs)):
+    #     tire_radius = float(tire_tabs[i].tire_rad_entry.get())
+    #     spring_len = float(axle_tabs[i].spring_len_entry.get())
+    #     x_off = float(axle_tabs[i].long_offset_entry.get())
+    #     ax.add_patch(plt.Circle((x_off, tire_radius), tire_radius, color='blue'))
+    #     ax.add_patch(plt.Rectangle((x_off-0.025, tire_radius), 0.05, spring_len, color='orange'))
+    # z_cg = z_low + 0.5*lz +  float(cg_vert_offset_entry.get())   
+    # ax.add_patch(plt.Circle((0.0, z_cg), 0.1, color='red'))    
+    # plt.xlim(x_lo-0.5, x_hi+0.5)
+    # plt.ylim(0, z_hi + 0.5)
+    # # Show the plot
+    # plt.show()
 
 view_debug_button = tk.Button(root, text ="View Vehicle", command = ViewDebugCallback)
 view_debug_button.grid(row=8,column=2,columnspan=3,sticky='ew')

@@ -36,7 +36,10 @@ namespace mavs_rp3d {
 class Chassis : public DynamicBody {
 public:
 	/// Create a default blank chassis
-	Chassis() {}
+	Chassis() {
+		cg_offset_ = 0.0f;
+		mass_ = 1.0f;
+	}
 
 	/**
 	* Initialize a chassis attached to an RP3D world

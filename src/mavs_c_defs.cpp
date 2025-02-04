@@ -923,6 +923,16 @@ extern "C" {
 		controller->SetVehicleState(px, py, speed, heading);
 	}
 
+	EXPORT_CMD void ViewRp3dDebug(char* input_file_name){
+		mavs::Rp3dVehicleViewer viewer;
+
+		std::string fname(input_file_name);
+		viewer.LoadVehicle(fname);
+
+		while (viewer.IsOpen()) {
+			viewer.Display(true);
+		}
+	}
 	//--- Sensor base class functions ----------------------//
 	EXPORT_CMD void SetMavsSensorPose(mavs::sensor::Sensor* sens, float position[3], float orientation[4]) {
 		glm::vec3 p(position[0], position[1], position[2]);

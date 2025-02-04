@@ -5,7 +5,7 @@
   "Chassis": {
     "Sprung Mass": 280.0,
     "CG Offset": 0.2,
-    "Dimensions": [ 1.35, 0.70, 0.30 ]
+    "Dimensions": [ 1.35, 1.2, 0.75 ]
   },
 
   "Powertrain": {

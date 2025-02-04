@@ -110,6 +110,7 @@ public:
 		sprung_mass_ = veh.sprung_mass_;
 		cg_offset_ = veh.cg_offset_;
 		cg_lateral_offset_ = veh.cg_lateral_offset_;
+		cg_long_offset_ = veh.cg_long_offset_;
 		chassis_dimensions_ = veh.chassis_dimensions_;
 		auto_commit_animations_ = veh.auto_commit_animations_;
 	}
@@ -251,6 +252,9 @@ public:
 	/// Get the offset of the CG above the running gear
 	float GetCgLateralOffset() { return cg_lateral_offset_; }
 
+	/// Get the longitudinal (+X) offset of the CG above the running gear
+	float GetCgLongitudinalOffset() { return cg_long_offset_; }
+
 	/// Get the distance from the front axle to cg, positive to the rear of vehicle
 	float GetCgLongOffset() { return axles_[0].long_offset; }
 
@@ -373,6 +377,7 @@ private:
 	float sprung_mass_;
 	float cg_offset_;
 	float cg_lateral_offset_;
+	float cg_long_offset_;
 	rp3d::Vector3 chassis_dimensions_;
 	float torque_mass_scale_factor_;
 	float chassis_drag_coeff_;

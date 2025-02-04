@@ -2,9 +2,9 @@
 
   "Chassis": {
     "Sprung Mass": 1140.6,
-    "CG Offset": 0.025,
+    "CG Offset": 0.0,
     "CG Lateral Offset": 0.0,
-    "Dimensions": [ 3.594, 1.2, 1.2 ],
+    "Dimensions": [ 3.594, 1.2, 1.0 ],
     "Drag Coefficient": 28.2
   },
 
@@ -18,11 +18,11 @@
 
   "Axles": [
     {
-      "Longitudinal Offset": 1.57,
+      "Longitudinal Offset": 1.34625,
       "Track Width": 1.302,
       "Spring Constant": 77706.3,
       "Damping Constant": 8657.1,
-      "Spring Length": 0.576,
+      "Spring Length": 0.55,
       "Steered": true,
       "Powered": true,
       "Max Steer Angle": 17.5,
@@ -38,11 +38,11 @@
       }
     },
     {
-      "Longitudinal Offset": -1.15,
+      "Longitudinal Offset": -1.37375,
       "Track Width": 1.339,
       "Spring Constant": 106085.9,
       "Damping Constant": 11818.9,
-      "Spring Length": 0.524,
+      "Spring Length": 0.55,
       "Steered": false,
       "Powered": true,
       "Unsprung Mass": 34.8,
@@ -63,7 +63,7 @@
     "Rotate Y to Z": false,
     "Rotate X to Y": false,
     "Rotate Y to X": false,
-    "Offset": [ 0.0, 0.0, 0.0 ],
+    "Offset": [ 0.0, 0.0, -0.1 ],
     "Scale": [ 1.0, 1.0, 1.0 ]
   },
 

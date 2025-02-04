@@ -42,12 +42,18 @@ Rp3dVehicleViewer::Rp3dVehicleViewer() {
 	disp_filled_ = false;
 }
 
+bool Rp3dVehicleViewer::IsOpen() {
+	if (!disp_filled_) return true;
+	if (front_disp_.is_closed() || side_disp_.is_closed()) return false;
+	return true;
+}
+
 void Rp3dVehicleViewer::LoadVehicle(std::string fname) {
 	mavs::MavsDataPath mavs_data_path;
 	std::string veh_path = mavs_data_path.GetPath();
 	veh_path.append("/vehicles/rp3d/");
 	std::string scene_file = mavs_data_path.GetPath();
-	scene_file.append("/scenes/cube_scene.json");
+	scene_file.append("/scenes/surface_only.json");
 	scene_.Load(scene_file);
 	env_.SetRaytracer(&scene_);
 	vehicle_.Load(fname);
@@ -55,22 +61,23 @@ void Rp3dVehicleViewer::LoadVehicle(std::string fname) {
 	args.push_back(0.0f);
 	vehicle_.SetTerrainProperties("paved", 1000.0f, "flat", args);
 	float elapsed_time = 0.0f;
+	float dt = 0.01f;
 	while (elapsed_time < 2.0f) {
-		vehicle_.Update(&env_, 0.0f, 0.0f, 1.0f, 0.01f);
-		env_.SetActorPosition(0, vehicle_.GetPosition(), vehicle_.GetOrientation());
-		elapsed_time += 0.01f;
+		vehicle_.Update(&env_, 0.0f, 0.0f, 0.0f, dt);
+		//env_.SetActorPosition(0, vehicle_.GetPosition(), vehicle_.GetOrientation());
+		elapsed_time += dt;
 	}
 }
 
 void Rp3dVehicleViewer::FillDisplay(bool show_debug) {
 	glm::vec3 position = vehicle_.GetPosition();
 	float cgz = vehicle_.GetCgOffset();
-
-	glm::vec3 size = 3.0f*vehicle_.GetChassisDimensions();
+	float scale = 1.5f;
+	glm::vec3 size = scale*vehicle_.GetChassisDimensions();
 
 	float front_dist = std::max(0.5f*size.x, std::max(size.y, size.z));
 	front_camera_.Initialize(npix_, npix_, front_dist, front_dist, 0.0035f);
-	front_camera_.SetBackgroundColor(0, 0, 0);
+	front_camera_.SetBackgroundColor(20.0f, 20.0f, 20.0f);
 	float front_pixdim = front_dist / ((float)npix_);
 	glm::vec3 front_camera_pos(position.x + size.x, position.y, position.z);
 	glm::quat front_camera_orient(0.0f, 0.0f, 0.0f, -1.0f);
@@ -79,7 +86,7 @@ void Rp3dVehicleViewer::FillDisplay(bool show_debug) {
 
 	float side_dist = std::max(0.5f*size.y, std::max(size.x, size.z));
 	side_camera_.Initialize(npix_, npix_, side_dist, side_dist, 0.0035f);
-	side_camera_.SetBackgroundColor(0, 0, 0);
+	side_camera_.SetBackgroundColor(20.0f, 20.0f, 20.0f);
 	float side_pixdim = side_dist / ((float)npix_);
 	glm::vec3 side_camera_pos(position.x, position.y - size.y, position.z);
 	glm::quat side_camera_orient(0.7071f, 0.0f, 0.0f, 0.7071f);
@@ -119,12 +126,13 @@ void Rp3dVehicleViewer::FillDisplay(bool show_debug) {
 	front_image_.draw_text(15, np2_, zdim_str.c_str(), yellow);
 	front_image_.draw_text(y_start + y_size - 10, 15, "Y", yellow);
 	front_image_.draw_text(15, z_start, "Z", yellow);
+	
 	if (show_debug) {
 		front_image_.draw_rectangle(
-			(int)(((position.y - 0.5*size.y / 3.0) - ylow) / front_pixdim),
-			npix_ - (int)(((position.z + cgz - 0.5*size.z / 3.0) - zlow) / front_pixdim) - 1,
-			(int)(((position.y + 0.5*size.y / 3.0) - ylow) / front_pixdim),
-			npix_ - (int)(((position.z + cgz + 0.5*size.z / 3.0) - zlow) / front_pixdim) - 1,
+			(int)(((position.y - 0.5*size.y / scale) - ylow) / front_pixdim),
+			npix_ - (int)(((position.z + cgz - 0.5f*size.z / scale) - zlow) / front_pixdim) - 1,
+			(int)(((position.y + 0.5*size.y / scale) - ylow) / front_pixdim),
+			npix_ - (int)(((position.z + cgz + 0.5f*size.z / scale) - zlow) / front_pixdim) - 1,
 			blue, 0.5f);
 		front_image_.draw_circle(yp, zp, 5, green, 1.0f);
 		for (int tn = 0; tn < 2; tn++) {
@@ -137,7 +145,7 @@ void Rp3dVehicleViewer::FillDisplay(bool show_debug) {
 		}
 		front_image_.draw_line(0, z_0, front_image_.width(), z_0, red, 1.0f);
 	}
-
+	
 	float xlow = center.x - np2_ * side_pixdim;
 	zlow = center.z - np2_ * side_pixdim;
 	int x_size = (int)(size.x / side_pixdim);
@@ -161,10 +169,10 @@ void Rp3dVehicleViewer::FillDisplay(bool show_debug) {
 	side_image_.draw_text(15, z_start, "Z", yellow);
 	if (show_debug) {
 		side_image_.draw_rectangle(
-			(int)(((position.x - 0.5*size.x / 3.0) - xlow) / side_pixdim),
-			npix_ - (int)(((position.z + cgz - 0.5*size.z / 3.0) - zlow) / side_pixdim) - 1,
-			(int)(((position.x + 0.5*size.x / 3.0) - xlow) / side_pixdim),
-			npix_ - (int)(((position.z + cgz + 0.5*size.z / 3.0) - zlow) / side_pixdim) - 1,
+			(int)(((position.x - 0.5f*size.x / scale) - xlow) / side_pixdim),
+			npix_ - (int)(((position.z + cgz - 0.5f*size.z / scale) - zlow) / side_pixdim) - 1,
+			(int)(((position.x + 0.5f*size.x / scale) - xlow) / side_pixdim),
+			npix_ - (int)(((position.z + cgz + 0.5f*size.z / scale) - zlow) / side_pixdim) - 1,
 			blue, 0.5f);
 		side_image_.draw_circle(xp, zp, 5, green, 1.0f);
 		for (int tn = 0; tn < vehicle_.GetNumTires(); tn++) {
@@ -175,14 +183,15 @@ void Rp3dVehicleViewer::FillDisplay(bool show_debug) {
 				int tp0r = (int)(vehicle_.GetTire(0)->GetRadius() / side_pixdim);
 				float tcol[3];
 				if (tn == 0) {
-					side_image_.draw_circle(tp0x, tp0z, tp0r, green, 1.0f, 2);
+					side_image_.draw_circle(tp0x, tp0z, tp0r, green, 0.5f);
 				}
 				else {
-					side_image_.draw_circle(tp0x, tp0z, tp0r, orange, 1.0f, 2);
+					side_image_.draw_circle(tp0x, tp0z, tp0r, orange, 0.5f);
 				}
 			}
 		}
 	}
+	
 	disp_filled_ = true;
 }
 

@@ -372,7 +372,6 @@ def ImportFile():
                         
 #--------END OF IMPORT EXISTING  FILE ----------------------------------------------------------#
 
-
 def ViewDebugCallback():
     data = WriteDataDict()
     fname = "rp3d_dbg_tmp_zzz.json"
@@ -381,38 +380,45 @@ def ViewDebugCallback():
         print(json_dumps_str, file=fout)
     mavs.ViewRp3dDebug(fname)
     os.remove(fname)
-    # fig, ax = plt.subplots()
-    # # Create a rectangle
-    # lx = float(chass_x_entry.get())
-    # ly = float(chass_y_entry.get())
-    # lz = float(chass_z_entry.get())
-    # z_low = 0.0
-    # for i in range(len(axle_tabs)):
-    #     tire_radius = float(tire_tabs[i].tire_rad_entry.get())
-    #     spring_len = float(axle_tabs[i].spring_len_entry.get())
-    #     zc = tire_radius + spring_len
-    #     if (zc>z_low):
-    #         z_low = zc;
-    # x_lo = -0.5*lx
-    # x_hi = x_lo + lx
-    # rect = patches.Rectangle((-0.5*lx, z_low), lx, lz, color='green')
-    # z_hi = z_low + lz
-    # ax.add_patch(rect)
-    # for i in range(len(axle_tabs)):
-    #     tire_radius = float(tire_tabs[i].tire_rad_entry.get())
-    #     spring_len = float(axle_tabs[i].spring_len_entry.get())
-    #     x_off = float(axle_tabs[i].long_offset_entry.get())
-    #     ax.add_patch(plt.Circle((x_off, tire_radius), tire_radius, color='blue'))
-    #     ax.add_patch(plt.Rectangle((x_off-0.025, tire_radius), 0.05, spring_len, color='orange'))
-    # z_cg = z_low + 0.5*lz +  float(cg_vert_offset_entry.get())   
-    # ax.add_patch(plt.Circle((0.0, z_cg), 0.1, color='red'))    
-    # plt.xlim(x_lo-0.5, x_hi+0.5)
-    # plt.ylim(0, z_hi + 0.5)
-    # # Show the plot
-    # plt.show()
-
 view_debug_button = tk.Button(root, text ="View Vehicle", command = ViewDebugCallback)
 view_debug_button.grid(row=8,column=2,columnspan=3,sticky='ew')
+
+def TestDriveCallback():
+    data = WriteDataDict()
+    fname = "rp3d_dbg_tmp_zzz.json"
+    with open(fname, 'w') as fout:
+        json_dumps_str = json.dumps(data, indent=4)
+        print(json_dumps_str, file=fout)
+    scene = mavs.MavsEmbreeScene()
+    mavs_scenefile = "/scenes/cube_scene.json"
+    scene.Load(mavs_python_paths.mavs_data_path+mavs_scenefile)
+    #------------------ environment ------------------------------------------------------#
+    env = mavs.MavsEnvironment()
+    env.SetScene(scene)
+    #------------------ vehicle ----------------------------------------------------------#
+    veh = mavs.MavsRp3d()
+    veh.Load(fname)
+    #------------------ camera -----------------------------------------------------------#
+    drive_cam = mavs.MavsCamera() 
+    drive_cam.Initialize(512,512,0.0035,0.0035,0.0035) 
+    drive_cam.SetOffset([-10.0,0.0,2.0],[1.0,0.0,0.0,0.0]) 
+    drive_cam.RenderShadows(True) 
+    drive_cam.Update(env,0.05)
+    drive_cam.Display()
+    #------------------ main loop ------------------------------------------------------#
+    dt = 1.0/100.0 # time step, seconds
+    n = 0 # loop counter
+    while (drive_cam.DisplayOpen()):
+        dc = drive_cam.GetDrivingCommand() 
+        veh.Update(env, dc.throttle, dc.steering, dc.braking, dt) 
+        if n%6==0:
+            drive_cam.SetPose(veh.GetPosition(),veh.GetOrientation())
+            drive_cam.Update(env,0.05)
+            drive_cam.Display()
+        n = n+1
+    os.remove(fname)
+test_drive_button = tk.Button(root, text ="Test Drive", command = TestDriveCallback)
+test_drive_button.grid(row=9,column=2,columnspan=3,sticky='ew')
    
 menubar = tk.Menu(root)
 filemenu = tk.Menu(menubar, tearoff=0)

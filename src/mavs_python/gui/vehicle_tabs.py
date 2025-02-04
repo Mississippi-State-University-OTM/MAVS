@@ -79,8 +79,8 @@ class VisMeshTab():
         self.tab = ttk.Frame(masroot)
         def locMeshCallBack():
            m_file = tk.filedialog.askopenfilename(initialdir = mavs_data_path+"/scenes/meshes/vehicles")
-           self.m_file_entry.delete(0, tk.END)
-           self.m_file_entry.insert(0,(os.path.basename(m_file)))
+           self.file_entry.delete(0, tk.END)
+           self.file_entry.insert(0,(os.path.basename(m_file)))
         self.file_label = ttk.Label(self.tab, text='Mesh File')
         self.file_label.grid(column=0, row=0,sticky='w')
         self.file_entry = tk.Entry(self.tab)
@@ -88,9 +88,9 @@ class VisMeshTab():
         self.file_entry.insert(0,"1kHM.png")
         self.file_select_button = tk.Button(self.tab, text ="Select Mesh File", command = locMeshCallBack)
         self.file_select_button.grid(row=0,column=2,columnspan=1,sticky='ew')
-        tt.Tooltip(self.file_label,text=('Select the mesh file corresponding to the vehicle chassis.'))
-        tt.Tooltip(self.file_entry,text=('Select the mesh file corresponding to the vehicle chassis.'))
-        tt.Tooltip(self.file_select_button,text=('Select the mesh file corresponding to the vehicle chassis.'))
+        tt.Tooltip(self.file_label,text=('Select the mesh file corresponding to the physics object.'))
+        tt.Tooltip(self.file_entry,text=('Select the mesh file corresponding to the physics object.'))
+        tt.Tooltip(self.file_select_button,text=('Select the mesh file corresponding to the physics object.'))
         
         self.offset_label = ttk.Label(self.tab, text='Mesh Offset')
         self.offset_label.grid(column=0, row=1,sticky='w')

@@ -302,9 +302,8 @@
     [ "vegetation/narrow_leaved_paperbark/narrow_leaved_paperbark_6.obj", "high vegetation" ],
 
     [ "vehicles/hmmwv/hmmwv.obj", "vehicle" ],
-    [ "vehicles/hmmwv/hmmwv_centered.obj", "vehicle" ],
-    [ "vehicles/hmmwv/hmmwv_body_rotated_scaled_shifted.obj", "vehicle" ],
-    [ "vehicles/hmmwv/hmmwv_wheel_rotated_scaled.obj", "vehicle" ],
+    [ "vehicles/hmmwv/hmmwv_chassis.obj", "vehicle" ],
+    [ "vehicles/hmmwv/hmmwv_tire.obj", "vehicle" ],
 
     [ "vehicles/jackal/jackal_no_tires_scaled_3.obj", "vehicle" ],
     [ "vehicles/jackal/jackal_tire_scaled_2.obj", "vehicle" ],

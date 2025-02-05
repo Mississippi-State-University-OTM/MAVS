@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
 
 	viewer.LoadVehicle(fname);
 
-	while (true) {
+	while (viewer.IsOpen()) {
 		viewer.Display(true);
 	}
 

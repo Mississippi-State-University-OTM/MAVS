@@ -189,6 +189,8 @@ mavs_lib.PlotTrajectory.argtypes =  [ctypes.c_void_p, ctypes.c_int, ctypes.POINT
 mavs_lib.AddPlotToTrajectory.restype = ctypes.c_void_p
 mavs_lib.AddPlotToTrajectory.argtypes =  [ctypes.c_void_p, ctypes.c_int, ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float)]
 #------ Vehicle functions -----#
+mavs_lib.ViewRp3dDebug.restype = ctypes.c_void_p
+mavs_lib.ViewRp3dDebug.argtypes = [ctypes.c_char_p]
 mavs_lib.NewMavsRp3dVehicle.restype = ctypes.c_void_p
 mavs_lib.LoadMavsRp3dVehicle.restype = ctypes.c_void_p
 mavs_lib.LoadMavsRp3dVehicle.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
@@ -575,6 +577,9 @@ def PyStringToChar(py_string):
     """
     b_string = py_string.encode('utf-8')
     return ctypes.c_char_p(b_string)
+
+def ViewRp3dDebug(fname):
+    mavs_lib.ViewRp3dDebug(PyStringToChar(fname))
 
 def AddRainToImage(fname,rate,add_drops=False,rho=1.0):
     """Add rain streaks to an existing image.

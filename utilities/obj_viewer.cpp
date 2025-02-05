@@ -51,6 +51,7 @@ SOFTWARE.
 #include <sensors/io/user_io.h>
 
 float tx_, ty_, tz_, scale_;
+bool increment_rotation_ = false;
 //float pitch_, yaw_, roll_;
 bool save_, exit_, x_to_y_, y_to_x_, z_to_y_, y_to_z_;
 float front_pixdim, side_pixdim, top_pixdim;
@@ -93,8 +94,40 @@ glm::mat3x3 Rx(float theta) {
 	return R;
 }
 
+glm::mat3x3 Ry(float theta) {
+	glm::mat3 R(0.0);
+	float c = cos(theta);
+	float s = sin(theta);
+	R[0][0] = c;
+	R[0][2] = s;
+	R[1][1] = 1.0f;
+	R[2][0] = -s;
+	R[2][2] = c;
+	return R;
+}
+
 bool GetKeyboardInput() {
 	bool pressed = false;
+	if (front_disp.is_keyU() || side_disp.is_keyU() || top_disp.is_keyU()) {
+		float rx = mavs::io::GetUserNumericInput("Rotation", "Rotation about X (deg)");
+		rot_keep = Rx((float)(rx*mavs::kPi/180.0f)) * rot_keep;
+		increment_rotation_ = true;
+		pressed = true;
+	}
+	if (front_disp.is_keyV() || side_disp.is_keyV() || top_disp.is_keyV()) {
+		float ry = mavs::io::GetUserNumericInput("Rotation", "Rotation about Y (deg)");
+		rot_keep = Ry((float)(ry * mavs::kPi / 180.0f)) * rot_keep;
+		increment_rotation_ = true;
+		pressed = true;
+	}
+	if (front_disp.is_keyW() || side_disp.is_keyW() || top_disp.is_keyW()) {
+		float rz = mavs::io::GetUserNumericInput("Rotation", "Rotation about Z (deg)");
+		rot_keep = Rz((float)(rz * mavs::kPi / 180.0f)) * rot_keep;
+		increment_rotation_ = true;
+		pressed = true;
+	}
+
+
 	if (front_disp.is_keyX() || side_disp.is_keyX() || top_disp.is_keyX()) {
 		tx_ = mavs::io::GetUserNumericInput("Translation", "Translation in X");
 		trans_keep.x += tx_;
@@ -463,6 +496,12 @@ int main(int argc, char * argv[]) {
 		}
 		if (y_to_z_) {
 			mesh.RotateYToZ();
+		}
+		if (increment_rotation_) {
+			glm::mat3x4 aff_rot;
+			for (int i = 0; i < 3; i++) { for (int j = 0; j < 3; j++) { aff_rot[i][j] = scale_keep * rot_keep[i][j]; } }
+			mesh.ApplyAffineTransformation(aff_rot);
+			increment_rotation_ = false;
 		}
 		std::cout << std::endl;
 		if (save_) {

@@ -105,6 +105,7 @@ EXPORT_CMD void SetMavsAnimationPosition(mavs::raytracer::Animation *anim, float
 
 EXPORT_CMD void SetMavsAnimationHeading(mavs::raytracer::Animation *anim, float heading);
 
+EXPORT_CMD void ViewRp3dDebug(char* input_file_name);
 #endif //use EMBREE
 
 EXPORT_CMD mavs::terraingen::GridSurface *LoadDem(char* input_file_name, bool interp_no_data, bool recenter);

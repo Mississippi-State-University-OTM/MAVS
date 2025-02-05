@@ -21,6 +21,8 @@ src/mavs_python/examples/__pycache__
 src/mavs_python/examples/euro_ncap/__pycache__
 src/mavs_python/mavs_gui.cmd
 src/mavs_python/mavs_gui.sh
+src/mavs_python/mavs_vehicle_editor.sh
+src/mavs_python/mavs_vehicle_editor.cmd
 src/mavs_python/*.pyc
 src/mavs_python/mavs_python_paths.py
 /data/data

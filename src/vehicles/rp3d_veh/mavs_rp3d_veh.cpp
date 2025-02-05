@@ -53,6 +53,7 @@ Rp3dVehicle::Rp3dVehicle() {
 	//chassis parameters
 	cg_offset_ = 0.25f;
 	cg_lateral_offset_ = 0.0f;
+	cg_long_offset_ = 0.0f;
 	chassis_dimensions_ = rp3d::Vector3(2.4f, 2.0f, 0.5f);
 	sprung_mass_ = 1200.0f;
 	torque_mass_scale_factor_ = 1.0f;
@@ -135,6 +136,10 @@ void Rp3dVehicle::Load(std::string input_file) {
 
 		if (d["Chassis"].HasMember("CG Lateral Offset")) {
 			cg_lateral_offset_ = d["Chassis"]["CG Lateral Offset"].GetFloat();
+		}
+
+		if (d["Chassis"].HasMember("CG Longitudinal Offset")) {
+			cg_long_offset_ = d["Chassis"]["CG Longitudinal Offset"].GetFloat();
 		}
 
 		if (d["Chassis"].HasMember("Dimensions")) {
@@ -436,7 +441,7 @@ void Rp3dVehicle::Init(environment::Environment *env) {
 	float h = env->GetGroundHeight((float)current_state_.pose.position.x, (float)current_state_.pose.position.y);
 	//float z = h + spring_length + cg_offset_ + 2.0f*tire_radius;
 	float z = h + spring_length + cg_offset_ + tire_radius + 0.75f;
-	rp3d::Vector3 pos((float)current_state_.pose.position.x, (float)current_state_.pose.position.y, z);
+	rp3d::Vector3 pos((float)current_state_.pose.position.x + cg_long_offset_, (float)current_state_.pose.position.y, z);
 	
 	// find the current ground normal and vehicle yaw
 	glm::vec4 h_and_n = env->GetGroundHeightAndNormal((float)current_state_.pose.position.x, (float)current_state_.pose.position.y);

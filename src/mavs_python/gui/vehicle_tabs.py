@@ -10,7 +10,7 @@ class SuspensionTab():
         self.long_offset_label.grid(column=0, row=0,sticky='w')
         self.long_offset_entry = tk.Entry(self.tab)
         self.long_offset_entry.grid(column=1, row=0,sticky='w')
-        self.long_offset_entry.insert(0,"168")
+        self.long_offset_entry.insert(0,"1.34625")
         tt.Tooltip(self.long_offset_label,text=('Offset of axle from CG. Forward is positive. Negative is behind the CG. Front axle should have a positive offset, rear axle(s) a negative offset.'))
         tt.Tooltip(self.long_offset_entry,text=('Offset of axle from CG. Forward is positive. Negative is behind the CG. Front axle should have a positive offset, rear axle(s) a negative offset.'))
     
@@ -18,7 +18,7 @@ class SuspensionTab():
         self.track_width_label.grid(column=0, row=1,sticky='w')
         self.track_width_entry = tk.Entry(self.tab)
         self.track_width_entry.grid(column=1, row=1,sticky='w')
-        self.track_width_entry.insert(0,"168")
+        self.track_width_entry.insert(0,"1.302")
         tt.Tooltip(self.track_width_label,text=('Distance between tire centers on the left and right side of the vehicle (meters)'))
         tt.Tooltip(self.track_width_entry,text=('Distance between tire centers on the left and right side of the vehicle (meters)'))
     
@@ -26,7 +26,7 @@ class SuspensionTab():
         self.spring_const_label.grid(column=0, row=2, sticky='w')
         self.spring_const_entry = tk.Entry(self.tab)
         self.spring_const_entry.grid(column=1, row=2,sticky='w')
-        self.spring_const_entry.insert(0,"168")
+        self.spring_const_entry.insert(0,"77706.3")
         tt.Tooltip(self.spring_const_label,text=('The recommended spring constant is about 90 times the sprung mass in kg.'))
         tt.Tooltip(self.spring_const_entry,text=('The recommended spring constant is about 90 times the sprung mass in kg.'))
     
@@ -34,7 +34,7 @@ class SuspensionTab():
         self.damp_const_label.grid(column=0, row=3, sticky='w')
         self.damp_const_entry = tk.Entry(self.tab)
         self.damp_const_entry.grid(column=1, row=3,sticky='w')
-        self.damp_const_entry.insert(0,"168")
+        self.damp_const_entry.insert(0,"8657.1")
         tt.Tooltip(self.damp_const_label,text=('The recommended damping constant is about 9.5 times the sprung mass in kg.'))
         tt.Tooltip(self.damp_const_entry,text=('The recommended damping constant is about 9.5 times the sprung mass in kg.'))
     
@@ -42,7 +42,7 @@ class SuspensionTab():
         self.spring_len_label.grid(column=0, row=4, sticky='w')
         self.spring_len_entry = tk.Entry(self.tab)
         self.spring_len_entry.grid(column=1, row=4,sticky='w')
-        self.spring_len_entry.insert(0,"168")
+        self.spring_len_entry.insert(0,"0.55")
         tt.Tooltip(self.spring_len_label,text=('Length of the connection from the axle to the chassis (m).'))
         tt.Tooltip(self.spring_len_entry,text=('Length of the connection from the axle to the chassis (m).'))
     
@@ -50,7 +50,7 @@ class SuspensionTab():
         self.steer_angle_label.grid(column=0, row=5, sticky='w')
         self.steer_angle_entry = tk.Entry(self.tab)
         self.steer_angle_entry.grid(column=1, row=5,sticky='w')
-        self.steer_angle_entry.insert(0,"168")
+        self.steer_angle_entry.insert(0,"17.5")
         tt.Tooltip(self.steer_angle_label,text=('Maximum turning angle of the steered tire, in degrees.'))
         tt.Tooltip(self.steer_angle_entry,text=('Maximum turning angle of the steered tire, in degrees.'))
     
@@ -58,7 +58,7 @@ class SuspensionTab():
         self.unsprung_label.grid(column=0, row=6, sticky='w')
         self.unsprung_entry = tk.Entry(self.tab)
         self.unsprung_entry.grid(column=1, row=6,sticky='w')
-        self.unsprung_entry.insert(0,"168")
+        self.unsprung_entry.insert(0,"34.8")
         tt.Tooltip(self.unsprung_label,text=('Mass of the overall suspension element (including tire) in kg.'))
         tt.Tooltip(self.unsprung_entry,text=('Mass of the overall suspension element (including tire) in kg.'))
     
@@ -85,7 +85,7 @@ class VisMeshTab():
         self.file_label.grid(column=0, row=0,sticky='w')
         self.file_entry = tk.Entry(self.tab)
         self.file_entry.grid(column=1, row=0,sticky='w')
-        self.file_entry.insert(0,"1kHM.png")
+        self.file_entry.insert(0,"vehicles/mrzr4/mrzr_no_wheel_rot.obj")
         self.file_select_button = tk.Button(self.tab, text ="Select Mesh File", command = locMeshCallBack)
         self.file_select_button.grid(row=0,column=2,columnspan=1,sticky='ew')
         tt.Tooltip(self.file_label,text=('Select the mesh file corresponding to the physics object.'))
@@ -139,7 +139,7 @@ class VisMeshTab():
         self.rot_y_to_x_var = tk.IntVar()
         self.rot_y_to_x_var.set(False)
         self.rot_y_to_x_checkbox = tk.Checkbutton(self.tab, text="Rotate Y to X?", variable=self.rot_y_to_x_var)
-        self.rot_y_to_x_checkbox.grid(column=1,row=4,sticky='w')
+        self.rot_y_to_x_checkbox.grid(column=1,row=5,sticky='w')
         tt.Tooltip(self.rot_y_to_x_checkbox,text=('Change the default orientation of the mesh.'))
     
 class TireTab():
@@ -149,7 +149,7 @@ class TireTab():
         self.spring_cons_label.grid(column=0, row=0,sticky='w')
         self.spring_cons_entry = tk.Entry(self.tab)
         self.spring_cons_entry.grid(column=1, row=0,sticky='w')
-        self.spring_cons_entry.insert(0,"168")
+        self.spring_cons_entry.insert(0,"100000.0")
         tt.Tooltip(self.spring_cons_label,text=('Spring constant of the tire, proportional to inflation pressure.'))
         tt.Tooltip(self.spring_cons_entry,text=('Spring constant of the tire, proportional to inflation pressure.'))
     
@@ -157,7 +157,7 @@ class TireTab():
         self.damp_const_label.grid(column=0, row=1, sticky='w')
         self.damp_const_entry = tk.Entry(self.tab)
         self.damp_const_entry.grid(column=1, row=1,sticky='w')
-        self.damp_const_entry.insert(0,"168")
+        self.damp_const_entry.insert(0,"34003.0")
         tt.Tooltip(self.damp_const_label,text=('Tire damping constant, should be set to cricitcal damping.'))
         tt.Tooltip(self.damp_const_entry,text=('Tire damping constant, should be set to cricitcal damping.'))
     
@@ -165,7 +165,7 @@ class TireTab():
         self.tire_rad_label.grid(column=0, row=2, sticky='w')
         self.tire_rad_entry = tk.Entry(self.tab)
         self.tire_rad_entry.grid(column=1, row=2,sticky='w')
-        self.tire_rad_entry.insert(0,"168")
+        self.tire_rad_entry.insert(0,"0.3302")
         tt.Tooltip(self.tire_rad_label,text=('Undeflected tire radius (m)'))
         tt.Tooltip(self.tire_rad_entry,text=('Undeflected tire radius (m)'))
     
@@ -173,7 +173,7 @@ class TireTab():
         self.tire_wid_label.grid(column=0, row=3, sticky='w')
         self.tire_wid_entry = tk.Entry(self.tab)
         self.tire_wid_entry.grid(column=1, row=3,sticky='w')
-        self.tire_wid_entry.insert(0,"168")
+        self.tire_wid_entry.insert(0,"0.2286")
         tt.Tooltip(self.tire_wid_label,text=('Undeflected tire section width (m)'))
         tt.Tooltip(self.tire_wid_entry,text=('Undeflected tire section width (m)'))
     
@@ -181,7 +181,7 @@ class TireTab():
         self.tire_sh_label.grid(column=0, row=4, sticky='w')
         self.tire_sh_entry = tk.Entry(self.tab)
         self.tire_sh_entry.grid(column=1, row=4,sticky='w')
-        self.tire_sh_entry.insert(0,"168")
+        self.tire_sh_entry.insert(0," 0.1651")
         tt.Tooltip(self.tire_sh_label,text=('Undeflected tire section height (m)'))
         tt.Tooltip(self.tire_sh_entry,text=('Undeflected tire section height (m)'))
     
@@ -189,7 +189,7 @@ class TireTab():
         self.hsca_label.grid(column=0, row=5, sticky='w')
         self.hsca_entry = tk.Entry(self.tab)
         self.hsca_entry.grid(column=1, row=5,sticky='w')
-        self.hsca_entry.insert(0,"168")
+        self.hsca_entry.insert(0,"10.0")
         tt.Tooltip(self.hsca_label,text=('Slip angle (degree) at which the traction "crosses-over" to constant.'))
         tt.Tooltip(self.hsca_entry,text=('Slip angle (degree) at which the traction "crosses-over" to constant.'))
     
@@ -197,6 +197,6 @@ class TireTab():
         self.vf_label.grid(column=0, row=5, sticky='w')
         self.vf_entry = tk.Entry(self.tab)
         self.vf_entry.grid(column=1, row=5,sticky='w')
-        self.vf_entry.insert(0,"168")
+        self.vf_entry.insert(0,"0.4")
         tt.Tooltip(self.vf_label,text=('Friction coefficient for how the "free-spinning" tire loses angular momentum.'))
         tt.Tooltip(self.vf_entry,text=('Friction coefficient for how the "free-spinning" tire loses angular momentum.'))

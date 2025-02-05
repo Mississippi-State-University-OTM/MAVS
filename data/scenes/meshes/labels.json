@@ -211,6 +211,7 @@
     [ "vegetation/Fruit/FR20m.obj", "high vegetation" ],
     [ "vegetation/Fruit/FR20y.obj", "high vegetation" ],
 
+    [ "vehicles/m915/m915_chassis.obj", "vehicle" ],
     [ "vehicles/forester/forester_vehicle_m_rot.obj", "vehicle" ],
     [ "vehicles/forester/forester_vehicle_aligned.obj", "vehicle" ],
     [ "vehicles/forester/forester_single_wheel.obj", "vehicle" ],

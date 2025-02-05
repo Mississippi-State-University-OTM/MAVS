@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import gui.Tooltip as tt
-import os
+import pathlib
 
 class SuspensionTab():
     def __init__(self, masroot):
@@ -80,7 +80,10 @@ class VisMeshTab():
         def locMeshCallBack():
            m_file = tk.filedialog.askopenfilename(initialdir = mavs_data_path+"/scenes/meshes/vehicles")
            self.file_entry.delete(0, tk.END)
-           self.file_entry.insert(0,(os.path.basename(m_file)))
+           p = pathlib.Path(m_file)
+           nf = len(p.parts)
+           fpath =p.parts[nf-3]+"/"+p.parts[nf-2]+"/"+p.parts[nf-1]
+           self.file_entry.insert(0,fpath)
         self.file_label = ttk.Label(self.tab, text='Mesh File')
         self.file_label.grid(column=0, row=0,sticky='w')
         self.file_entry = tk.Entry(self.tab)

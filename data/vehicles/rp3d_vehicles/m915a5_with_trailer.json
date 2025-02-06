@@ -1,0 +1,127 @@
+{
+    "Chassis": {
+        "Sprung Mass": 6500.0,
+        "CG Offset": 0.1,
+        "CG Lateral Offset": 0.0,
+        "Dimensions": [
+            6.5,
+            2.36,
+            1.4
+        ],
+        "Drag Coefficient": 28.2
+    },
+    "Powertrain": {
+        "Final Drive Ratio": 3.3,
+        "Max Engine Torque": 583.0,
+        "Max Engine Rpm": 4500.0,
+        "Max Braking Torque": 3200.0,
+        "Idle Rpm": 1000.0
+    },
+    "Axles": [
+        {
+            "Longitudinal Offset": 2.52,
+            "Track Width": 2.17,
+            "Spring Constant": 395404.0,
+            "Spring Length": 0.55,
+            "Max Steer Angle": 17.5,
+            "Unsprung Mass": 68.0,
+            "Damping Constant": 52625.25,
+            "Steered": true,
+            "Powered": true,
+            "Tire": {
+                "Spring Constant": 788970.0,
+                "Damping Constant": 76851.4,
+                "Radius": 0.492,
+                "Width": 0.359,
+                "Section Height": 0.253,
+                "High Slip Crossover Angle": 5.0,
+                "Viscous Friction Coefficient": 0.05
+            }
+        },
+        {
+            "Longitudinal Offset": -1.51226,
+            "Track Width": 2.17,
+            "Spring Constant": 10.0,
+            "Spring Length": 0.55,
+            "Max Steer Angle": 17.5,
+            "Unsprung Mass": 0.01,
+            "Damping Constant": 10.25,
+            "Steered": false,
+            "Powered": true,
+            "Tire": {
+                "Spring Constant": 10.0,
+                "Damping Constant": 10.4,
+                "Radius": 0.492,
+                "Width": 0.359,
+                "Section Height": 0.253,
+                "High Slip Crossover Angle": 5.0,
+                "Viscous Friction Coefficient": 0.05
+            }
+        },
+        {
+            "Longitudinal Offset": -2.79292,
+            "Track Width": 2.17,
+            "Spring Constant": 395404.0,
+            "Spring Length": 0.55,
+            "Max Steer Angle": 17.5,
+            "Unsprung Mass": 68.0,
+            "Damping Constant": 52625.25,
+            "Steered": false,
+            "Powered": true,
+            "Tire": {
+                "Spring Constant": 788970.0,
+                "Damping Constant": 76851.4,
+                "Radius": 0.492,
+                "Width": 0.359,
+                "Section Height": 0.253,
+                "High Slip Crossover Angle": 5.0,
+                "Viscous Friction Coefficient": 0.05
+            }
+        }
+    ],
+    "Mesh": {
+        "File": "vehicles/m915a5/m915a5_chassis.obj",
+        "Rotate Y to Z": false,
+        "Rotate X to Y": false,
+        "Rotate Y to X": false,
+        "Offset": [
+            0.0,
+            0.0,
+            -0.05
+        ],
+        "Scale": [
+            1.0,
+            1.0,
+            1.0
+        ]
+    },
+    "Tire Mesh": {
+        "File": "vehicles/m915a5/m915a5_tire.obj",
+        "Rotate Y to Z": false,
+        "Rotate X to Y": false,
+        "Rotate Y to X": false,
+        "Offset": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "Scale": [
+            1.0,
+            1.0,
+            1.0
+        ]
+    },
+    "Initial Pose": {
+        "Position": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "Orientation": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}

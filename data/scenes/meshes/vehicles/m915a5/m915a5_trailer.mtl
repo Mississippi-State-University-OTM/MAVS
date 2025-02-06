@@ -1,0 +1,45 @@
+#
+# Wavefront material file
+# Converted by Meshlab Group
+#
+
+newmtl material_0
+Ka 0.200000 0.200000 0.200000
+Kd 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Tr 1.000000
+illum 2
+Ns 0.000000
+Ni -1.5
+map_Kd M915A5_C.bmp
+
+newmtl material_1
+Ka 0.200000 0.200000 0.200000
+Kd 0.164706 0.164706 0.164706
+Ks 1.000000 1.000000 1.000000
+Tr 1.000000
+illum 2
+Ns 0.000000
+Ni -1.5
+map_Kd M915A5_C.bmp
+
+newmtl material_2
+Ka 0.200000 0.200000 0.200000
+Kd 0.000000 0.000000 0.000000
+Ks 1.000000 1.000000 1.000000
+Tr 1.000000
+illum 2
+Ns 0.000000
+Ni -1.5
+map_Kd M915A5_C.bmp
+
+newmtl material_3
+Ka 0.200000 0.200000 0.200000
+Kd 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Tr 1.000000
+illum 2
+Ns 0.000000
+Ni -1.5
+map_Kd Payload_C.bmp
+

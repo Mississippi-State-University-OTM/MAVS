@@ -35,17 +35,17 @@ Rp3dVehicle::Rp3dVehicle() {
 	max_dt_ = 1.0f / 1000.0f;
 
 	chassis_drag_coeff_ = 0.3f;
-
+	has_trailer_ = false;
 	auto_commit_animations_ = true;
 	
 	rp3d::PhysicsWorld::WorldSettings settings;
-	settings.defaultVelocitySolverNbIterations = 20;
+	settings.defaultVelocitySolverNbIterations = 30;
 	settings.defaultPositionSolverNbIterations = 15;
 	settings.isSleepingEnabled = false;
 	settings.gravity = rp3d::Vector3(0.0, 0.0, -9.806);
 
 	world_ = physics_common_.createPhysicsWorld(settings);
-	world_->setNbIterationsVelocitySolver(20); //default is 10 
+	world_->setNbIterationsVelocitySolver(30); //default is 10 
 	world_->setNbIterationsPositionSolver(15); //default is 5
 
 	external_force_ = rp3d::Vector3(0.0f, 0.0f, 0.0f);
@@ -66,6 +66,9 @@ Rp3dVehicle::Rp3dVehicle() {
 	animate_tires_ = false;
 	load_visualization_ = true;
 	vehicle_id_num_ = 0;
+	num_tire_slices_ = 3;
+	dtheta_slice_ = 2.5f;
+	hitch_point_ = glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
 Rp3dVehicle::~Rp3dVehicle() {
@@ -86,6 +89,244 @@ float Rp3dVehicle::GetPercentDeflectionOfTire(int i) {
 	}
 	return d;
 }
+
+void Rp3dVehicle::LoadTrailer(const rapidjson::Value& trailer_doc) {
+	has_trailer_ = true;
+	if (trailer_doc.HasMember("Offset")) {
+		if (trailer_doc["Offset"].Capacity() == 3) {
+			trailer_offset_.x = trailer_doc["Offset"][0].GetFloat();
+			trailer_offset_.y = trailer_doc["Offset"][1].GetFloat();
+			trailer_offset_.z = trailer_doc["Offset"][2].GetFloat();
+		}
+	}
+	if (trailer_doc.HasMember("Chassis")) {
+		if (trailer_doc["Chassis"].HasMember("Sprung Mass")) {
+			trailer_sprung_mass_ = trailer_doc["Chassis"]["Sprung Mass"].GetFloat();
+		}
+
+		if (trailer_doc["Chassis"].HasMember("CG Offset")) {
+			trailer_cg_offset_ = trailer_doc["Chassis"]["CG Offset"].GetFloat();
+		}
+
+		if (trailer_doc["Chassis"].HasMember("CG Lateral Offset")) {
+			trailer_cg_lateral_offset_ = trailer_doc["Chassis"]["CG Lateral Offset"].GetFloat();
+		}
+
+		if (trailer_doc["Chassis"].HasMember("CG Longitudinal Offset")) {
+			trailer_cg_long_offset_ = trailer_doc["Chassis"]["CG Longitudinal Offset"].GetFloat();
+		}
+
+		if (trailer_doc["Chassis"].HasMember("Dimensions")) {
+			if (trailer_doc["Chassis"]["Dimensions"].Capacity() == 3) {
+				trailer_chassis_dimensions_.x = trailer_doc["Chassis"]["Dimensions"][0].GetFloat();
+				trailer_chassis_dimensions_.y = trailer_doc["Chassis"]["Dimensions"][1].GetFloat();
+				trailer_chassis_dimensions_.z = trailer_doc["Chassis"]["Dimensions"][2].GetFloat();
+			}
+		}
+		if (trailer_doc["Chassis"].HasMember("Drag Coefficient")) {
+			trailer_chassis_drag_coeff_ = trailer_doc["Chassis"]["Drag Coefficient"].GetFloat();
+		}
+	}
+
+	//load all the axles
+	if (trailer_doc.HasMember("Axles")) {
+		if (trailer_doc["Axles"].Capacity() >= 1) {
+			for (int i = 0; i < (int)trailer_doc["Axles"].Capacity(); i++) {
+				rp3d_axle axle;
+				if (trailer_doc["Axles"][i].HasMember("Tire")) {
+					if (trailer_doc["Axles"][i]["Tire"].HasMember("Spring Constant")) {
+						axle.tire.spring_constant = trailer_doc["Axles"][i]["Tire"]["Spring Constant"].GetFloat();
+					}
+					else {
+						std::cerr << "WARNING: No spring constant given for axle " << i << std::endl;
+						axle.tire.spring_constant = 470000.0f;
+					}
+					if (trailer_doc["Axles"][i]["Tire"].HasMember("Damping Constant")) {
+						axle.tire.damping_constant = trailer_doc["Axles"][i]["Tire"]["Damping Constant"].GetFloat();
+					}
+					else {
+						std::cerr << "WARNING: No damping constant given for axle " << i << std::endl;
+						axle.tire.damping_constant = 300000.0;
+					}
+					if (trailer_doc["Axles"][i]["Tire"].HasMember("Radius")) {
+						axle.tire.radius = trailer_doc["Axles"][i]["Tire"]["Radius"].GetFloat();
+					}
+					else {
+						std::cerr << "WARNING: No radius given for axle " << i << std::endl;
+						axle.tire.radius = 0.5f;
+					}
+					if (trailer_doc["Axles"][i]["Tire"].HasMember("Width")) {
+						axle.tire.width = trailer_doc["Axles"][i]["Tire"]["Width"].GetFloat();
+					}
+					else {
+						std::cerr << "WARNING: No width given for axle " << i << std::endl;
+						axle.tire.width = 0.25f;
+					}
+					if (trailer_doc["Axles"][i]["Tire"].HasMember("Section Height")) {
+						axle.tire.section_height = trailer_doc["Axles"][i]["Tire"]["Section Height"].GetFloat();
+					}
+					if (trailer_doc["Axles"][i]["Tire"].HasMember("Viscous Friction Coefficient")) {
+						axle.tire.viscous_fric = trailer_doc["Axles"][i]["Tire"]["Viscous Friction Coefficient"].GetFloat();
+					}
+					else {
+						std::cerr << "WARNING: No section  height given for axle " << i << std::endl;
+						axle.tire.section_height = 0.25f;
+					}
+					if (trailer_doc["Axles"][i]["Tire"].HasMember("High Slip Crossover Angle")) {
+						axle.tire.slip_crossover_angle = trailer_doc["Axles"][i]["Tire"]["High Slip Crossover Angle"].GetFloat();
+					}
+					else {
+						std::cerr << "WARNING: No slip crossover angle given for tire " << i << std::endl;
+						axle.tire.slip_crossover_angle = 5.0f;
+					}
+				} // tire data
+				//remainder of axle data
+				if (trailer_doc["Axles"][i].HasMember("Longitudinal Offset")) {
+					axle.long_offset = trailer_doc["Axles"][i]["Longitudinal Offset"].GetFloat();
+				}
+				else {
+					if (i == 0) {
+						axle.long_offset = 1.2f;
+					}
+					else if (i == 1) {
+						axle.long_offset = -1.4f;
+					}
+					else {
+						axle.long_offset = -1.4f - 1.0f * (i - 1);
+					}
+				}
+				axle.lat_offset = 0.75f;
+				if (trailer_doc["Axles"][i].HasMember("Track Width")) {
+					axle.lat_offset = 0.5f * trailer_doc["Axles"][i]["Track Width"].GetFloat();
+				}
+				axle.spring_constant = 37044.0f;
+				if (trailer_doc["Axles"][i].HasMember("Spring Constant")) {
+					axle.spring_constant = trailer_doc["Axles"][i]["Spring Constant"].GetFloat();
+				}
+				axle.damping_constant = 1058.4f;
+				if (trailer_doc["Axles"][i].HasMember("Damping Constant")) {
+					axle.damping_constant = trailer_doc["Axles"][i]["Damping Constant"].GetFloat();
+				}
+				axle.spring_length = 0.3f;
+				if (trailer_doc["Axles"][i].HasMember("Spring Length")) {
+					axle.spring_length = trailer_doc["Axles"][i]["Spring Length"].GetFloat();
+				}
+				axle.spring_length += cg_offset_;
+
+				axle.max_steer_angle = 5.0f;
+				if (trailer_doc["Axles"][i].HasMember("Max Steer Angle")) {
+					axle.max_steer_angle = trailer_doc["Axles"][i]["Max Steer Angle"].GetFloat();
+				}
+				axle.unsprung_mass = 60.0f;
+				if (trailer_doc["Axles"][i].HasMember("Unsprung Mass")) {
+					axle.unsprung_mass = trailer_doc["Axles"][i]["Unsprung Mass"].GetFloat();
+				}
+				axle.steered = true;
+				if (trailer_doc["Axles"][i].HasMember("Steered")) {
+					axle.steered = trailer_doc["Axles"][i]["Steered"].GetBool();
+				}
+				axle.powered = true;
+				if (trailer_doc["Axles"][i].HasMember("Powered")) {
+					axle.powered = trailer_doc["Axles"][i]["Powered"].GetBool();
+				}
+				trailer_axles_.push_back(axle);
+			} // loop over axles
+		}
+		
+	}
+
+	//load the associated animation
+	if (trailer_doc.HasMember("Mesh")) {
+		trailer_anim_.file = "misc/cube.obj";
+		if (trailer_doc["Mesh"].HasMember("File")) {
+			trailer_anim_.file = trailer_doc["Mesh"]["File"].GetString();
+		}
+		trailer_anim_.x_to_y = false;
+		if (trailer_doc["Mesh"].HasMember("Rotate X to Y")) {
+			trailer_anim_.x_to_y = trailer_doc["Mesh"]["Rotate X to Y"].GetBool();
+		}
+		trailer_anim_.y_to_x = false;
+		if (trailer_doc["Mesh"].HasMember("Rotate Y to X")) {
+			trailer_anim_.y_to_x = trailer_doc["Mesh"]["Rotate Y to X"].GetBool();
+		}
+		trailer_anim_.y_to_z = false;
+		if (trailer_doc["Mesh"].HasMember("Rotate Y to Z")) {
+			trailer_anim_.y_to_z = trailer_doc["Mesh"]["Rotate Y to Z"].GetBool();
+		}
+		trailer_anim_.offset = rp3d::Vector3(0.0f, 0.0f, 0.0f);
+		if (trailer_doc["Mesh"].HasMember("Offset")) {
+			if (trailer_doc["Mesh"]["Offset"].Capacity() == 3) {
+				trailer_anim_.offset.x = trailer_doc["Mesh"]["Offset"][0].GetFloat();
+				trailer_anim_.offset.y = trailer_doc["Mesh"]["Offset"][1].GetFloat();
+				trailer_anim_.offset.z = trailer_doc["Mesh"]["Offset"][2].GetFloat();
+			}
+		}
+		trailer_anim_.scale = rp3d::Vector3(1.0f, 1.0f, 1.0f);
+		if (trailer_doc["Mesh"].HasMember("Scale")) {
+			if (trailer_doc["Mesh"]["Scale"].Capacity() == 3) {
+				trailer_anim_.scale.x = trailer_doc["Mesh"]["Scale"][0].GetFloat();
+				trailer_anim_.scale.y = trailer_doc["Mesh"]["Scale"][1].GetFloat();
+				trailer_anim_.scale.z = trailer_doc["Mesh"]["Scale"][2].GetFloat();
+			}
+		}
+	}
+	else {
+		//std::cerr << "WARNING: NO ANIMATION INFO WAS LISTED, USING DEFAULT" << std::endl;
+		trailer_anim_.file = "misc/cube.obj";
+		trailer_anim_.x_to_y = false;
+		trailer_anim_.y_to_x = false;
+		trailer_anim_.y_to_z = false;
+		trailer_anim_.offset = rp3d::Vector3(0.0f, 0.0f, 0.0f);
+		trailer_anim_.scale = rp3d::Vector3(1.0f, 1.0f, 1.0f);
+	}
+
+	//load the associated tires animation
+	if (trailer_doc.HasMember("Tire Mesh")) {
+		//animate_tires_ = true;
+		trailer_tire_anim_.file = "misc/cube.obj";
+		if (trailer_doc["Tire Mesh"].HasMember("File")) {
+			trailer_tire_anim_.file = trailer_doc["Tire Mesh"]["File"].GetString();
+		}
+		trailer_tire_anim_.x_to_y = false;
+		if (trailer_doc["Tire Mesh"].HasMember("Rotate X to Y")) {
+			trailer_tire_anim_.x_to_y = trailer_doc["Tire Mesh"]["Rotate X to Y"].GetBool();
+		}
+		trailer_tire_anim_.y_to_x = false;
+		if (trailer_doc["Tire Mesh"].HasMember("Rotate Y to X")) {
+			trailer_tire_anim_.y_to_x = trailer_doc["Tire Mesh"]["Rotate Y to X"].GetBool();
+		}
+		trailer_tire_anim_.y_to_z = false;
+		if (trailer_doc["Tire Mesh"].HasMember("Rotate Y to Z")) {
+			trailer_tire_anim_.y_to_z = trailer_doc["Tire Mesh"]["Rotate Y to Z"].GetBool();
+		}
+		trailer_tire_anim_.offset = rp3d::Vector3(0.0f, 0.0f, 0.0f);
+		if (trailer_doc["Tire Mesh"].HasMember("Offset")) {
+			if (trailer_doc["Tire Mesh"]["Offset"].Capacity() == 3) {
+				trailer_tire_anim_.offset.x = trailer_doc["Tire Mesh"]["Offset"][0].GetFloat();
+				trailer_tire_anim_.offset.y = trailer_doc["Tire Mesh"]["Offset"][1].GetFloat();
+				trailer_tire_anim_.offset.z = trailer_doc["Tire Mesh"]["Offset"][2].GetFloat();
+			}
+		}
+		trailer_tire_anim_.offset.y = tire_anim_.offset.y + cg_lateral_offset_;
+		trailer_tire_anim_.scale = rp3d::Vector3(1.0f, 1.0f, 1.0f);
+		if (trailer_doc["Tire Mesh"].HasMember("Scale")) {
+			if (trailer_doc["Tire Mesh"]["Scale"].Capacity() == 3) {
+				trailer_tire_anim_.scale.x = trailer_doc["Tire Mesh"]["Scale"][0].GetFloat();
+				trailer_tire_anim_.scale.y = trailer_doc["Tire Mesh"]["Scale"][1].GetFloat();
+				trailer_tire_anim_.scale.z = trailer_doc["Tire Mesh"]["Scale"][2].GetFloat();
+			}
+		}
+	}
+	else {
+		//std::cerr << "WARNING: NO ANIMATION INFO WAS LISTED, USING DEFAULT" << std::endl;
+		trailer_tire_anim_.file = "misc/cube.obj";
+		trailer_tire_anim_.x_to_y = false;
+		trailer_tire_anim_.y_to_x = false;
+		trailer_tire_anim_.y_to_z = false;
+		trailer_tire_anim_.offset = rp3d::Vector3(0.0f, 0.0f, 0.0f);
+		trailer_tire_anim_.scale = rp3d::Vector3(0.00001f, 0.00001f, 0.00001f);
+	}
+} // LoadTrailer
 
 void Rp3dVehicle::Load(std::string input_file) {
 
@@ -121,6 +362,10 @@ void Rp3dVehicle::Load(std::string input_file) {
 				current_state_.pose.quaternion.z = d["Initial Pose"]["Orientation"][3].GetFloat();
 			}
 		}
+	}
+
+	if (d.HasMember("Trailer")) {
+		LoadTrailer(d["Trailer"]);
 	}
 
 	if (d.HasMember("Chassis")) {
@@ -404,6 +649,112 @@ void Rp3dVehicle::Load(std::string input_file) {
 
 }
 
+void Rp3dVehicle::InitTrailer(environment::Environment* env) {
+
+	float tire_radius = trailer_axles_[0].tire.radius;
+	float spring_length = trailer_axles_[0].spring_length;
+	// Set the vehicle on the ground
+	rp3d::Vector3 position(current_state_.pose.position.x + trailer_offset_.x,current_state_.pose.position.y+trailer_offset_.y, current_state_.pose.position.z + trailer_offset_.z); 
+
+	float h = env->GetGroundHeight((float)position.x, (float)position.y);
+	//float z = h + spring_length + cg_offset_ + 2.0f*tire_radius;
+	float z = h + spring_length + trailer_cg_offset_ + tire_radius + 0.75f;
+	rp3d::Vector3 pos((float)position.x + trailer_cg_long_offset_, (float)position.y, z);
+
+	// find the current ground normal and vehicle yaw
+	glm::vec4 h_and_n = env->GetGroundHeightAndNormal((float)position.x, (float)position.y);
+	glm::vec3 ground_normal(h_and_n.x, h_and_n.y, h_and_n.z);
+	ground_normal = glm::normalize(ground_normal);
+
+	// adjust the pitch of the vehicle to align with the ground
+	glm::mat3 R = mavs::math::GetRotationMatrixFromVectors(GetLookUp(), ground_normal);
+	glm::quat new_ori(R * glm::mat3(GetOrientation()));
+
+	current_state_.pose.quaternion = new_ori;
+	glm::vec3 new_look_up = GetLookUp();
+
+	rp3d::Quaternion quat(new_ori.x, new_ori.y, new_ori.z, new_ori.w);
+	quat.normalize();
+
+	rp3d::Transform init_trans(pos, quat);
+
+	trailer_.Init(&physics_common_, world_, init_trans, trailer_cg_offset_, trailer_chassis_dimensions_.x, trailer_chassis_dimensions_.y, trailer_chassis_dimensions_.z, trailer_sprung_mass_);
+
+	for (int i = 0; i < trailer_axles_.size(); i++) {
+		AddAxleToTrailer(trailer_axles_[i]);
+	}
+
+	current_trailer_tire_forces_.resize(trailer_running_gear_.size());
+
+	//int current_num_objs = env->GetNumberObjects()-2; // the -2 accounts for the surface object
+	if (load_visualization_) {
+		std::vector<int> actor_num = env->AddActor(trailer_anim_.file, trailer_anim_.y_to_z, trailer_anim_.x_to_y, trailer_anim_.y_to_x, glm::vec3(trailer_anim_.offset.x, trailer_anim_.offset.y, trailer_anim_.offset.z), glm::vec3(trailer_anim_.scale.x, trailer_anim_.scale.y, trailer_anim_.scale.z));
+		trailer_id_num_ = env->GetNumberOfActors() - 1;// actor_num.back(); // -current_num_objs;
+	}
+	else {
+		if (animate_tires_) {
+			trailer_id_num_ = env->GetNumberOfActors() - 5;
+		}
+		else {
+			trailer_id_num_ = env->GetNumberOfActors() - 1;
+		}
+	}
+	int current_tire_id = trailer_id_num_ + 1;
+	if (animate_tires_) {
+		for (int i = 0; i < 2 * trailer_axles_.size(); i++) {
+			if (load_visualization_) {
+				std::vector<int> tire_num = env->AddActor(trailer_tire_anim_.file, trailer_tire_anim_.y_to_z, trailer_tire_anim_.x_to_y, trailer_tire_anim_.y_to_x, glm::vec3(trailer_tire_anim_.offset.x, trailer_tire_anim_.offset.y, trailer_tire_anim_.offset.z), glm::vec3(trailer_tire_anim_.scale.x, trailer_tire_anim_.scale.y, trailer_tire_anim_.scale.z));
+				trailer_tire_id_nums_.push_back(env->GetNumberOfActors() - 1);
+			}
+			else {
+				//tire_id_nums_.push_back(tire_num.back()-current_num_objs);
+				trailer_tire_id_nums_.push_back(current_tire_id);
+				current_tire_id++;
+			}
+		}
+	}
+	//rp3d::BallAndSocketJoint* trailer_hitch = new rp3d::BallAndSocketJoint;
+	glm::vec3 hp = GetHitchPointInWorldCoordinates();
+	const rp3d::Vector3 anchorPoint(hp.x, hp.y, hp.z);
+	const rp3d::Vector3 axis(0.0, 0.0, 1.0);
+	// Create the joint info object
+	//rp3d::HingeJointInfo jointInfo(chassis_.GetBody(), trailer_.GetBody(), anchorPoint, axis);
+	rp3d::FixedJointInfo jointInfo(chassis_.GetBody(), trailer_.GetBody(), anchorPoint);
+	//jointInfo.isLimitEnabled = true;
+	//jointInfo.minAngleLimit = -mavs::kPi / 4.0;
+	//jointInfo.maxAngleLimit = mavs::kPi / 4.0;
+	jointInfo.isCollisionEnabled = false;
+	//trailer_hitch_joint_ = dynamic_cast<rp3d::HingeJoint*>(world_->createJoint(jointInfo));
+	trailer_hitch_joint_ = dynamic_cast<rp3d::FixedJoint*>(world_->createJoint(jointInfo));
+}
+
+void Rp3dVehicle::AddAxleToTrailer(rp3d_axle axle) {
+	mavs_rp3d::MavsTire tire(axle.unsprung_mass, axle.tire.radius, axle.tire.width, axle.tire.section_height, axle.tire.spring_constant);
+	tire.SetViscousFrictionCoeff(axle.tire.viscous_fric);
+	tire.SetLateralCrossoverAngle(axle.tire.slip_crossover_angle);
+
+	tire.SetNumSlices(num_tire_slices_);
+	tire.SetDthetaSlice(dtheta_slice_);
+
+	trailer_running_gear_.push_back(mavs_rp3d::Suspension(&trailer_, &physics_common_, world_, tire, axle.long_offset,
+		(axle.lat_offset - trailer_cg_lateral_offset_), axle.spring_length, axle.spring_constant, axle.damping_constant, axle.max_steer_angle));
+	int n = (int)trailer_running_gear_.size() - 1;
+	running_gear_[n].GetTire()->SetId(n);
+	trailer_running_gear_[n].SetSteered(axle.steered);
+	trailer_running_gear_[n].SetPowered(axle.powered);
+	//running_gear_[n].GetTire()->SetLeft(true);
+	trailer_running_gear_[n].GetTire()->SetLeft(false);
+	//running_gear_.push_back(mavs_rp3d::Suspension(&chassis_, &physics_common_, world_, tire, axle.long_offset, -axle.lat_offset, axle.spring_length, axle.spring_constant, axle.damping_constant, axle.max_steer_angle));
+	trailer_running_gear_.push_back(mavs_rp3d::Suspension(&trailer_, &physics_common_, world_, tire, axle.long_offset,
+		(-axle.lat_offset - trailer_cg_lateral_offset_), axle.spring_length, axle.spring_constant, axle.damping_constant, axle.max_steer_angle));
+	n = (int)trailer_running_gear_.size() - 1;
+	trailer_running_gear_[n].SetSteered(axle.steered);
+	trailer_running_gear_[n].SetPowered(axle.powered);
+	//running_gear_[n].GetTire()->SetLeft(false);
+	trailer_running_gear_[n].GetTire()->SetLeft(true);
+	trailer_running_gear_[n].GetTire()->SetId(n);
+}
+
 void Rp3dVehicle::AddAxle(rp3d_axle axle) {
 	
 	mavs_rp3d::MavsTire tire(axle.unsprung_mass, axle.tire.radius, axle.tire.width, axle.tire.section_height, axle.tire.spring_constant);
@@ -496,7 +847,7 @@ void Rp3dVehicle::Init(environment::Environment *env) {
 		}
 	}
 	
-}
+} // init
 
 void Rp3dVehicle::CalculateWheelTorques(float current_velocity, float throttle, float brake, float steering) {
 	for (int i = 0; i < running_gear_.size(); i++) {
@@ -516,6 +867,15 @@ void Rp3dVehicle::CalculateWheelTorques(float current_velocity, float throttle, 
 			torque = powertrain_.CalculateWheelTorque(current_velocity, throt_steer, brake, running_gear_[i].GetTire()->GetRadius(), running_gear_[i].IsPowered());
 		}
 		running_gear_[i].SetCurrentAppliedTorque(torque);
+	}
+
+	// trailer
+	if (has_trailer_) {
+		for (int i = 0; i < trailer_running_gear_.size(); i++) {
+			float torque = 0.0f;
+			torque = powertrain_.CalculateWheelTorque(current_velocity, 0.0f, 0.0f, trailer_running_gear_[i].GetTire()->GetRadius(), trailer_running_gear_[i].IsPowered());
+			trailer_running_gear_[i].SetCurrentAppliedTorque(torque);
+		}
 	}
 }
 
@@ -574,10 +934,19 @@ void Rp3dVehicle::SetState(VehicleState veh_state) {
 	chassis_.SetLinearAngularVelocity(current_state_.twist.linear.x, current_state_.twist.linear.y, current_state_.twist.linear.z, current_state_.twist.angular.x, current_state_.twist.angular.y, current_state_.twist.angular.z);
 }
 
+glm::vec3 Rp3dVehicle::GetHitchPointInWorldCoordinates() {
+	glm::vec3 pos(chassis_.GetPosition().x, chassis_.GetPosition().y, chassis_.GetPosition().z);
+	glm::quat ori(chassis_.GetOrientation().w, chassis_.GetOrientation().x, chassis_.GetOrientation().y, chassis_.GetOrientation().z);
+	glm::mat3 R(ori);
+	glm::vec3 hp = pos + (R * hitch_point_);
+	return hp;
+}
+
 void Rp3dVehicle::Update(environment::Environment *env, float throttle, float steer, float brake, float dt) {
 	//Initialize the vehicle on the first time step
 	if (local_sim_time_ <= 0.0) {
 		Init(env);
+		if (has_trailer_) InitTrailer(env);
 	}
 
 	int nsteps = 1;
@@ -585,9 +954,10 @@ void Rp3dVehicle::Update(environment::Environment *env, float throttle, float st
 		nsteps = (int)roundf(dt / max_dt_);
 		dt = max_dt_;
 	}
-
 	for (int i = 0; i < nsteps; i++) {
+
 		world_->update(dt);
+		// update chassis
 		float longitudinal_velocity = chassis_.GetBody()->getLinearVelocity().dot(chassis_.GetLookTo());
 		if (longitudinal_velocity > max_governed_speed_)throttle = 0.0; // set the speed governor
 		CalculateWheelTorques(longitudinal_velocity, throttle, brake, steer);
@@ -601,7 +971,6 @@ void Rp3dVehicle::Update(environment::Environment *env, float throttle, float st
 
 	float delta_t = dt * nsteps;
 
-
 	long_vel_trace_.push_back(glm::dot((glm::vec3)current_state_.twist.linear, GetLookTo()));
 	if (long_vel_trace_.size() > 50)long_vel_trace_.erase(long_vel_trace_.begin());
 	time_trace_.push_back(local_sim_time_);
@@ -614,7 +983,6 @@ void Rp3dVehicle::Update(environment::Environment *env, float throttle, float st
 	current_state_.accel.angular.y = (chassis_.GetBody()->getAngularVelocity().y - current_state_.twist.angular.y) / delta_t;
 	current_state_.accel.angular.z = (chassis_.GetBody()->getAngularVelocity().z - current_state_.twist.angular.z) / delta_t;
 	
-
 	current_state_.pose.position.x = chassis_.GetPosition().x;
 	current_state_.pose.position.y = chassis_.GetPosition().y;
 	current_state_.pose.position.z = chassis_.GetPosition().z;
@@ -629,16 +997,26 @@ void Rp3dVehicle::Update(environment::Environment *env, float throttle, float st
 	current_state_.twist.angular.y = chassis_.GetBody()->getAngularVelocity().y;
 	current_state_.twist.angular.z = chassis_.GetBody()->getAngularVelocity().z;
 
-
-
-
 	// update the actor position in the environment
 	env->SetActorPosition(vehicle_id_num_, current_state_.pose.position, current_state_.pose.quaternion, auto_commit_animations_);
 	env->SetActorVelocity(vehicle_id_num_, current_state_.twist.linear);
+
 	if (animate_tires_) {
 		for (int tn = 0; tn < (int)tire_id_nums_.size(); tn++) {
 			env->SetActorPosition(tire_id_nums_[tn], GetTirePosition(tn), GetTireOrientation(tn), auto_commit_animations_);
 			env->SetActorVelocity(tire_id_nums_[tn], current_state_.twist.linear);
+		}
+	}
+
+	// update the trailer position
+	if (has_trailer_) {
+		env->SetActorPosition(trailer_id_num_, glm::vec3(trailer_.GetPosition().x, trailer_.GetPosition().y, trailer_.GetPosition().z), current_state_.pose.quaternion, auto_commit_animations_);
+		env->SetActorVelocity(trailer_id_num_, current_state_.twist.linear);
+		if (animate_tires_) {
+			for (int tn = 0; tn < (int)trailer_tire_id_nums_.size(); tn++) {
+				env->SetActorPosition(trailer_tire_id_nums_[tn], GetTrailerTirePosition(tn), GetTrailerTireOrientation(tn), auto_commit_animations_);
+				//env->SetActorVelocity(trailer_tire_id_nums_[tn], current_state_.twist.linear);
+			}
 		}
 	}
 	
@@ -664,20 +1042,41 @@ void Rp3dVehicle::ApplySuspensionForces() {
 	rp3d::Vector3 look_up = rot_mat.getColumn(2);
 	look_up.normalize();
 	for (int i = 0; i < running_gear_.size(); i++) {
+		if ((i == 2 || i == 3)) continue;
 		rp3d::Vector3 t_vel = running_gear_[i].GetBody()->getLinearVelocity();
 		rp3d::Vector3 rel_vel = t_vel - chass_vel;
 		rp3d::Vector3 t_pos = running_gear_[i].GetPosition();
 		float v = -rel_vel.dot(look_up);
 		float x = -running_gear_[i].GetTranslation();
-		float f = -running_gear_[i].GetSpringConstant()*x - running_gear_[i].GetDampingConstant()*v;
-		rp3d::Vector3 force = rp3d::decimal(f)*look_up;
+		float f = -running_gear_[i].GetSpringConstant() * x - running_gear_[i].GetDampingConstant() * v;
+		rp3d::Vector3 force = rp3d::decimal(f) * look_up;
 		chassis_.GetBody()->applyForceAtWorldPosition(force, t_pos);
 		running_gear_[i].GetBody()->applyForceToCenterOfMass(-force);
+	}
+
+	if (has_trailer_) {
+		rp3d::Vector3 trailer_vel = trailer_.GetBody()->getLinearVelocity();
+		rp3d::Vector3 trailer_pos = trailer_.GetPosition();
+		rp3d::Matrix3x3 trailer_rot_mat = trailer_.GetOrientation().getMatrix();
+		rp3d::Vector3 trailer_look_up = trailer_rot_mat.getColumn(2);
+		trailer_look_up.normalize();
+		for (int i = 0; i < trailer_running_gear_.size(); i++) {
+			rp3d::Vector3 t_vel = trailer_running_gear_[i].GetBody()->getLinearVelocity();
+			rp3d::Vector3 rel_vel = t_vel - trailer_vel;
+			rp3d::Vector3 t_pos = trailer_running_gear_[i].GetPosition();
+			float v = -rel_vel.dot(look_up);
+			float x = -trailer_running_gear_[i].GetTranslation();
+			float f = -trailer_running_gear_[i].GetSpringConstant() * x - trailer_running_gear_[i].GetDampingConstant() * v;
+			rp3d::Vector3 force = rp3d::decimal(f) * look_up;
+			trailer_.GetBody()->applyForceAtWorldPosition(force, t_pos);
+			trailer_running_gear_[i].GetBody()->applyForceToCenterOfMass(-force);
+		}
 	}
 }
 
 void Rp3dVehicle::ApplyGroundForces(environment::Environment *env, float dt, float throttle, float brake, float steering) {
 	for (int i = 0; i < running_gear_.size(); i++) {
+		if (i == 2 || i == 3) continue;
 		rp3d::Vector3 force = running_gear_[i].GetTire()->Update(env, dt, running_gear_[i].GetBody()->getTransform(), running_gear_[i].GetBody()->getLinearVelocity(), running_gear_[i].GetCurrentWheelTorque(), running_gear_[i].GetCurrentSteeringAngle());
 		running_gear_[i].GetBody()->applyForceToCenterOfMass(force);
 		if (skid_steered_) {
@@ -695,6 +1094,16 @@ void Rp3dVehicle::ApplyGroundForces(environment::Environment *env, float dt, flo
 			chassis_.GetBody()->applyTorque(torque);
 		}
 		current_tire_forces_[i] = glm::vec3(force.x, force.y, force.z);
+	}
+
+	// do the trailer
+	for (int i = 0; i < trailer_running_gear_.size(); i++) {
+		rp3d::Vector3 force = trailer_running_gear_[i].GetTire()->Update(env, dt, trailer_running_gear_[i].GetBody()->getTransform(), trailer_running_gear_[i].GetBody()->getLinearVelocity(), 0.0f, 0.0f);
+		trailer_running_gear_[i].GetBody()->applyForceToCenterOfMass(force);
+		rp3d::Vector3 r = trailer_running_gear_[i].GetBody()->getTransform().getPosition() - trailer_.GetBody()->getTransform().getPosition();
+		rp3d::Vector3 torque = torque_mass_scale_factor_*r.cross(force);
+		trailer_.GetBody()->applyTorque(torque);
+		current_trailer_tire_forces_[i] = glm::vec3(force.x, force.y, force.z);
 	}
 }
 

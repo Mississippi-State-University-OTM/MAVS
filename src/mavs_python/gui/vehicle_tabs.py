@@ -197,9 +197,9 @@ class TireTab():
         tt.Tooltip(self.hsca_entry,text=('Slip angle (degree) at which the traction "crosses-over" to constant.'))
     
         self.vf_label = ttk.Label(self.tab, text='Viscous Friction Coefficient')
-        self.vf_label.grid(column=0, row=5, sticky='w')
+        self.vf_label.grid(column=0, row=6, sticky='w')
         self.vf_entry = tk.Entry(self.tab)
-        self.vf_entry.grid(column=1, row=5,sticky='w')
+        self.vf_entry.grid(column=1, row=6,sticky='w')
         self.vf_entry.insert(0,"0.4")
         tt.Tooltip(self.vf_label,text=('Friction coefficient for how the "free-spinning" tire loses angular momentum.'))
         tt.Tooltip(self.vf_entry,text=('Friction coefficient for how the "free-spinning" tire loses angular momentum.'))

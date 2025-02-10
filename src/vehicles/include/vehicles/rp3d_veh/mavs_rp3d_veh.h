@@ -1,18 +1,25 @@
 /*
-Non-Commercial License - Mississippi State University Autonomous Vehicle Software (MAVS)
+MIT License
 
-ACKNOWLEDGEMENT:
-Mississippi State University, Center for Advanced Vehicular Systems (CAVS)
+Copyright (c) 2024 Mississippi State University
 
-*NOTICE*
-Thank you for your interest in MAVS, we hope it serves you well!  We have a few small requests to ask of you that will help us continue to create innovative platforms:
--To share MAVS with a friend, please ask them to visit https://gitlab.com/cgoodin/msu-autonomous-vehicle-simulator to register and download MAVS for free.
--Feel free to create derivative works for non-commercial purposes, i.e. academics, U.S. government, and industry research.  If commercial uses are intended, please contact us for a commercial license at otm@msstate.edu or jonathan.rudd@msstate.edu.
--Finally, please use the ACKNOWLEDGEMENT above in your derivative works.  This helps us both!
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-Please visit https://gitlab.com/cgoodin/msu-autonomous-vehicle-simulator to view the full license, or email us if you have any questions.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-Copyright 2018 (C) Mississippi State University
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 */
 /**
 * \class Rp3dVehicle
@@ -41,6 +48,7 @@ Copyright 2018 (C) Mississippi State University
 #include <vehicles/rp3d_veh/mavs_powertrain.h>
 #include <reactphysics3d/reactphysics3d.h>
 #include <vehicles/vehicle.h>
+#include <rapidjson/document.h>
 
 namespace mavs {
 namespace vehicle {
@@ -113,6 +121,12 @@ public:
 		cg_long_offset_ = veh.cg_long_offset_;
 		chassis_dimensions_ = veh.chassis_dimensions_;
 		auto_commit_animations_ = veh.auto_commit_animations_;
+		animate_tires_ = veh.animate_tires_;
+		dtheta_slice_ = veh.dtheta_slice_;
+		load_visualization_ = veh.load_visualization_;
+		num_tire_slices_ = veh.num_tire_slices_;
+		torque_mass_scale_factor_ = veh.torque_mass_scale_factor_;
+		vehicle_id_num_ = veh.vehicle_id_num_;
 	}
 
 	/**
@@ -234,10 +248,30 @@ public:
 		}
 	}
 
+	glm::vec3 GetTrailerTirePosition(int i) {
+		if (i >= 0 && i < trailer_running_gear_.size() && trailer_running_gear_.size()>0) {
+			return glm::vec3(trailer_running_gear_[i].GetPosition().x, trailer_running_gear_[i].GetPosition().y, trailer_running_gear_[i].GetPosition().z);
+		}
+		else {
+			return glm::vec3(0.0f, 0.0f, 0.0f);
+		}
+	}
+
 	/// Get orientation of the ith tire
 	glm::quat GetTireOrientation(int i) {
 		if (i >= 0 && i < running_gear_.size() && running_gear_.size()>0) {
 			rp3d::Quaternion tq = running_gear_[i].GetTire()->GetCurrentOrientation();
+			glm::quat q(tq.w, tq.x, tq.y, tq.z);
+			return q;
+		}
+		else {
+			return glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+		}
+	}
+
+	glm::quat GetTrailerTireOrientation(int i) {
+		if (i >= 0 && i < trailer_running_gear_.size() && trailer_running_gear_.size()>0) {
+			rp3d::Quaternion tq = trailer_running_gear_[i].GetTire()->GetCurrentOrientation();
 			glm::quat q(tq.w, tq.x, tq.y, tq.z);
 			return q;
 		}
@@ -346,12 +380,18 @@ public:
 
 	int GetVehicleIdNum() { return vehicle_id_num_; }
 
+	void SetHitchPoint(float x, float y, float z) { hitch_point_ = glm::vec3(x, y, z); }
+
+	glm::vec3 GetHitchPointInWorldCoordinates();
+
 private:
 	bool auto_commit_animations_;
 
 	//Initialization Functions
 	void Init(environment::Environment *env);
+	void InitTrailer(environment::Environment* env);
 	void AddAxle(rp3d_axle axle);
+	void AddAxleToTrailer(rp3d_axle axle);
 
 	float max_dt_;
 	bool calculate_drag_forces_;
@@ -365,6 +405,28 @@ private:
 	rp3d::PhysicsWorld* world_;
 	rp3d::PhysicsCommon physics_common_;
 	mavs_rp3d::MavsPowertrain powertrain_;
+
+	// trailer data members ----------------------------------------------------//
+	bool has_trailer_;
+	mavs_rp3d::Chassis trailer_;
+	glm::vec3 hitch_point_;
+	void LoadTrailer(const rapidjson::Value& trailer_object);
+	float trailer_sprung_mass_;
+	float trailer_cg_offset_, trailer_cg_lateral_offset_, trailer_cg_long_offset_;
+	float trailer_chassis_drag_coeff_;
+	rp3d::Vector3 trailer_chassis_dimensions_;
+	std::vector<rp3d_axle> trailer_axles_;
+	rp3d_anim trailer_anim_;
+	rp3d_anim trailer_tire_anim_;
+	std::vector<mavs_rp3d::Suspension> trailer_running_gear_;
+	int trailer_id_num_;
+	std::vector<glm::vec3> current_trailer_tire_forces_;
+	glm::vec3 trailer_offset_;
+	std::vector<int> trailer_tire_id_nums_;
+	//rp3d::HingeJoint* trailer_hitch_joint_;
+	rp3d::FixedJoint* trailer_hitch_joint_;
+	//----------------------------------------------------------------------------//
+	
 
 	// Update functions
 	void CalculateWheelTorques(float current_velocity, float throttle, float brake, float steering);

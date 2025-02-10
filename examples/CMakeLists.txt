@@ -39,6 +39,7 @@ if(MAVS_USE_EMBREE)
 		oakd_camera_example
         lidar_roughness_analyzer
         rp3d_driving_example
+        rp3d_trailer_example
         uav_example
 		helicopter_example
 		chamfer_distance_example

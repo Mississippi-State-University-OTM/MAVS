@@ -315,6 +315,8 @@ mavs_lib.SetMavsCameraShadows.restype = ctypes.c_void_p
 mavs_lib.SetMavsCameraShadows.argtypes = [ctypes.c_void_p,ctypes.c_bool]
 mavs_lib.SetMavsCameraBlur.restype = ctypes.c_void_p
 mavs_lib.SetMavsCameraBlur.argtypes = [ctypes.c_void_p,ctypes.c_bool]
+mavs_lib.SetMavsCameraTargetBrightness.restype = ctypes.c_void_p
+mavs_lib.SetMavsCameraTargetBrightness.argtypes = [ctypes.c_void_p,ctypes.c_float]
 mavs_lib.SetMavsCameraAntiAliasingFactor.restype = ctypes.c_void_p
 mavs_lib.SetMavsCameraAntiAliasingFactor.argtypes = [ctypes.c_void_p,ctypes.c_int]
 mavs_lib.SetMavsCameraEnvironmentProperties.restype = ctypes.c_void_p
@@ -1834,6 +1836,8 @@ class MavsCamera(MavsSensor):
         """
         self.use_blur = blur
         mavs_lib.SetMavsCameraBlur(self.sensor,ctypes.c_bool(blur))
+    def SetTargetBrightness(self, target_brightness):
+        mavs_lib.SetMavsCameraTargetBrightness(self.sensor, ctypes.c_float(target_brightness))
     def SetAntiAliasingFactor(self,numsamples):
         """Set the camera anti-aliasing factor.
         

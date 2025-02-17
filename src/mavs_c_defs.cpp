@@ -1384,6 +1384,12 @@ EXPORT_CMD void SetMavsCameraBlur(mavs::sensor::Sensor* sens, bool blur) {
 	sens = camera;
 }
 
+EXPORT_CMD void SetMavsCameraTargetBrightness(mavs::sensor::Sensor* sens, float target_brightness) {
+	mavs::sensor::camera::Camera* camera = static_cast<mavs::sensor::camera::Camera*>(sens);
+	camera->SetTargetBrightness(target_brightness);
+	sens = camera;
+}
+
 EXPORT_CMD void SetMavsCameraLensDrops(mavs::sensor::Sensor* sens, bool onlens) {
 	mavs::sensor::camera::Camera* camera = static_cast<mavs::sensor::camera::Camera *>(sens);
 	camera->SetRaindropsOnLens(onlens);

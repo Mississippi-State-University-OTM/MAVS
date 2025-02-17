@@ -374,6 +374,9 @@ public:
 
 	/// Save the normals to a space delimited text file, "normals.txt"
 	void SaveNormalsToText();
+	
+	/// Set the desired value for target_brightness, should be 0-255
+	void SetTargetBrightness(float target_brightness) { target_brightness_ = target_brightness; }
 
 	/**
 	* Get the color of pixel (i,j)
@@ -475,6 +478,7 @@ protected:
 	float gamma_;
 	float gain_;
 	float exposure_time_;
+	float target_brightness_;
 
 	std::string anti_aliasing_type_;
 	int pixel_sample_factor_;

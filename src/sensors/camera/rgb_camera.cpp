@@ -59,6 +59,7 @@ RgbCamera::RgbCamera() {
 	do_fast_lights_ = true;
 	frame_count_ = 0;
 	blur_on_ = false;
+	target_brightness_ = 150.0f;
 }
 
 RgbCamera::~RgbCamera() {
@@ -335,7 +336,7 @@ void RgbCamera::ApplyElectronics(double dt) {
 		avg = 100.0f;
 	}
 
-	float mfac = 150.0f / avg;
+	float mfac = target_brightness_ / avg;
 
 	image_ = mfac * image_;
 

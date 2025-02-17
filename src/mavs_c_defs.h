@@ -367,6 +367,8 @@ EXPORT_CMD void SetMavsCameraShadows(mavs::sensor::Sensor* sens, bool shadows);
 
 EXPORT_CMD void SetMavsCameraBlur(mavs::sensor::Sensor* sens, bool blur);
 
+EXPORT_CMD void SetMavsCameraTargetBrightness(mavs::sensor::Sensor* sens, float target_brightness);
+
 EXPORT_CMD void SetMavsCameraAntiAliasingFactor(mavs::sensor::Sensor* sens, int fac);
 
 EXPORT_CMD void SetMavsCameraElectronics(mavs::sensor::Sensor* sens, float gamma, float gain);

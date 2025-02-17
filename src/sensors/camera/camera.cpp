@@ -85,7 +85,7 @@ Camera::Camera() {
 	key_rot_rate_ = 0.05f;
 	key_commands_.resize(4, false);
 	frame_grabbed_ = false;
-
+	target_brightness_ = 150.0f;
 	snow_noise_.SetFrequency(50.0f);
 }
 

@@ -1,0 +1,192 @@
+{
+  "Object Labels": "labels.json",
+
+  "Layered Surface": {
+    "Mesh": "surfaces/surface.obj",
+    "Trail": {
+      "Trail Width": 0.0,
+      "Track Width": 0.0,
+      "Wheelbase": 0.0,
+      "Path": [
+        "waypoints/x_axis_points.vprp"
+      ]
+    },
+    "Layers": "surface_textures/meadow_surfaces.json"
+  },
+
+  "Surface Mesh": [
+    {
+      "Mesh": "surfaces/surface.obj",
+      "Rotate Y to Z": false,
+      "YawPitchRoll": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  ],
+
+  "Objects": [
+    {
+      "Mesh": "vegetation/oat_grass/oat_grass_single.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 12500,
+        "Polygon": [
+          [ 0, -2.5 ],
+          [ 0, 2.5 ],
+          [ 25, 2.5 ],
+          [ 25, -2.5 ]
+        ],
+        "Scale": [ 0.5, 2.0 ]
+      }
+    },
+    {
+      "Mesh": "vegetation/oat_grass/oat_grass_single.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 25000,
+        "Polygon": [
+          [ 25, -2.5 ],
+          [ 25, 2.5 ],
+          [ 50, 2.5 ],
+          [ 50, -2.5 ]
+        ],
+        "Scale": [ 0.5, 2.0 ]
+      }
+    },
+    {
+      "Mesh": "vegetation/oat_grass/oat_grass_single.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 37500,
+        "Polygon": [
+          [ 50, -2.5 ],
+          [ 50, 2.5 ],
+          [ 75, 2.5 ],
+          [ 75, -2.5 ]
+        ],
+        "Scale": [ 0.5, 2.0 ]
+      }
+    },
+    {
+      "Mesh": "vegetation/oat_grass/oat_grass_single.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 50000,
+        "Polygon": [
+          [ 75, -2.5 ],
+          [ 75, 2.5 ],
+          [ 100, 2.5 ],
+          [ 100, -2.5 ]
+        ],
+        "Scale": [ 0.28, 2.0 ]
+      }
+    },
+    {
+      "Mesh": "vegetation/oat_grass/oat_grass_single.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 62500,
+        "Polygon": [
+          [ 100, -2.5 ],
+          [ 100, 2.5 ],
+          [ 125, 2.5 ],
+          [ 125, -2.5 ]
+        ],
+        "Scale": [ 0.28, 2.0 ]
+      }
+    },
+    {
+      "Mesh": "vegetation/oat_grass/oat_grass_single.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 75000,
+        "Polygon": [
+          [ 125, -2.5 ],
+          [ 125, 2.5 ],
+          [ 150, 2.5 ],
+          [ 150, -2.5 ]
+        ],
+        "Scale": [ 0.28, 2.0 ]
+      }
+    },
+    {
+      "Mesh": "vegetation/oat_grass/oat_grass_single.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 87500,
+        "Polygon": [
+          [ 150, -2.5 ],
+          [ 150, 2.5 ],
+          [ 175, 2.5 ],
+          [ 175, -2.5 ]
+        ],
+        "Scale": [ 0.5, 2.0 ]
+      }
+    },
+    {
+      "Mesh": "vegetation/oat_grass/oat_grass_single.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 200000,
+        "Polygon": [
+          [ 175, -5.0 ],
+          [ 175, 5.0 ],
+          [ 200, 5.0 ],
+          [ 200, -5.0 ]
+        ],
+        "Scale": [ 0.5, 2.0 ]
+      }
+    },
+    {
+      "Mesh": "vegetation/oat_grass/oat_grass_single.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 225000,
+        "Polygon": [
+          [ 200, -5.0 ],
+          [ 200, 5.0 ],
+          [ 225, 5.0 ],
+          [ 225, -5.0 ]
+        ],
+        "Scale": [ 0.5, 2.0 ]
+      }
+    },
+    {
+      "Mesh": "vegetation/oat_grass/oat_grass_single.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 250000,
+        "Polygon": [
+          [ 225, -5.0 ],
+          [ 225, 5.0 ],
+          [ 250, 5.0 ],
+          [ 250, -5.0 ]
+        ],
+        "Scale": [ 0.5, 2.0 ]
+      }
+    }
+
+  ]
+}

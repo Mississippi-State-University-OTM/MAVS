@@ -1,0 +1,173 @@
+{
+  "Object Labels": "labels.json",
+
+  "Layered Surface": {
+    "Mesh": "surfaces/surface.obj",
+    "Trail": {
+      "Trail Width": 0.0,
+      "Track Width": 0.0,
+      "Wheelbase": 0.0,
+      "Path": [
+        "waypoints/x_axis_points.vprp"
+      ]
+    },
+    "Layers": "surface_textures/meadow_surfaces.json"
+  },
+
+  "Surface Mesh": [
+    {
+      "Mesh": "surfaces/surface.obj",
+      "Rotate Y to Z": false,
+      "YawPitchRoll": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  ],
+
+  "Objects": [
+    {
+      "Mesh": "vegetation/oat_grass/oat_grass_single.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 625,
+        "Polygon": [
+          [ 0, -2.5 ],
+          [ 0, 2.5 ],
+          [ 50, 2.5 ],
+          [ 50, -2.5 ]
+        ],
+        "Scale": [ 0.5, 2.0 ]
+      }
+    },
+    {
+      "Mesh": "vegetation/oat_grass/oat_grass_single.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 1250,
+        "Polygon": [
+          [ 50, -2.5 ],
+          [ 50, 2.5 ],
+          [ 100, 2.5 ],
+          [ 100, -2.5 ]
+        ],
+        "Scale": [ 0.5, 2.0 ]
+      }
+    },
+    {
+      "Mesh": "vegetation/oat_grass/oat_grass_single.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 2500,
+        "Polygon": [
+          [ 100, -2.5 ],
+          [ 100, 2.5 ],
+          [ 150, 2.5 ],
+          [ 150, -2.5 ]
+        ],
+        "Scale": [ 0.5, 2.0 ]
+      }
+    },
+    {
+      "Mesh": "vegetation/oat_grass/oat_grass_single.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 5000,
+        "Polygon": [
+          [ 150, -2.5 ],
+          [ 150, 2.5 ],
+          [ 200, 2.5 ],
+          [ 200, -2.5 ]
+        ],
+        "Scale": [ 0.28, 2.0 ]
+      }
+    },
+    {
+      "Mesh": "vegetation/oat_grass/oat_grass_single.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 10000,
+        "Polygon": [
+          [ 200, -2.5 ],
+          [ 200, 2.5 ],
+          [ 250, 2.5 ],
+          [ 250, -2.5 ]
+        ],
+        "Scale": [ 0.28, 2.0 ]
+      }
+    },
+    {
+      "Mesh": "vegetation/oat_grass/oat_grass_single.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 15000,
+        "Polygon": [
+          [ 250, -2.5 ],
+          [ 250, 2.5 ],
+          [ 290, 2.5 ],
+          [ 290, -2.5 ]
+        ],
+        "Scale": [ 0.28, 2.0 ]
+      }
+    },
+    {
+      "Mesh": "vegetation/bamboo/bamboo.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 40,
+        "Polygon": [
+          [ 290, -2.5 ],
+          [ 290, 2.5 ],
+          [ 300, 2.5 ],
+          [ 300, -2.5 ]
+        ],
+        "Scale": [ 0.28, 1.5 ]
+      }
+    },
+    {
+      "Mesh": "vegetation/honey_locust/honey_locust_1.obj",
+      "Rotate Y to Z": false,
+      "Instances": [
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 375.0, 0.0, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        }
+      ]
+    },
+    {
+      "Mesh": "vegetation/oat_grass/oat_grass_single.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Number": 2500,
+        "Polygon": [
+          [ 300, -2.5 ],
+          [ 300, 2.5 ],
+          [ 400, 2.5 ],
+          [ 400, -2.5 ]
+        ],
+        "Scale": [ 0.5, 2.0 ]
+      }
+    }
+
+  ]
+}

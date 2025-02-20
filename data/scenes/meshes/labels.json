@@ -237,6 +237,7 @@
     [ "vehicles/piper_pa18/piper_pa18_rotated_v2.obj", "uav" ],
 
     [ "vegetation/oat_grass/oat_grass_5.obj", "low vegetation" ],
+    [ "vegetation/oat_grass/oat_grass_single.obj", "low vegetation" ],
 
     [ "vegetation/Groundcover/GC08_1.obj", "low vegetation" ],
     [ "vegetation/Groundcover/GC08_2.obj", "low vegetation" ],

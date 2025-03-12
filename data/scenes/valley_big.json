@@ -1,0 +1,30 @@
+{
+  "Object Labels": "labels.json",
+
+  "Surface Mesh": [
+    {
+      "Mesh": "surfaces/valley/fixed_valley.obj",
+      "Rotate Y to Z": false,
+      "YawPitchRoll": [ 0.0, 0.0, 0.0 ],
+      "Position": [ 0.0, 0.0, 0.0 ],
+      "Scale": [ 1.0, 1.0, 0.4 ],
+      "Material": "sand",
+      "Cone Index": 150.0
+    }
+  ],
+
+  "Objects": [
+    {
+      "Mesh": "surfaces/valley/fixed_valley.obj",
+      "Rotate Y to Z": false,
+      "Smooth Normals": true,
+      "Instances": [
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 0.0, 0.0, 0.0 ],
+          "Scale": [ 1.0, 1.0, 0.4 ]
+        }
+      ]
+    }
+  ]
+}

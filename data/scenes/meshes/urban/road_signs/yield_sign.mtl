@@ -1,0 +1,13 @@
+# yieldsign.mtl
+
+newmtl yield_sign
+Ka 0.875 0.875 0.875
+Kd 0.875 0.875 0.875
+Ks 1.0 1.0 1.0
+Ns 752.6
+Ni -1.5
+
+# Point each map to your BMP file:
+map_Ka yieldsign_diffuse.bmp
+map_Kd yieldsign_diffuse.bmp
+map_Ks yieldsign_diffuse.bmp

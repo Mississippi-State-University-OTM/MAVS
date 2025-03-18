@@ -1,0 +1,72 @@
+{
+
+  "Scene": {
+    "Input File": "scenes/cube_scene.json",
+    "Origin": [ 32.3526, 90.8779, 73.152 ],
+    "Time Zone": 6
+  },
+
+  "Poses": {
+    "Pose File": "waypoints/vehicle2_pos_1.vprp",
+    "Pose Type": "anvel"
+  },
+  
+  "Starting Pose": {
+    "Position": [ 0.0, 0.0, 0.0 ],
+    "Heading":  0.0
+  },
+  
+  
+  "Sensors": [
+    {
+      "Type": "camera",
+      "Model": "MachineVision",
+      "Offset": [ 1.35, 0.5, 0.85 ],
+      "Orientation": [ 1.0, 0.0, 0.0, 0.0 ],
+      "Repitition Rate (Hz)": 10.0,
+      "Name": "top_left_camera"
+    },
+    {
+      "Type": "camera",
+      "Model": "MachineVision",
+      "Offset": [ 1.35, -0.5, 0.85 ],
+      "Orientation": [ 1.0, 0.0, 0.0, 0.0 ],
+      "Repitition Rate (Hz)": 10.0,
+      "Name": "top_right_camera"
+    },
+    {
+      "Type": "lidar",
+      "Model": "OS1-64",
+      "Offset": [ 0.0, 0.0, 1.1 ],
+      "Orientation": [ 1.0, 0.0, 0.0, 0.0 ],
+      "Repitition Rate (Hz)": 10.0,
+      "Name": "top_lidar"
+    }
+
+  ],
+
+  "Vehicle": {
+    "Input File": "vehicles/rp3d_vehicles/mrzr4_tires_low_gear.json"
+  },
+
+  "Controller": {
+    "Steering Coefficient": 2.35,
+    "Max Steering Angle": 0.855,
+    "Max Speed": 17.0,
+    "Wheelbase": 3.8
+  },
+
+  "Environment": {
+    "Month": 6,
+    "Day": 5,
+    "Year": 2004,
+    "Hour": 14,
+    "Minute": 0,
+    "Second": 0,
+    "Turbidity": 3.0,
+    "Rain Rate": 0.0,
+    "Fog": 1.0,
+    "Cloud Cover": 10.0,
+    "Local Albedo": 0.25
+  }
+}

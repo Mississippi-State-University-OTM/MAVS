@@ -1,0 +1,54 @@
+{
+  "Object Labels": "labels.json",
+
+  "Surface Mesh": [
+    {
+      "Mesh": "surfaces/pg_sw_corner/ground_points.obj",
+      "Rotate Y to Z": false,
+      "YawPitchRoll": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  ],
+
+  "Objects": [
+    {
+      "Mesh": "surfaces/pg_sw_corner/ground_points.obj",
+      "Rotate Y to Z": false,
+      "Smooth Normals": false,
+      "Instances": [
+        {
+          "Position": [ 0.0, 0.0, 0.0 ],
+          "YawPitchRoll": [ 0.0, 0.0, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        }
+      ]
+    },
+      {
+        "Mesh": "vegetation/pine_tree/pine_tree.obj",
+        "Random": {
+          "Offset": [ 0.0, 0.0, 0.0 ],
+          "Number": 300,
+          "Polygon": [
+            [ -350, -350 ],
+            [ -350, 350 ],
+            [ 350, 350 ],
+            [ 350, -350 ]
+          ],
+          "Scale": [ 0.25, 0.95 ]
+        }
+      }
+    ]
+}

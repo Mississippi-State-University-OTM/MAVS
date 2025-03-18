@@ -69,7 +69,8 @@ class MavsInteractiveSim(MavsMenuBar):
         self.loaded = False
         # Create a camera for looking at the vehicle
         self.cam = mavs_interface.MavsCamera()
-        self.cam.Initialize(384,384,0.0035,0.0035,0.0035)
+        #self.cam.Initialize(960,640,(1920.0/1080.0)*0.0035,0.0035,0.0035)
+        self.cam.Initialize(768,432,(1920.0/1080.0)*0.0035,0.0035,0.0035)
         self.cam.SetOffset([-10.0,0.0,3.0],[1.0,0.0,0.0,0.0])
         self.cam.RenderShadows(False)
 

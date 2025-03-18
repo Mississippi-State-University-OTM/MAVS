@@ -1,0 +1,55 @@
+{
+
+  "Scene": {
+    "Input File": "scenes/cube_scene.json",
+    "Origin": [ 32.3526, 90.8779, 73.152 ],
+    "Time Zone": 6
+  },
+
+  "Poses": {
+    "Pose File": "waypoints/vehicle2_pos_1.vprp",
+    "Pose Type": "anvel"
+  },
+  "Sensors": [
+    {
+      "Type": "camera",
+      "Model": "XCD-V60",
+      "Offset": [ -15.0, 0.0, 1.5 ],
+      "Orientation": [ 1.0, 0.0, 0.0, 0.0 ],
+      "Repitition Rate (Hz)": 30.0,
+      "Name": "camera"
+    }
+  ],
+
+  "Starting Pose": {
+    "Position": [ 50.0, 50.0, 0.0 ]
+  },
+
+  "Vehicle": {
+    "Input File": "vehicles/rp3d_vehicles/hmmwv.json",
+    "Dusty": false
+  },
+
+  "Controller": {
+    "Steering Coefficient": 0.7,
+    "Max Steering Angle": 0.52,
+    "Max Speed": 5.0,
+    "Wheelbase": 3.4
+  },
+
+  "Environment": {
+    "Month": 6,
+    "Day": 5,
+    "Year": 2004,
+    "Hour": 14,
+    "Minute": 0,
+    "Second": 0,
+    "Turbidity": 3.0,
+    "Rain Rate": 0.0,
+    "Snow Rate": 0.0,
+    "Fog": 0.5,
+    "Cloud Cover": 40.0,
+    "Local Albedo": 0.25,
+    "Wind": [ 2.0, 2.0 ]
+  }
+}

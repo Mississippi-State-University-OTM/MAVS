@@ -72,7 +72,7 @@ class MavsInteractiveSim(MavsMenuBar):
         #self.cam.Initialize(960,640,(1920.0/1080.0)*0.0035,0.0035,0.0035)
         self.cam.Initialize(768,432,(1920.0/1080.0)*0.0035,0.0035,0.0035)
         self.cam.SetOffset([-10.0,0.0,3.0],[1.0,0.0,0.0,0.0])
-        self.cam.RenderShadows(False)
+        self.cam.RenderShadows(True)
 
         # Start button 
         self.start_button_text = StringVar()

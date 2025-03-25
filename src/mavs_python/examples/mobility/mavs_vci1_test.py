@@ -1,7 +1,7 @@
 import time
 import sys
 # Set the path to the mavs python api, mavs_interface.py
-sys.path.append(r'C:/Users/cgoodin/Desktop/vm_shared/shared_repos/mavs/src/mavs_python')
+sys.path.append(r'C:/Users/cgoodin/Desktop/goodin_docs/repos/mavs/src/mavs_python')
 
 # Load the mavs python modules
 import mavs_interface
@@ -9,11 +9,11 @@ import mavs_python_paths
 # Set the path to the mavs data folder
 mavs_data_path = mavs_python_paths.mavs_data_path
     
-render = False
+render = True
 if (len(sys.argv)>1):
     arg = int(sys.argv[1])
-    if arg>0:
-        render = True
+    if arg<0:
+        render = False
 
 # Select a scene and load it
 mavs_scenefile = "/scenes/surface_only.json"
@@ -23,11 +23,11 @@ scene.Load(mavs_data_path+mavs_scenefile)
 
 # Create a MAVS environment and add the scene to it
 env = mavs_interface.MavsEnvironment()
-env.SetScene(scene.scene)
+env.SetScene(scene)
 
 #Create and load a MAVS vehicle
 veh = mavs_interface.MavsRp3d()
-veh_file = 'forester_2017_rp3d.json'
+veh_file = 'mrzr4_tires_low_gear.json'
 veh.Load(mavs_data_path+'/vehicles/rp3d_vehicles/' + veh_file)
 veh.SetInitialPosition(0.0, 0.0, 0.0) # in global ENU
 veh.SetInitialHeading(0.0) # in radians

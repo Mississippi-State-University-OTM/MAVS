@@ -1,0 +1,82 @@
+{
+
+  "Chassis": {
+    "Sprung Mass": 1587.6,
+    "CG Offset": 0.15,
+    "Dimensions": [ 1.795, 1.45, 1.245 ]
+  },
+
+  "Powertrain": {
+    "Final Drive Ratio": 1.0,
+    "Max Engine Torque": 775.0,
+    "Max Engine Rpm": 6000.0,
+    "Max Braking Torque": 4263.0,
+    "Idle Rpm": 1000.0
+  },
+
+  "Axles": [
+    {
+      "Longitudinal Offset": 1.25,
+      "Track Width": 1.54,
+      "Spring Constant": 133300.9,
+      "Damping Constant": 14850.85,
+      "Spring Length": 0.3,
+      "Steered": true,
+      "Powered": true,
+      "Max Steer Angle": 35.0,
+      "Unsprung Mass": 62.45,
+      "Tire": {
+        "Spring Constant": 156843.0,
+        "Damping Constant": 47604.0,
+        "Radius": 0.335,
+        "Width": 0.3,
+        "Section Height": 0.07,
+        "High Slip Crossover Angle": 15.0,
+        "Viscous Friction Coefficient": 0.05
+      }
+    },
+    {
+      "Longitudinal Offset": -1.36,
+      "Track Width": 1.54,
+      "Spring Constant": 122519.2,
+      "Damping Constant": 13649.7,
+      "Spring Length": 0.3,
+      "Steered": false,
+      "Powered": true,
+      "Unsprung Mass": 62.45,
+      "Tire": {
+        "Spring Constant": 156843.0,
+        "Damping Constant": 47604.0,
+        "Radius": 0.335,
+        "Width": 0.3,
+        "Section Height": 0.07,
+        "High Slip Crossover Angle": 15.0,
+        "Viscous Friction Coefficient": 0.05
+      }
+    }
+  ],
+
+  "Mesh": {
+    "File": "vehicles/forester/forester_vehicle_nowheel_rotated.obj",
+    "Rotate Y to Z": false,
+    "Rotate X to Y": false,
+    "Rotate Y to X": false,
+    "Offset": [ 0.0, 0.0, -0.1 ],
+    "Scale": [ 1.0, 1.0, 1.0 ]
+  },
+
+  "Tire Mesh": {
+    "File": "vehicles/forester/forester_single_wheel.obj",
+    "Rotate Y to Z": true,
+    "Rotate X to Y": false,
+    "Rotate Y to X": false,
+    "Offset": [ 0.0, 0.0, 0.0 ],
+    "Scale": [ 1.0, 1.0, 1.0 ]
+  },
+
+
+  "Initial Pose": {
+    "Position": [ 0.0, 0.0, 0.0 ],
+    "Orientation": [ 1.0, 0.0, 0.0, 0.0 ]
+  }
+}

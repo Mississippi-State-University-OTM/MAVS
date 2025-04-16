@@ -37,15 +37,15 @@ MavsTire::MavsTire() {
 	left_ = true;
 	elapsed_time_ = 0.0f;
 	tire_id_ = 0;
-	num_slices_ = 3;
-	dtheta_slice_ = 2.5f;
+	num_slices_ = 12;
+	dtheta_slice_ = 0.1f;
 	startup_ = true;
 }
 
 MavsTire::MavsTire(float tire_mass, float tire_radius, float tire_width, float tire_section_height, float tire_spring_constant) {
 	Init(tire_mass, tire_radius, tire_width, tire_section_height, tire_spring_constant);
-	num_slices_ = 3;
-	dtheta_slice_ = 2.5f;
+	num_slices_ = 12;
+	dtheta_slice_ = 0.1f;
 	startup_ = true;
 }
 

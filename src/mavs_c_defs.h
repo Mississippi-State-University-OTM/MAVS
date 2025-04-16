@@ -430,6 +430,25 @@ EXPORT_CMD void SetOakDMaxRangeCm(mavs::sensor::Sensor* sens, float max_range_cm
 
 EXPORT_CMD void SetOakDCameraDisplayType(mavs::sensor::Sensor* sens, char* display_type);
 
+//--- Zed2i Stereo Camera sensor functions -----------------------------------------------//
+EXPORT_CMD mavs::sensor::Sensor* NewMavsZed2iCamera();
+
+EXPORT_CMD float* GetZed2iDepthBuffer(mavs::sensor::Sensor* sens);
+
+EXPORT_CMD float* GetZed2iImageBuffer(mavs::sensor::Sensor* sens);
+
+EXPORT_CMD int GetZed2iDepthBufferSize(mavs::sensor::Sensor* sens);
+
+EXPORT_CMD int GetZed2iImageBufferSize(mavs::sensor::Sensor* sens);
+
+EXPORT_CMD mavs::sensor::Sensor* GetZed2iCamera(mavs::sensor::Sensor* sens);
+
+EXPORT_CMD float GetZed2iMaxRangeCm(mavs::sensor::Sensor* sens);
+
+EXPORT_CMD void SetZed2iMaxRangeCm(mavs::sensor::Sensor* sens, float max_range_cm);
+
+EXPORT_CMD void SetZed2iCameraDisplayType(mavs::sensor::Sensor* sens, char* display_type);
+
 EXPORT_CMD bool CameraDisplayOpen(mavs::sensor::Sensor* sens);
 
 //--- Constructors for specific sensors ------------------------------//

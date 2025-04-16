@@ -581,6 +581,22 @@ mavs_lib.GetOakDCamera.restype = ctypes.c_void_p
 mavs_lib.SetOakDCameraDisplayType.argtypes = [ctypes.c_void_p, ctypes.c_char_p] 
 mavs_lib.CameraDisplayOpen.argtypes = [ctypes.c_void_p]
 mavs_lib.CameraDisplayOpen.restype = ctypes.c_bool
+#-------------- MAVS Zed2i Sensor -----------------------------------------------------------------------#
+mavs_lib.NewMavsZed2iCamera.restype = ctypes.c_void_p
+mavs_lib.GetZed2iDepthBuffer.argtypes = [ctypes.c_void_p]
+mavs_lib.GetZed2iDepthBuffer.restype = ctypes.POINTER(ctypes.c_float)
+mavs_lib.GetZed2iDepthBufferSize.argtypes = [ctypes.c_void_p]
+mavs_lib.GetZed2iDepthBufferSize.restype = ctypes.c_int
+mavs_lib.GetZed2iImageBuffer.argtypes = [ctypes.c_void_p]
+mavs_lib.GetZed2iImageBuffer.restype = ctypes.POINTER(ctypes.c_float)
+mavs_lib.GetZed2iImageBufferSize.restype = ctypes.c_int
+mavs_lib.GetZed2iImageBufferSize.argtypes = [ctypes.c_void_p]
+mavs_lib.GetZed2iMaxRangeCm.restype = ctypes.c_float
+mavs_lib.GetZed2iMaxRangeCm.argtypes = [ctypes.c_void_p]
+mavs_lib.SetZed2iMaxRangeCm.argtypes = [ctypes.c_void_p, ctypes.c_float]
+mavs_lib.GetZed2iCamera.argtypes = [ctypes.c_void_p]
+mavs_lib.GetZed2iCamera.restype = ctypes.c_void_p
+mavs_lib.SetZed2iCameraDisplayType.argtypes = [ctypes.c_void_p, ctypes.c_char_p] 
 
 def PyStringToChar(py_string):
     """Convert a python string to a C char array.
@@ -2049,6 +2065,122 @@ class MavsOakDCamera(MavsSensor):
         range_cm = (mr_cm / 255.0) * self.range_data[v][u][0]
         return range_cm/100.0
         
+class MavsZed2iCamera(MavsSensor):
+    def __init__(self):
+        self.sensor = mavs_lib.NewMavsZed2iCamera()
+        self.range_data = None
+        self.max_range_m = 12.0
+        self.width = 0
+        self.height = 0
+        self.depth = 0
+    def SetDisplayType(self, display_type):
+        """Set the camera display type
+
+        Parameters:
+        display_type (string): Can be "rgb", "range", or "both"
+        """
+        mavs_lib.SetZed2iCameraDisplayType(self.sensor, PyStringToChar(display_type))
+    def GetDimensions(self):
+        """Get the dimensions of the current camera frame.
+
+        Returns:
+        width (int): Width of the image in pixels.
+        height (int): Height of the image in pixels.
+        depth (int): Depth of the image, usually 3.
+        """
+        sens = mavs_lib.GetZed2iCamera(self.sensor)
+        self.width = mavs_lib.GetCameraBufferWidth(sens)
+        self.height = mavs_lib.GetCameraBufferHeight(sens)
+        self.depth = mavs_lib.GetCameraBufferDepth(sens)
+        return [self.width,self.height,self.depth]
+    def DisplayOpen(self):
+        sens = mavs_lib.GetZed2iCamera(self.sensor)
+        is_open = mavs_lib.CameraDisplayOpen(sens)
+        return is_open
+    def GetImage(self):
+        """Return a numpy array that can be converted directly to an image.
+        
+        Faster version recommended by Kasi Viswanth.
+
+        Example usage: 
+        from PIL import Image
+        img_data = cam.GetNumpyArray()
+        img = Image.fromarray(img_data, 'RGB')
+        img.show()
+
+        Returns:
+        img_data (numpy array of floats): The camera buffer.
+        """
+        try:
+            import numpy as np
+        except ImportError:
+            print("WARNING, TRIED TO GET MAVS IMAGE AS NUMPY ARRAY, BUT NUMPY IS NOT INSTALLED \n")
+            return None
+        pointbuff = mavs_lib.GetZed2iImageBuffer(self.sensor)
+        buffsize = mavs_lib.GetZed2iImageBufferSize(self.sensor)
+        buffer = pointbuff[:buffsize]
+        imagedim = self.GetDimensions()
+        buffer = np.asarray(buffer,dtype = 'float32')
+        shape = buffer.shape
+        buffer = buffer.ravel()
+        buffer[np.isnan(buffer)] = 0
+        buffer = buffer.reshape(shape)
+        img_data = np.zeros((imagedim[1], imagedim[0], imagedim[2]), dtype=np.uint8)
+        raw = np.reshape(buffer.astype('uint8'),(imagedim[2],imagedim[1], imagedim[0]))
+        img_data[:,:,0] = raw[0]
+        img_data[:,:,1] = raw[1]
+        img_data[:,:,2] = raw[2]
+        return img_data 
+    def GetDepthImage(self):
+        """Return a numpy array that can be converted directly to an image.
+        
+        Faster version recommended by Kasi Viswanth.
+
+        Example usage: 
+        from PIL import Image
+        img_data = cam.GetNumpyArray()
+        img = Image.fromarray(img_data, 'RGB')
+        img.show()
+
+        Returns:
+        img_data (numpy array of floats): The camera buffer.
+        """
+        try:
+            import numpy as np
+        except ImportError:
+            print("WARNING, TRIED TO GET MAVS IMAGE AS NUMPY ARRAY, BUT NUMPY IS NOT INSTALLED \n")
+            return None
+        pointbuff = mavs_lib.GetZed2iDepthBuffer(self.sensor)
+        buffsize = mavs_lib.GetZed2iDepthBufferSize(self.sensor)
+        buffer = pointbuff[:buffsize]
+        imagedim = self.GetDimensions()
+        buffer = np.asarray(buffer,dtype = 'float32')
+        shape = buffer.shape
+        buffer = buffer.ravel()
+        buffer[np.isnan(buffer)] = 0
+        buffer = buffer.reshape(shape)
+        img_data = np.zeros((imagedim[1], imagedim[0], imagedim[2]), dtype=np.uint8)
+        raw = np.reshape(buffer.astype('uint8'),(imagedim[2],imagedim[1], imagedim[0]))
+        img_data[:,:,0] = raw[0]
+        img_data[:,:,1] = raw[1]
+        img_data[:,:,2] = raw[2]
+        self.range_data = img_data
+        return self.range_data
+    def GetMaxRangeCm(self):
+        return mavs_lib.GetZed2iMaxRangeCm(self.sensor)
+    def SetMaxRangeCm(self, max_range_cm):
+        mavs_lib.SetZed2iMaxRangeCm(self.sensor, ctypes.c_float(max_range_cm))
+    def GetRangeAtPixelMeters(self, u, v):
+        u = int(u)
+        v = int(v)
+        if (u>=self.width or u<0 or v>=self.height or v<0):
+            return 0.0
+        if self.width<=0:
+            return 0.0
+        mr_cm = self.GetMaxRangeCm() # max_range in meters
+        range_cm = (mr_cm / 255.0) * self.range_data[v][u][0]
+        return range_cm/100.0
+
 
 class MavsLwirCamera(MavsCamera):
     def __init__(self, nx, ny, dx, dy, flen):

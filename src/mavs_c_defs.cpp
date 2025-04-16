@@ -1584,6 +1584,57 @@ EXPORT_CMD void SetOakDMaxRangeCm(mavs::sensor::Sensor* sens, float max_range_cm
 	camera->SetMaxDepth(max_range_cm / 100.0f);
 }
 
+// --- zed2i camera methods ------------------------------------------//
+EXPORT_CMD void SetZed2iCameraDisplayType(mavs::sensor::Sensor* sens, char* display_type) {
+	std::string disp_type(display_type);
+	mavs::sensor::camera::Zed2iCamera* camera = static_cast<mavs::sensor::camera::Zed2iCamera*>(sens);
+	camera->SetDisplayType(disp_type);
+}
+
+EXPORT_CMD mavs::sensor::Sensor* NewMavsZed2iCamera() {
+	mavs::sensor::Sensor* cam = new mavs::sensor::camera::Zed2iCamera();
+	return cam;
+}
+
+EXPORT_CMD float* GetZed2iDepthBuffer(mavs::sensor::Sensor* sens) {
+	mavs::sensor::camera::Zed2iCamera* camera = static_cast<mavs::sensor::camera::Zed2iCamera*>(sens);
+	float* buffer = camera->GetRangeBuffer();
+	return buffer;
+}
+
+EXPORT_CMD float* GetZed2iImageBuffer(mavs::sensor::Sensor* sens) {
+	mavs::sensor::camera::Zed2iCamera* camera = static_cast<mavs::sensor::camera::Zed2iCamera*>(sens);
+	float* buffer = camera->GetImageBuffer();
+	return buffer;
+}
+
+EXPORT_CMD mavs::sensor::Sensor* GetZed2iCamera(mavs::sensor::Sensor* sens) {
+	mavs::sensor::camera::Zed2iCamera* zed2i = static_cast<mavs::sensor::camera::Zed2iCamera*>(sens);
+	mavs::sensor::Sensor* cam = zed2i->GetCamera();
+	return cam;
+}
+
+EXPORT_CMD int GetZed2iDepthBufferSize(mavs::sensor::Sensor* sens) {
+	mavs::sensor::camera::Zed2iCamera* camera = static_cast<mavs::sensor::camera::Zed2iCamera*>(sens);
+	return camera->GetRangeBufferSize();
+}
+
+EXPORT_CMD int GetZed2iImageBufferSize(mavs::sensor::Sensor* sens) {
+	mavs::sensor::camera::Zed2iCamera* camera = static_cast<mavs::sensor::camera::Zed2iCamera*>(sens);
+	return camera->GetBufferSize();
+}
+
+EXPORT_CMD float GetZed2iMaxRangeCm(mavs::sensor::Sensor* sens) {
+	mavs::sensor::camera::Zed2iCamera* camera = static_cast<mavs::sensor::camera::Zed2iCamera*>(sens);
+	float max_range_cm = camera->GetMaxRangeCm();
+	return max_range_cm;
+}
+
+EXPORT_CMD void SetZed2iMaxRangeCm(mavs::sensor::Sensor* sens, float max_range_cm) {
+	mavs::sensor::camera::Zed2iCamera* camera = static_cast<mavs::sensor::camera::Zed2iCamera*>(sens);
+	camera->SetMaxDepth(max_range_cm / 100.0f);
+}
+
 //--- Constructors for specific sensors ------------------------------//
 EXPORT_CMD mavs::sensor::Sensor* NewMavsRgbCamera() {
 	mavs::sensor::Sensor* cam = new mavs::sensor::camera::RgbCamera();

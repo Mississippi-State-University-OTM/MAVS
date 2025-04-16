@@ -471,8 +471,11 @@ glm::vec3 Environment::GetSolarDirection(){
 		HorizontalCoordinate solpos =
 			solar_position_.GetSolarPosition();
 		float sz = (float)sin(solpos.zenith);
-		direction.x = (float)cos(solpos.azimuth)*sz;
-		direction.y = (float)sin(solpos.azimuth)*sz;
+		//direction.x = (float)cos(solpos.azimuth)*sz;
+		//direction.y = (float)sin(solpos.azimuth)*sz;
+		// ctg, 4/16/25, Kodai noticed these were wrong
+		direction.y = (float)cos(-solpos.azimuth) * sz;
+		direction.x = (float)sin(-solpos.azimuth) * sz;
 		direction.z = (float)cos(solpos.zenith);
 		//save for next time
 		sun_direction_ = direction;

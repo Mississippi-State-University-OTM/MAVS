@@ -26,6 +26,7 @@ Copyright 2018 (C) Mississippi State University
 #include <sensors/camera/micasense_red_edge.h>
 #include <sensors/camera/nir_camera.h>
 #include <sensors/camera/oak_d_camera.h>
+#include <sensors/camera/zed2i_camera.h>
 #include <sensors/camera/lwir_camera.h>
 //compass
 #include <sensors/compass/compass.h>

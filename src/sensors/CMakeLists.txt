@@ -40,6 +40,7 @@ camera/lens_drop.cpp
 camera/add_rain_to_existing_image.cpp
 camera/path_tracer.cpp
 camera/oak_d_camera.cpp
+camera/zed2i_camera.cpp
 
 gps/gps.cpp
 gps/satellite.cpp

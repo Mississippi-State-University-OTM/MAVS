@@ -1,0 +1,25 @@
+{
+  "Label Colors": [
+    {
+      "Label": "lemon",
+      "Color": [ 1.0, 1.0, 0.0 ],
+      "Label Number": 1
+    },
+    {
+      "Label": "branch",
+      "Color": [ 0.9, 0.8, 0.6 ],
+      "Label Number": 2
+    },
+    {
+      "Label": "leaf",
+      "Color": [ 0.0, 1.0, 0.0 ],
+      "Label Number": 3
+    }
+  ],
+
+  "Labels": [
+    [ "Lemon_Fruit_Branches", "branch" ],
+    [ "Lemon_Fruit_Caps", "lemon" ],
+    [ "Lemon_Fruit_Leaves", "leaf" ]
+  ]
+}

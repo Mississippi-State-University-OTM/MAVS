@@ -3818,6 +3818,8 @@ def GetQuatFromPoints(p,q):
     x = q[0]-p[0]
     y = q[1]-p[1]
     m = math.sqrt(x*x + y*y)
+    if m==0.0:
+        return [1.0, 0.0, 0.0, 0.0]
     x = x/m
     y = y/m
     theta = 0.5*math.atan2(y,x)

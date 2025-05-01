@@ -197,6 +197,18 @@
           "Scale": [ 1.0, 1.0, 1.0 ]
         }
       ]
+    },
+
+    {
+      "Mesh": "vegetation/lemon_tree/Lemon_Fruit_Scaled.obj",
+      "Rotate Y to Z": false,
+      "Instances": [
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 170.0, -5.0, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        }
+      ]
     }
 
   ]

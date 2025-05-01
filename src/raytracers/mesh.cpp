@@ -573,8 +573,8 @@ void Mesh::Load(std::string inpath, std::string fname, std::string mtllib_filena
 				this_face.t1 = i0.texcoord_index;
 				this_face.t2 = i1.texcoord_index;
 				this_face.t3 = i2.texcoord_index;
-				std::copy(shapes[i].name.begin(), shapes[i].name.end(), this_face.group);
-				//this_face.group = shapes[i].name;
+				//std::copy(shapes[i].name.begin(), shapes[i].name.end(), this_face.group);
+				this_face.group = shapes[i].name;
 				faces_.push_back(this_face);
 				if (tobj_materials.size() > 0) {
 					mat_nums_.push_back((unsigned short int)shapes[i].mesh.material_ids[f]);

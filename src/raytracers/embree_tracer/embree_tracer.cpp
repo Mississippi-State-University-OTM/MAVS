@@ -1656,6 +1656,7 @@ void EmbreeTracer::GetClosestIntersection(glm::vec3 origin, glm::vec3 direction,
 				}
 				inter.label = semantic_labels_[inter.object_name];
 			}
+			
 			int mnum = meshes_[instID].GetMatNum(query.hit.primID);
 			Material * return_mat = meshes_[instID].GetMaterial(mnum);
 			

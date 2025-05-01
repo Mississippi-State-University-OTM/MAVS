@@ -1,0 +1,53 @@
+# Wavefront Object Material File
+# Generated using SpeedTree tools
+
+newmtl Cap_02
+Tr 0
+d 1
+Kd 1 0.996078 0.996078
+Ka 0.721569 0.721569 0.721569
+illum 2
+Ni -1.5
+map_Kd Cap_02.bmp
+map_bump Cap_02_Normal.bmp
+
+newmtl LemonTreeFruitSkin
+Tr 0
+d 1
+Kd 1 1 1
+Ka 0.67451 0.67451 0.67451
+Ks 0.270588 0.27451 0.27451
+Ns 7.3
+illum 2
+Ni -1.5
+map_Kd LemonTreeFruitSkin.bmp
+map_bump LemonTreeFruitSkin_Normal.bmp
+map_Ks LemonTreeFruitSkin_Spec.bmp
+
+
+newmtl LemonTreeLeaf
+Tr 0
+d 1
+Kd 1 1 1
+Ka 0.67451 0.67451 0.67451
+Ks 0.486275 0.490196 0.490196
+Ns 45.1
+illum 2
+Ni -1.5
+map_Kd LemonTreeLeaf.bmp
+map_d LemonTreeLeaf_Alpha.bmp
+map_bump LemonTreeLeaf_Normal.bmp
+map_Ks LemonTreeLeaf_Spec.bmp
+
+
+newmtl LemonTreeBark
+Tr 0
+d 1
+Kd 1 1 1
+Ka 0.717647 0.717647 0.717647
+illum 1
+Ni -1.5
+map_Kd LemonTreeBark.bmp
+map_bump LemonTreeBark_Normal.bmp
+
+

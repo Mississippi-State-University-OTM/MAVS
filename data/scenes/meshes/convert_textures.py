@@ -4,7 +4,7 @@ import sys
 
 def convert_to_bmp(directory):
     for filename in os.listdir(directory):
-        if filename.endswith(('.jpg', '.jpeg', '.png', '.gif', '.tif','.tiff')):  # Add more extensions if needed
+        if filename.endswith(('tga', '.jpg', '.jpeg', '.png', '.gif', '.tif','.tiff')):  # Add more extensions if needed
             filepath = os.path.join(directory, filename)
             with Image.open(filepath) as img:
                 bmp_filename = os.path.splitext(filename)[0] + ".bmp"

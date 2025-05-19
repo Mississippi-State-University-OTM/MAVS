@@ -472,6 +472,38 @@ void Mesh::Scale(float sx, float sy, float sz) {
 	glm::vec3 size = GetSize();
 }
 
+void Mesh::MirrorX() {
+	float x_center = 0.0f;
+	float nxv = 0.0f;
+	for (int i = 0; i < (int)vertices_.size(); i++) {
+		x_center += vertices_[i].x;
+		nxv += 1.0f;
+	}
+	x_center = x_center / nxv;
+	for (int i = 0; i < (int)vertices_.size(); i++) {
+		float dx = vertices_[i].x - x_center;
+		vertices_[i].x = x_center - dx;
+	}
+	size_calculated_ = false;
+	glm::vec3 size = GetSize();
+}
+
+void Mesh::MirrorY() {
+	float y_center = 0.0f;
+	float nyv = 0.0f;
+	for (int i = 0; i < (int)vertices_.size(); i++) {
+		y_center += vertices_[i].y;
+		nyv += 1.0f;
+	}
+	y_center = y_center / nyv;
+	for (int i = 0; i < (int)vertices_.size(); i++) {
+		float dy = vertices_[i].y - y_center;
+		vertices_[i].y = y_center - dy;
+	}
+	size_calculated_ = false;
+	glm::vec3 size = GetSize();
+}
+
 void Mesh::RotateYToZ() {
 	for (int i = 0; i < (int)vertices_.size(); i++) {
 		float zold = vertices_[i].z;

@@ -161,6 +161,16 @@ public:
 	void Scale(float sx, float sy, float sz);
 
 	/**
+		* Mirror the mesh about X
+		*/
+	void MirrorX();
+
+	/**
+		* Mirror the mesh about Y
+		*/
+	void MirrorY();
+
+	/**
 		* Rotates the mesh by 90 degrees about the x-axis such that the y axis
 		* becomes z and z becomes -y.
 		*/

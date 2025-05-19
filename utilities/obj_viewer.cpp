@@ -54,6 +54,7 @@ float tx_, ty_, tz_, scale_;
 bool increment_rotation_ = false;
 //float pitch_, yaw_, roll_;
 bool save_, exit_, x_to_y_, y_to_x_, z_to_y_, y_to_z_;
+bool mirror_x_, mirror_y_;
 float front_pixdim, side_pixdim, top_pixdim;
 glm::mat3x3 rot_keep;
 glm::vec3 trans_keep;
@@ -127,6 +128,14 @@ bool GetKeyboardInput() {
 		pressed = true;
 	}
 
+	if (front_disp.is_keyI() || side_disp.is_keyI() || top_disp.is_keyI()) {
+		mirror_x_ = true;
+		pressed = true;
+	}
+	if (front_disp.is_keyJ() || side_disp.is_keyJ() || top_disp.is_keyJ()) {
+		mirror_y_ = true;
+		pressed = true;
+	}
 
 	if (front_disp.is_keyX() || side_disp.is_keyX() || top_disp.is_keyX()) {
 		tx_ = mavs::io::GetUserNumericInput("Translation", "Translation in X");
@@ -307,6 +316,8 @@ int main(int argc, char * argv[]) {
 		y_to_x_ = false;
 		z_to_y_ = false;
 		y_to_z_ = false;
+		mirror_x_ = false;
+		mirror_y_ = false;
 		glm::vec3 size; // , center;
 		size = mesh.GetSize();
 		center = mesh.GetCenter();
@@ -377,6 +388,7 @@ int main(int argc, char * argv[]) {
 		std::string point_str = "Press P to get coordinate of a point";
 		std::string meas_str = "Press M to measure the distance between two points";
 		std::string rend_str = "Press R to render current view to file";
+		std::string mirr_str = "Press I,J to mirror around X,Y";
 
 		float green[] = { 0.0f,255.0f,0.0f };
 		float yellow[] = { 255.0f,255.0f,0.0f };
@@ -399,6 +411,7 @@ int main(int argc, char * argv[]) {
 		if (y_0 >= 0 && z_0 >= 0 && y_0 < npix && z_0 < npix) {
 			front_image.draw_circle(y_0, z_0, 5, green, 1.0f);
 		}
+		front_image.draw_text(15, npix - 120, mirr_str.c_str(), yellow);
 		front_image.draw_text(15, npix - 105, rend_str.c_str(), yellow);
 		front_image.draw_text(15, npix - 90, point_str.c_str(), yellow);
 		front_image.draw_text(15, npix - 75, meas_str.c_str(), yellow);
@@ -424,6 +437,7 @@ int main(int argc, char * argv[]) {
 		if (x_0 >= 0 && z_0 >= 0 && x_0 < npix && z_0 < npix) {
 			side_image.draw_circle(x_0, z_0, 5, green, 1.0f);
 		}
+		side_image.draw_text(15, npix - 120, mirr_str.c_str(), yellow);
 		side_image.draw_text(15, npix - 105, rend_str.c_str(), yellow);
 		side_image.draw_text(15, npix - 90, point_str.c_str(), yellow);
 		side_image.draw_text(15, npix - 75, meas_str.c_str(), yellow);
@@ -451,7 +465,8 @@ int main(int argc, char * argv[]) {
 		if (x_0 >= 0 && y_0 >= 0 && x_0 < npix && y_0 < npix) {
 			top_image.draw_circle(y_0, x_0, 5, green, 1.0f);
 		}
-		top_image.draw_text(15, npix - 90, rend_str.c_str(), yellow);
+		top_image.draw_text(15, npix - 120, mirr_str.c_str(), yellow);
+		top_image.draw_text(15, npix - 105, rend_str.c_str(), yellow);
 		top_image.draw_text(15, npix - 90, point_str.c_str(), yellow);
 		top_image.draw_text(15, npix - 75, meas_str.c_str(), yellow);
 		top_image.draw_text(15, npix - 60, save_str.c_str(), yellow);
@@ -497,19 +512,27 @@ int main(int argc, char * argv[]) {
 		if (y_to_z_) {
 			mesh.RotateYToZ();
 		}
+		if (mirror_x_) {
+			mesh.MirrorX();
+		}
+		if (mirror_y_) {
+			mesh.MirrorY();
+		}
 		if (increment_rotation_) {
 			glm::mat3x4 aff_rot;
 			for (int i = 0; i < 3; i++) { for (int j = 0; j < 3; j++) { aff_rot[i][j] = scale_keep * rot_keep[i][j]; } }
 			mesh.ApplyAffineTransformation(aff_rot);
 			increment_rotation_ = false;
 		}
+		
 		std::cout << std::endl;
 		if (save_) {
 			std::string ofname = mavs::io::GetSaveFileName("Select the save file name", "file.obj", "*.obj");
-			glm::mat3x4 aff_rot;
-			for (int i = 0; i < 3; i++) { for (int j = 0; j < 3; j++){aff_rot[i][j] = scale_keep * rot_keep[i][j]; } }
-			aff_rot[0][3] = trans_keep.x; aff_rot[1][3] = trans_keep.y; aff_rot[2][3] = trans_keep.z;
-			mesh.LoadTransformAndSave(fname, ofname, aff_rot);
+			//glm::mat3x4 aff_rot;
+			//for (int i = 0; i < 3; i++) { for (int j = 0; j < 3; j++){aff_rot[i][j] = scale_keep * rot_keep[i][j]; } }
+			//aff_rot[0][3] = trans_keep.x; aff_rot[1][3] = trans_keep.y; aff_rot[2][3] = trans_keep.z;
+			//mesh.LoadTransformAndSave(fname, ofname, aff_rot);
+			mesh.Write(ofname);
 			break;
 		}
 		if (exit_) {

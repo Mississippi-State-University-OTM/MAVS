@@ -29,7 +29,14 @@ src/mavs_python/mavs_python_paths.py
 /data/scenes/meshes/snow_scenes
 /data/test
 data/scenes/island.json
+data/scenes/meshes/flw
 data/scenes/meshes/surfaces/car_scene/
+data/scenes/meshes/vegetation/Seedling/
+data/scenes/meshes/vegetation/Shrub/
+data/scenes/meshes/vegetation/Basic/
+data/scenes/Ecology_scene_BA_Iteration_0_50_1_scene.json
+data/scenes/meshes/surfaces/Ecology_scene_BA_Iteration_0_surface.mtl
+data/scenes/meshes/surfaces/Ecology_scene_BA_Iteration_0_surface.obj
 data/scenes/meshes/surfaces/island/
 data/scenes/snow100m_cows_deep.json
 data/scenes/snow100m_cows_fine.json
@@ -37,5 +44,9 @@ data/scenes/truck_vehicle_snow.json
 data/actors/actors/tigershark_actor.json
 data/scenes/meshes/vehicles/tigershark/
 data/scenes/with_snow100m__cows_edited.json
+data/scenes/flw_basic_100_years.json
+data/scenes/flw_surface_only.json
+data/scenes/Ecology_scene_*_scene.json
 data/scenes/meshes/surfaces/snow_surface_hm_smoothed.obj
+data/scenes/meshes/surfaces/flw_surface.*
 data/scenes/meshes/surfaces/snow_surface_hm_smoothed.obj

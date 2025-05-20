@@ -521,28 +521,16 @@ void Rp3dVehicle::CalculateWheelTorques(float current_velocity, float throttle, 
 
 void Rp3dVehicle::CalculateSteeringAngles(float dt, float steering_factor) {
 	float max_steering_rate = 0.785f; //3.14f; // Max change of pi radians per second
+	float max_ds = dt * max_steering_rate;
 	for (int i = 0; i < running_gear_.size(); i++) {
-		
 		if (running_gear_[i].IsSteered()) {
 			float steering = steering_factor * running_gear_[i].GetMaxSteeringAngle();
-			//running_gear_[i].SetCurrentSteeringAngle(steering);
-			
-			if (steering != 0.0f) {
-				float new_steering = steering;
-				//float new_steering = running_gear_[i].GetCurrentSteeringAngle() + dt * steering;
-				float steer_rate = fabs(steering - running_gear_[i].GetCurrentSteeringAngle()) / dt;
-				if (steer_rate > max_steering_rate && steering_factor!=0.0f) {
-					new_steering = running_gear_[i].GetCurrentSteeringAngle() + dt*max_steering_rate * (steering_factor) / fabs(steering_factor);
-				}
-				running_gear_[i].SetCurrentSteeringAngle(new_steering);
-			}
-			else { //power steering
-				if (fabs(running_gear_[i].GetCurrentSteeringAngle()) > 0.0001f) {
-					//float new_steering = dt * running_gear_[i].GetCurrentSteeringAngle() / fabs(running_gear_[i].GetCurrentSteeringAngle());
-					float new_steering = 0.95f * running_gear_[i].GetCurrentSteeringAngle() ;
-					running_gear_[i].SetCurrentSteeringAngle(new_steering);
-				}
-			}
+			float ds = steering - running_gear_[i].GetCurrentSteeringAngle();
+			float absds = fabsf(ds);
+			if (absds > max_ds)ds = max_ds * (ds / absds);
+			float new_steering = running_gear_[i].GetCurrentSteeringAngle() + ds;
+			new_steering = std::min(running_gear_[i].GetMaxSteeringAngle(), std::max(-running_gear_[i].GetMaxSteeringAngle(), new_steering));
+			running_gear_[i].SetCurrentSteeringAngle(new_steering);
 		}
 	}
 }

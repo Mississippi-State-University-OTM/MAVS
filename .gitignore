@@ -45,6 +45,7 @@ data/actors/actors/tigershark_actor.json
 data/scenes/meshes/vehicles/tigershark/
 data/scenes/with_snow100m__cows_edited.json
 data/scenes/flw_basic_100_years.json
+data/scenes/flw_basic_understory_100_years.json
 data/scenes/flw_surface_only.json
 data/scenes/Ecology_scene_*_scene.json
 data/scenes/meshes/surfaces/snow_surface_hm_smoothed.obj

@@ -211,6 +211,9 @@
     [ "vegetation/Fruit/FR20m.obj", "high vegetation" ],
     [ "vegetation/Fruit/FR20y.obj", "high vegetation" ],
 
+    [ "vehicles/amiga/amiga_chassis.obj", "vehicle" ],
+    [ "vehicles/amiga/amiga_1_chassis.obj", "vehicle" ],
+    [ "vehicles/amiga/amiga_tire.obj", "vehicle" ],
     [ "vehicles/m915a5/m915a5_chassis.obj", "vehicle" ],
     [ "vehicles/m915a5/m915a5_tire.obj", "vehicle" ],
     [ "vehicles/m915a5/m915a5_trailer.obj", "vehicle" ],

@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
 	mavs::vehicle::Rp3dVehicle veh;
 	veh.Load(vehic_file);
 	float zstart = scene.GetSurfaceHeight(0.0f, 0.0f);
-	veh.SetPosition(10.0f,10.0f, zstart + 0.25f);
+	veh.SetPosition(0.0f,0.0f, zstart + 0.25f);
 	veh.SetOrientation(1.0f, 0.0f, 0.0f, 0.0f);
 	//veh.SetPosition(20.0f, -20.0f, 2.5f);
 	//veh.SetOrientation(0.7071f, 0.0f, 0.0f, 0.7071f);

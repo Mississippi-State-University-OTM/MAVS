@@ -1,0 +1,63 @@
+{
+  "Object Labels": "labels.json",
+
+  "Surface Mesh": [
+    {
+      "Mesh": "surfaces/pg_sw_corner/cavs_pg_textured_rotated_smoothed.obj",
+      "Rotate Y to Z": false,
+      "YawPitchRoll": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Position": [
+        0.0,
+        -7.0,
+        0.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  ],
+
+
+  "Objects": [
+    {
+      "Mesh": "surfaces/pg_sw_corner/cavs_pg_textured_rotated_smoothed.obj",
+      "Rotate Y to Z": false,
+      "Smooth Normals": false,
+      "Instances": [
+        {
+          "YawPitchRoll": [ 0, 0.0, 0 ],
+          "Position": [ 0.0, -7.0, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        }
+      ]
+    },
+    {
+      "Mesh": "misc/red_cylinder.obj",
+      "Rotate Y to Z": true,
+      "Instances": [
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -21.0, 115.0, 17.0 ],
+          "Scale": [ 0.5, 0.5, 3.0 ]
+        }
+      ]
+    },
+    {
+      "Mesh": "misc/green_cylinder.obj",
+      "Rotate Y to Z": true,
+      "Instances": [
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -49.9, 137.2, 16.0 ],
+          "Scale": [ 0.5, 0.5, 3.0 ]
+        }
+      ]
+    }
+  ]
+}

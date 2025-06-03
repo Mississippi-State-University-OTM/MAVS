@@ -38,6 +38,7 @@ data/scenes/Ecology_scene_BA_Iteration_0_50_1_scene.json
 data/scenes/meshes/surfaces/Ecology_scene_BA_Iteration_0_surface.mtl
 data/scenes/meshes/surfaces/Ecology_scene_BA_Iteration_0_surface.obj
 data/scenes/meshes/surfaces/island/
+data/scenes/meshes/surfaces/pg_sw_corner/cavs_pg_textured_rotated_smoothed.obj
 data/scenes/snow100m_cows_deep.json
 data/scenes/snow100m_cows_fine.json
 data/scenes/truck_vehicle_snow.json

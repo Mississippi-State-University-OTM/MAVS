@@ -17,7 +17,7 @@ newmtl AG01_Leaf1
 Ns 50.781250
 illum 2
 Ni -1.0
-Kd 1.000000 1.000000 1.000000
+Kd 0.5 0.5 0.5
 map_Kd AG01lef1.bmp
 map_d AG01lef1_a.bmp
 
@@ -25,19 +25,19 @@ newmtl AG01_Blossom2
 Ns 50.781250
 illum 2
 Ni -1.0
-Kd 1.000000 1.000000 1.000000
+Kd 0.5 0.5 0.5
 map_Kd AG01blos2.bmp
 
 newmtl AG01_Blossom1
 Ns 50.781250
 illum 2
 Ni -1.0
-Kd 1.000000 1.000000 1.000000
+Kd 0.5 0.5 0.5
 map_Kd AG01blos1.bmp
 
 newmtl AG01_Branch1
 Ns 50.781250
 illum 2
 Ni -1.0
-Kd 1.000000 1.000000 1.000000
+Kd 0.5 0.5 0.5
 map_Kd AG01brn1.bmp

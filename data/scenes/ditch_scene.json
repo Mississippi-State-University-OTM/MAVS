@@ -1,0 +1,84 @@
+{
+  "UseFullPaths": false,
+  "Object Labels": "labels.json",
+  "Layered Surface": {
+    "Mesh": "surfaces/ditch/ditch_surface.obj",
+    "Layers": "surface_textures/meadow_surfaces.json"
+  },
+
+  "Surface Mesh": [
+    {
+      "Mesh": "surfaces/ditch/ditch_surface.obj",
+      "Rotate Y to Z": false,
+      "YawPitchRoll": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  ],
+
+  "Objects": [
+    {
+      "Mesh": "urban/roadblock/RoadBlockade_01.obj",
+      "Rotate Y to Z": true,
+      "Instances": [
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -12.0, -1.8, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -9.0, -1.8, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -6.0, -1.8, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ -3.0, -1.8, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 0.0, -1.8, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 3.0, -1.8, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 6.0, -1.8, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 9.0, -1.8, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+          "YawPitchRoll": [ 0, 0, 0 ],
+          "Position": [ 12.0, -1.8, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "Terrain Width": 50.0,
+  "Terrain Length": 50.0,
+  "Low Freq Mag": 10.0,
+  "High Freq Mag": 0.1,
+  "Mesh Resolution": 0.5,
+  "Trail Width": 2.0,
+  "Track Width": 0.6,
+  "Wheelbase": 1.25,
+  "Path Type": "Ridges",
+  "Ecosystem File": "C:/Users/cgoodin/Desktop/vm_shared/shared_repos/mavs/data/ecosystem_files/american_southeast_forest.json",
+  "Plant Density": 1.0,
+  "Output Directory": "C:/Users/cgoodin/Desktop/output",
+  "Base Name": "forest_ecosystem",
+  "DEM File": ""
+}

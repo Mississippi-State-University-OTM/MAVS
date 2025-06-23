@@ -1,0 +1,67 @@
+{
+	"Texture Inputs": "scenes/meshes/surface_textures/meadow_surfaces.json",
+
+	"Surface Mesh": "scenes/meshes/surfaces/surface.obj",
+	
+	"Anvel Replay File": "waypoints/vehicle2_pos_1.vprp",
+	
+	"Trail Properties": {
+		"Tire Width": 0.6,
+		"Wheelbase": 2.5,
+		"Ground Clearance": 0.0001,
+		"Trail Width": 4.5
+	},
+	
+	"Species":[
+		{
+		"Mesh File": "urban/roadblock/RoadBlockade_02.obj",
+		"Species Name": "Roadblock",
+		"Num New Per Area":0.001,
+		"Growth Rate": 1.0,
+		"Max Height": 0.9,
+		"Min Height": 0.8,
+		"Mesh Height": 0.8,
+		"Height To Diameter Ratio": 0.5,
+		"Max Age": 50, 
+		"Rotate Mesh": true	
+		},
+		{
+		"Mesh File": "vegetation/USA_Conifers/CL13y.obj",
+		"Species Name": "Pine",
+		"Num New Per Area":0.0015,
+		"Growth Rate": 0.1,
+		"Max Height": 15.75,
+		"Min Height": 6.75,
+		"Mesh Height": 45.1983,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 50, 
+		"Rotate Mesh": false	
+		},
+		
+		{
+		"Mesh File": "vegetation/Europe/EU39y.obj",
+		"Species Name": "Pyrenean Oak young",
+		"Num New Per Area":0.0015,
+		"Growth Rate": 0.1,
+		"Max Height": 12.4,
+		"Min Height": 4.515,
+		"Mesh Height": 60.2184,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 50, 
+		"Rotate Mesh": false	
+		},
+		
+		{
+		"Mesh File": "vegetation/Groundcover/GC18_3.obj",
+		"Species Name": "Clover 3",
+		"Num New Per Area":0.1,
+		"Growth Rate": 1.0,
+		"Max Height": 0.5,
+		"Min Height": 0.1,
+		"Mesh Height": 2.07128,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 15, 
+		"Rotate Mesh": false	
+		}
+	]
+}

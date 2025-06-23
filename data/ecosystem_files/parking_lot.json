@@ -1,0 +1,29 @@
+{
+	"Texture Inputs": "scenes/meshes/surface_textures/concrete_surfaces.json",
+
+	"Surface Mesh": "scenes/meshes/surfaces/surface.obj",
+	
+	"Anvel Replay File": "waypoints/vehicle2_pos_1.vprp",
+	
+	"Trail Properties": {
+		"Tire Width": 0.6,
+		"Wheelbase": 2.5,
+		"Ground Clearance": 0.0001,
+		"Trail Width": 4.5
+	},
+
+  "Species": [
+    {
+      "Mesh File": "urban/roadblock/RoadBlockade_02.obj",
+      "Species Name": "Roadblock",
+      "Num New Per Area": 0.001,
+      "Growth Rate": 1.0,
+      "Max Height": 0.9,
+      "Min Height": 0.8,
+      "Mesh Height": 0.8,
+      "Height To Diameter Ratio": 0.5,
+      "Max Age": 50,
+      "Rotate Mesh": true
+    }
+  ]
+}

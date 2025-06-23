@@ -1,0 +1,163 @@
+{
+	"Texture Inputs": "scenes/meshes/surface_textures/desert_surfaces.json",
+	
+	"Surface Mesh": "scenes/meshes/surfaces/surface.obj",
+	
+	"Anvel Replay File": "waypoints/vehicle2_pos_1.vprp",
+	
+	"Simulation Length": 20,
+	
+	"Trail Properties": {
+		"Tire Width": 0.6,
+		"Wheelbase": 2.5,
+		"Ground Clearance": 0.001,
+		"Trail Width": 4.5
+	},
+	
+	"Species":[
+		{
+		"Mesh File": "vegetation/USA_Southwest/SW04_1.obj",
+		"Species Name": "Giant Saguaro 1",
+		"Num New Per Area":0.0002,
+		"Growth Rate": 0.125,
+		"Max Height": 9.0,
+		"Min Height": 4.5,
+		"Mesh Height": 860.587,
+		"Height To Diameter Ratio": 0.5,
+		"Max Age": 50.0, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/USA_Southwest/SW04_2.obj",
+		"Species Name": "Giant Saguaro 2",
+		"Num New Per Area":0.0002,
+		"Growth Rate": 0.125,
+		"Max Height": 8.5,
+		"Min Height": 4.25,
+		"Mesh Height": 863.639,
+		"Height To Diameter Ratio": 0.5,
+		"Max Age": 50.0, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/USA_Southwest/SW04_3.obj",
+		"Species Name": "Giant Saguaro 3",
+		"Num New Per Area":0.0002,
+		"Growth Rate": 0.125,
+		"Max Height": 10.0,
+		"Min Height": 5.0,
+		"Mesh Height": 1012.85,
+		"Height To Diameter Ratio": 0.5,
+		"Max Age": 50.0, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/USA_Southwest/SW05_2.obj",
+		"Species Name": "Paloverde 2",
+		"Num New Per Area":0.00015,
+		"Growth Rate": 0.125,
+		"Max Height": 7.0,
+		"Min Height": 3.5,
+		"Mesh Height": 711.514,
+		"Height To Diameter Ratio": 0.5,
+		"Max Age": 50.0, 
+		"Rotate Mesh": false	
+		},
+				{
+		"Mesh File": "vegetation/USA_Southwest/SW05_3.obj",
+		"Species Name": "Paloverde 3",
+		"Num New Per Area":0.00015,
+		"Growth Rate": 0.125,
+		"Max Height": 4.0,
+		"Min Height": 2.0,
+		"Mesh Height": 461.406,
+		"Height To Diameter Ratio": 0.5,
+		"Max Age": 50.0, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/USA_Southwest/SW11_1.obj",
+		"Species Name": "Ocotillo 1",
+		"Num New Per Area":0.0006,
+		"Growth Rate": 0.25,
+		"Max Height": 3.0,
+		"Min Height": 1.5,
+		"Mesh Height": 282.856,
+		"Height To Diameter Ratio": 0.5,
+		"Max Age": 50.0, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/USA_Southwest/SW11_2.obj",
+		"Species Name": "Ocotillo 2",
+		"Num New Per Area":0.0006,
+		"Growth Rate": 0.25,
+		"Max Height": 3.5,
+		"Min Height": 1.75,
+		"Mesh Height": 338.301,
+		"Height To Diameter Ratio": 0.5,
+		"Max Age": 50.0, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/USA_Southwest/SW11_3.obj",
+		"Species Name": "Ocotillo 3",
+		"Num New Per Area":0.0006,
+		"Growth Rate": 0.25,
+		"Max Height": 3.5,
+		"Min Height": 1.75,
+		"Mesh Height": 355.052,
+		"Height To Diameter Ratio": 0.5,
+		"Max Age": 50.0, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/USA_Southwest/SW11_4.obj",
+		"Species Name": "Ocotillo 4",
+		"Num New Per Area":0.0006,
+		"Growth Rate": 0.25,
+		"Max Height": 3.5,
+		"Min Height": 1.75,
+		"Mesh Height": 365.631,
+		"Height To Diameter Ratio": 0.5,
+		"Max Age": 50.0, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/USA_Southwest/SW15_1.obj",
+		"Species Name": "Prickly Pear 1",
+		"Num New Per Area":0.001,
+		"Growth Rate": 0.25,
+		"Max Height": 1.1,
+		"Min Height": 0.55,
+		"Mesh Height": 109.987,
+		"Height To Diameter Ratio": 0.5,
+		"Max Age": 50.0, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/USA_Southwest/SW15_2.obj",
+		"Species Name": "Prickly Pear 2",
+		"Num New Per Area":0.001,
+		"Growth Rate": 0.25,
+		"Max Height": 1.2,
+		"Min Height": 0.6,
+		"Mesh Height": 142.328,
+		"Height To Diameter Ratio": 0.5,
+		"Max Age": 50.0, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/USA_Southwest/SW15_3.obj",
+		"Species Name": "Prickly Pear 3",
+		"Num New Per Area":0.001,
+		"Growth Rate": 0.25,
+		"Max Height": 1.2,
+		"Min Height": 0.6,
+		"Mesh Height": 123.503,
+		"Height To Diameter Ratio": 0.5,
+		"Max Age": 50.0, 
+		"Rotate Mesh": false	
+		}
+	]
+}

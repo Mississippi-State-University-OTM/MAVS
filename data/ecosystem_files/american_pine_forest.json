@@ -1,0 +1,152 @@
+{
+	"Texture Inputs": "scenes/meshes/surface_textures/meadow_surfaces.json",
+
+	"Surface Mesh": "scenes/meshes/surfaces/surface.obj",
+	
+	"Anvel Replay File": "waypoints/vehicle2_pos_1.vprp",
+	
+	"Trail Properties": {
+		"Tire Width": 0.6,
+		"Wheelbase": 2.5,
+		"Ground Clearance": 0.0001,
+		"Trail Width": 4.5
+	},
+
+  "Species": [
+    {
+      "Mesh File": "vegetation/USA_East/EA12m.obj",
+      "Species Name": "Eastern White Pine medium",
+      "Num New Per Area": 0.0015,
+      "Growth Rate": 0.1,
+      "Max Height": 15.0,
+      "Min Height": 7.5,
+      "Mesh Height": 179.413,
+      "Height To Diameter Ratio": 0.05,
+      "Max Age": 50,
+      "Rotate Mesh": false
+    },
+    {
+      "Mesh File": "vegetation/USA_East/EA12a.obj",
+      "Species Name": "Eastern White Pine adult",
+      "Num New Per Area": 0.0015,
+      "Growth Rate": 0.1,
+      "Max Height": 28.0,
+      "Min Height": 14.0,
+      "Mesh Height": 304.245,
+      "Height To Diameter Ratio": 0.05,
+      "Max Age": 50,
+      "Rotate Mesh": false
+    },
+
+    {
+      "Mesh File": "vegetation/Groundcover/GC08_1.obj",
+      "Species Name": "Couchgrass 1",
+      "Num New Per Area": 0.5,
+      "Growth Rate": 1.0,
+      "Max Height": 1.4,
+      "Min Height": 0.7,
+      "Mesh Height": 4.10518,
+      "Height To Diameter Ratio": 0.05,
+      "Max Age": 15,
+      "Rotate Mesh": false
+    },
+    {
+      "Mesh File": "vegetation/Groundcover/GC08_2.obj",
+      "Species Name": "Couchgrass 2",
+      "Num New Per Area": 0.5,
+      "Growth Rate": 1.0,
+      "Max Height": 1.0,
+      "Min Height": 0.5,
+      "Mesh Height": 0.579675,
+      "Height To Diameter Ratio": 0.05,
+      "Max Age": 15,
+      "Rotate Mesh": false
+    },
+    {
+      "Mesh File": "vegetation/Groundcover/GC08_3.obj",
+      "Species Name": "Couchgrass 3",
+      "Num New Per Area": 0.5,
+      "Growth Rate": 1.0,
+      "Max Height": 2.0,
+      "Min Height": 1.0,
+      "Mesh Height": 3.99698,
+      "Height To Diameter Ratio": 0.05,
+      "Max Age": 15,
+      "Rotate Mesh": false
+    },
+
+
+    {
+      "Mesh File": "vegetation/Groundcover/GC17_1.obj",
+      "Species Name": "Dandelion 1",
+      "Num New Per Area": 0.1,
+      "Growth Rate": 1.0,
+      "Max Height": 0.02,
+      "Min Height": 0.01,
+      "Mesh Height": 0.18998,
+      "Height To Diameter Ratio": 0.05,
+      "Max Age": 15,
+      "Rotate Mesh": false
+    },
+    {
+      "Mesh File": "vegetation/Groundcover/GC17_2.obj",
+      "Species Name": "Dandelion 2",
+      "Num New Per Area": 0.1,
+      "Growth Rate": 1.0,
+      "Max Height": 0.2,
+      "Min Height": 0.1,
+      "Mesh Height": 2.29535,
+      "Height To Diameter Ratio": 0.05,
+      "Max Age": 15,
+      "Rotate Mesh": false
+    },
+    {
+      "Mesh File": "vegetation/Groundcover/GC17_3.obj",
+      "Species Name": "Dandelion 3",
+      "Num New Per Area": 0.1,
+      "Growth Rate": 1.0,
+      "Max Height": 0.22,
+      "Min Height": 0.11,
+      "Mesh Height": 1.89287,
+      "Height To Diameter Ratio": 0.05,
+      "Max Age": 15,
+      "Rotate Mesh": false
+    },
+    {
+      "Mesh File": "vegetation/Groundcover/GC18_1.obj",
+      "Species Name": "Clover 1",
+      "Num New Per Area": 0.1,
+      "Growth Rate": 1.0,
+      "Max Height": 0.11,
+      "Min Height": 0.055,
+      "Mesh Height": 1.0264,
+      "Height To Diameter Ratio": 0.05,
+      "Max Age": 15,
+      "Rotate Mesh": false
+    },
+    {
+      "Mesh File": "vegetation/Groundcover/GC18_2.obj",
+      "Species Name": "Clover 2",
+      "Num New Per Area": 0.1,
+      "Growth Rate": 1.0,
+      "Max Height": 0.10,
+      "Min Height": 0.05,
+      "Mesh Height": 0.975679,
+      "Height To Diameter Ratio": 0.05,
+      "Max Age": 15,
+      "Rotate Mesh": false
+    },
+    {
+      "Mesh File": "vegetation/Groundcover/GC18_3.obj",
+      "Species Name": "Clover 3",
+      "Num New Per Area": 0.1,
+      "Growth Rate": 1.0,
+      "Max Height": 0.2,
+      "Min Height": 0.1,
+      "Mesh Height": 2.07128,
+      "Height To Diameter Ratio": 0.05,
+      "Max Age": 15,
+      "Rotate Mesh": false
+    }
+  ]
+}

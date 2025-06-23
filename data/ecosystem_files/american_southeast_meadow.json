@@ -1,0 +1,200 @@
+{
+	"Texture Inputs": "scenes/meshes/surface_textures/meadow_surfaces.json",
+	
+	"Surface Mesh": "scenes/meshes/surfaces/surface.obj",
+	
+	"Anvel Replay File": "waypoints/vehicle2_pos_1.vprp",
+	
+	
+	"Simulation Length": 7,
+	
+	"Trail Properties": {
+		"Tire Width": 0.6,
+		"Wheelbase": 2.5,
+		"Ground Clearance": 0.0001,
+		"Trail Width": 4.5
+	},
+	
+	"Species":[
+		{
+		"Mesh File": "vegetation/Groundcover/GC09_1.obj",
+		"Species Name": "Cleavers 1",
+		"Num New Per Area":1.0,
+		"Growth Rate": 1.0,
+		"Max Height": 0.42,
+		"Min Height": 0.21,
+		"Mesh Height": 4.0416,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 8,
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC09_2.obj",
+		"Species Name": "Cleavers 2",
+		"Num New Per Area":1.0,
+		"Growth Rate": 1.0,
+		"Max Height": 0.34,
+		"Min Height": 0.17,
+		"Mesh Height": 3.28519,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 8,
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC09_3.obj",
+		"Species Name": "Cleavers 3",
+		"Num New Per Area":1.0,
+		"Growth Rate": 1.0,
+		"Max Height": 0.31,
+		"Min Height": 0.155,
+		"Mesh Height": 3.04409,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 8,
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC14_1.obj",
+		"Species Name": "Bluegrass 1",
+		"Num New Per Area":1.0,
+		"Growth Rate": 1.0,
+		"Max Height": 0.07,
+		"Min Height": 0.035,
+		"Mesh Height": 0.736854,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 8,
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC14_2.obj",
+		"Species Name": "Bluegrass 2",
+		"Num New Per Area":1.0,
+		"Growth Rate": 1.0,
+		"Max Height": 0.05,
+		"Min Height": 0.025,
+		"Mesh Height": 0.575341,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 8,
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC14_3.obj",
+		"Species Name": "Bluegrass 1",
+		"Num New Per Area":1.0,
+		"Growth Rate": 1.0,
+		"Max Height": 0.10,
+		"Min Height": 0.05,
+		"Mesh Height": 0.785828,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 8,
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC17_1.obj",
+		"Species Name": "Dandelion 1",
+		"Num New Per Area":1.0,
+		"Growth Rate": 1.0,
+		"Max Height": 0.02,
+		"Min Height": 0.01,
+		"Mesh Height": 0.18998,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 8,
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC17_2.obj",
+		"Species Name": "Dandelion 2",
+		"Num New Per Area":1.0,
+		"Growth Rate": 1.0,
+		"Max Height": 0.2,
+		"Min Height": 0.1,
+		"Mesh Height": 2.29535,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 8,
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC17_3.obj",
+		"Species Name": "Dandelion 3",
+		"Num New Per Area":1.0,
+		"Growth Rate": 1.0,
+		"Max Height": 0.22,
+		"Min Height": 0.11,
+		"Mesh Height": 1.89287,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 8,
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC18_1.obj",
+		"Species Name": "Clover 1",
+		"Num New Per Area":1.0,
+		"Growth Rate": 1.0,
+		"Max Height": 0.11,
+		"Min Height": 0.055,
+		"Mesh Height": 1.0264,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 8,
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC18_2.obj",
+		"Species Name": "Clover 2",
+		"Num New Per Area":1.0,
+		"Growth Rate": 1.0,
+		"Max Height": 0.10,
+		"Min Height": 0.05,
+		"Mesh Height": 0.975679,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 8,
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC18_3.obj",
+		"Species Name": "Clover 3",
+		"Num New Per Area":1.0,
+		"Growth Rate": 1.0,
+		"Max Height": 0.2,
+		"Min Height": 0.1,
+		"Mesh Height": 2.07128,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 8,
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC20_1.obj",
+		"Species Name": "Pansy 1",
+		"Num New Per Area":1.0,
+		"Growth Rate": 1.0,
+		"Max Height": 0.12,
+		"Min Height": 0.06,
+		"Mesh Height": 0.962188,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 8,
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC20_2.obj",
+		"Species Name": "Pansy 2",
+		"Num New Per Area":1.0,
+		"Growth Rate": 1.0,
+		"Max Height": 0.11,
+		"Min Height": 0.055,
+		"Mesh Height": 1.05395,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 8,
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC20_3.obj",
+		"Species Name": "Pansy 3",
+		"Num New Per Area":1.0,
+		"Growth Rate": 1.0,
+		"Max Height": 0.1,
+		"Min Height": 0.05,
+		"Mesh Height": 0.997804,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 8,
+		"Rotate Mesh": false	
+		}
+	]
+}

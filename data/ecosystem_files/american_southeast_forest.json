@@ -1,0 +1,274 @@
+{
+	"Texture Inputs": "scenes/meshes/surface_textures/meadow_surfaces.json",
+
+	"Surface Mesh": "scenes/meshes/surfaces/surface.obj",
+	
+	"Anvel Replay File": "waypoints/vehicle2_pos_1.vprp",
+	
+	"Trail Properties": {
+		"Tire Width": 0.6,
+		"Wheelbase": 2.5,
+		"Ground Clearance": 0.0001,
+		"Trail Width": 4.5
+	},
+	
+	"Species":[
+		{
+		"Mesh File": "vegetation/USA_East/EA10y.obj",
+		"Species Name": "Southern Magnolia young",
+		"Num New Per Area":0.0015,
+		"Growth Rate": 0.1,
+		"Max Height": 4.0,
+		"Min Height": 2.0,
+		"Mesh Height": 37.4321,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 50, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/USA_East/EA10m.obj",
+		"Species Name": "Southern Magnolia medium",
+		"Num New Per Area":0.001,
+		"Growth Rate": 0.1,
+		"Max Height": 12.0,
+		"Min Height": 6.0,
+		"Mesh Height": 147.138,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 50, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/USA_East/EA10a.obj",
+		"Species Name": "Southern Magnolia adult",
+		"Num New Per Area":0.0005,
+		"Growth Rate": 0.1,
+		"Max Height": 17.0,
+		"Min Height": 8.5,
+		"Mesh Height": 204.752,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 50, 
+		"Rotate Mesh": false	
+		},
+		
+		{
+		"Mesh File": "vegetation/USA_East/EA12y.obj",
+		"Species Name": "Eastern White Pine young",
+		"Num New Per Area":0.0015,
+		"Growth Rate": 0.1,
+		"Max Height": 5.5,
+		"Min Height": 2.75,
+		"Mesh Height": 61.0044,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 50, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/USA_East/EA12m.obj",
+		"Species Name": "Eastern White Pine medium",
+		"Num New Per Area":0.001,
+		"Growth Rate": 0.1,
+		"Max Height": 15.0,
+		"Min Height": 7.5,
+		"Mesh Height": 179.413,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 50, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/USA_East/EA12a.obj",
+		"Species Name": "Eastern White Pine adult",
+		"Num New Per Area":0.0005,
+		"Growth Rate": 0.1,
+		"Max Height": 28.0,
+		"Min Height": 14.0,
+		"Mesh Height": 304.245,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 50, 
+		"Rotate Mesh": false	
+		},
+		
+		{
+		"Mesh File": "vegetation/Basic/BL04y.obj",
+		"Species Name": "Pecan young",
+		"Num New Per Area":0.0015,
+		"Growth Rate": 0.1,
+		"Max Height": 7.0,
+		"Min Height": 3.5,
+		"Mesh Height": 69.8889,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 50, 
+		"Rotate Mesh": false	
+		},
+		
+		{
+		"Mesh File": "vegetation/Basic/BL04m.obj",
+		"Species Name": "Pecan medium",
+		"Num New Per Area":0.001,
+		"Growth Rate": 0.1,
+		"Max Height": 15.0,
+		"Min Height": 7.5,
+		"Mesh Height": 181.191,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 50, 
+		"Rotate Mesh": false	
+		},
+		
+		{
+		"Mesh File": "vegetation/Basic/BL04a.obj",
+		"Species Name": "Pecan adult",
+		"Num New Per Area":0.0005,
+		"Growth Rate": 0.1,
+		"Max Height": 25.0,
+		"Min Height": 12.5,
+		"Mesh Height": 307.988,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 50, 
+		"Rotate Mesh": false	
+		},
+		
+		{
+		"Mesh File": "vegetation/Europe/EU39y.obj",
+		"Species Name": "Pyrenean Oak young",
+		"Num New Per Area":0.0015,
+		"Growth Rate": 0.1,
+		"Max Height": 5.5,
+		"Min Height": 2.75,
+		"Mesh Height": 60.2184,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 50, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Europe/EU39m.obj",
+		"Species Name": "Pyrenean Oak medium",
+		"Num New Per Area":0.001,
+		"Growth Rate": 0.1,
+		"Max Height": 9.0,
+		"Min Height": 4.5,
+		"Mesh Height": 102.347,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 50, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Europe/EU39a.obj",
+		"Species Name": "Pyrenean Oak adult",
+		"Num New Per Area":0.0005,
+		"Growth Rate": 0.1,
+		"Max Height": 20.0,
+		"Min Height": 10.0,
+		"Mesh Height": 217.031,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 50, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC14_1.obj",
+		"Species Name": "Bluegrass 1",
+		"Num New Per Area":0.1,
+		"Growth Rate": 1.0,
+		"Max Height": 0.07,
+		"Min Height": 0.035,
+		"Mesh Height": 0.736854,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 15, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC14_2.obj",
+		"Species Name": "Bluegrass 2",
+		"Num New Per Area":0.1,
+		"Growth Rate": 1.0,
+		"Max Height": 0.05,
+		"Min Height": 0.025,
+		"Mesh Height": 0.575341,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 15, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC14_3.obj",
+		"Species Name": "Bluegrass 1",
+		"Num New Per Area":0.1,
+		"Growth Rate": 1.0,
+		"Max Height": 0.10,
+		"Min Height": 0.05,
+		"Mesh Height": 0.785828,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 15, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC17_1.obj",
+		"Species Name": "Dandelion 1",
+		"Num New Per Area":0.1,
+		"Growth Rate": 1.0,
+		"Max Height": 0.02,
+		"Min Height": 0.01,
+		"Mesh Height": 0.18998,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 15, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC17_2.obj",
+		"Species Name": "Dandelion 2",
+		"Num New Per Area":0.1,
+		"Growth Rate": 1.0,
+		"Max Height": 0.2,
+		"Min Height": 0.1,
+		"Mesh Height": 2.29535,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 15, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC17_3.obj",
+		"Species Name": "Dandelion 3",
+		"Num New Per Area":0.1,
+		"Growth Rate": 1.0,
+		"Max Height": 0.22,
+		"Min Height": 0.11,
+		"Mesh Height": 1.89287,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 15, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC18_1.obj",
+		"Species Name": "Clover 1",
+		"Num New Per Area":0.1,
+		"Growth Rate": 1.0,
+		"Max Height": 0.11,
+		"Min Height": 0.055,
+		"Mesh Height": 1.0264,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 15, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC18_2.obj",
+		"Species Name": "Clover 2",
+		"Num New Per Area":0.1,
+		"Growth Rate": 1.0,
+		"Max Height": 0.10,
+		"Min Height": 0.05,
+		"Mesh Height": 0.975679,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 15, 
+		"Rotate Mesh": false	
+		},
+		{
+		"Mesh File": "vegetation/Groundcover/GC18_3.obj",
+		"Species Name": "Clover 3",
+		"Num New Per Area":0.1,
+		"Growth Rate": 1.0,
+		"Max Height": 0.2,
+		"Min Height": 0.1,
+		"Mesh Height": 2.07128,
+		"Height To Diameter Ratio": 0.05,
+		"Max Age": 15, 
+		"Rotate Mesh": false	
+		}
+	]
+}

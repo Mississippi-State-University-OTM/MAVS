@@ -1,0 +1,29 @@
+{
+	"Texture Inputs": "scenes/meshes/surface_textures/meadow_surfaces.json",
+
+	"Surface Mesh": "scenes/meshes/surfaces/surface.obj",
+	
+	"Anvel Replay File": "waypoints/vehicle2_pos_1.vprp",
+	
+	"Trail Properties": {
+		"Tire Width": 0.6,
+		"Wheelbase": 2.5,
+		"Ground Clearance": 0.0001,
+		"Trail Width": 4.5
+	},
+	
+	"Species":[
+		{
+		"Mesh File": "misc/cube.obj",
+		"Species Name": "Cube",
+		"Num New Per Area":0.005,
+		"Growth Rate": 0.1,
+		"Max Height": 6.0,
+		"Min Height": 2.0,
+		"Mesh Height": 2.0,
+		"Height To Diameter Ratio": 0.5,
+		"Max Age": 50, 
+		"Rotate Mesh": false	
+		}
+	]
+}

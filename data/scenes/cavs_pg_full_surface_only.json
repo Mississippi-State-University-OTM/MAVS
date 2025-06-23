@@ -37,17 +37,7 @@
         }
       ]
     },
-    {
-      "Mesh": "misc/red_cylinder.obj",
-      "Rotate Y to Z": true,
-      "Instances": [
-        {
-          "YawPitchRoll": [ 0, 0, 0 ],
-          "Position": [ -21.0, 115.0, 17.0 ],
-          "Scale": [ 0.5, 0.5, 3.0 ]
-        }
-      ]
-    },
+    
     {
       "Mesh": "misc/green_cylinder.obj",
       "Rotate Y to Z": true,

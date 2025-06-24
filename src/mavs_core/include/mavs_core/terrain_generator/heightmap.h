@@ -301,6 +301,8 @@ public:
 	*/
 	glm::vec2  IndexToCoordinate(int i, int j);
 
+	raytracer::Mesh GetAsMesh();
+
 private:
 	void CropSelf(int xsize, int ysize, int LLx, int LLy);
 

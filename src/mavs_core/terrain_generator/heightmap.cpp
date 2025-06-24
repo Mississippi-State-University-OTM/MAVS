@@ -24,13 +24,13 @@ SOFTWARE.
 #ifdef USE_MPI
 #include <mpi.h>
 #endif
-#include <mavs_core/terrain_generator/heightmap.h>
-
 #include <iostream>
 #include <algorithm>
 #include <limits>
+#include <cstdio>
 #include <mavs_core/math/utils.h>
 #include <raytracers/embree_tracer/embree_tracer.h>
+#include <mavs_core/terrain_generator/heightmap.h>
 
 namespace mavs {
 namespace terraingen {
@@ -424,6 +424,16 @@ void HeightMap::CreateFromMesh(std::string surface_file) {
 		}
 	}
 #endif
+}
+
+raytracer::Mesh HeightMap::GetAsMesh() {
+	raytracer::Mesh mesh;
+	std::string meshname = "tmp";
+	WriteObj(meshname, true, false);
+	mesh.Load("./", "tmp.obj");
+	remove("tmp.obj");
+	remove("tmp.mtl");
+	return mesh;
 }
 
 void HeightMap::WriteObj(std::string surfname, bool textured, bool floor) {

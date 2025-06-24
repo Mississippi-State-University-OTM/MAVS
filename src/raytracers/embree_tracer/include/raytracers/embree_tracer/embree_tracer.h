@@ -422,13 +422,25 @@ class EmbreeTracer : public Raytracer {
 	/// Get an Affience identity matrix
 	glm::mat3x4 GetAffineIdentity();
 
+	/// Set the default MAVS file path
+	void SetFilePath(std::string file_path) { file_path_ = file_path; }
+
+	/// Add a surface layer
+	void AddLayeredSurface(LayeredSurface layer) { layered_surfaces_.push_back(layer); }
+
+	/// Load the label file
+	void LoadSemanticLabels(std::string label_file);
+
+	/// Set if labels have been loaded
+	void SetLabelsLoaded(bool labels_loaded) { labels_loaded_ = labels_loaded; }
+
  private:
   glm::mat3 kidentity_matrix_;
   glm::mat3 MatrixFromNormal(float nx, float ny, float nz);
 
 	unsigned int AddMeshToScene(Mesh &mesh, RTCScene &scene, RTCBuildQuality flags);
 	bool surface_loaded_;
-	void LoadSemanticLabels(std::string label_file);
+	
 	bool labels_loaded_;
 	bool scene_loaded_;
 

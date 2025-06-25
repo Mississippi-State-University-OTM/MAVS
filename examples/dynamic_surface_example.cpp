@@ -35,6 +35,7 @@ SOFTWARE.
 * \date 6/25/2025
 */
 #include <iostream>
+#include <functional>
 #include <stdlib.h>
 #include <mavs_core/math/utils.h>
 #include <mavs_core/data_path.h>
@@ -45,18 +46,23 @@ SOFTWARE.
 #include <raytracers/embree_tracer/embree_tracer.h>
 #endif
 
-mavs::raytracer::embree::EmbreeTracer CreateScene() {
+using TerrainElevationFunction = float(*)(float, float);
+
+mavs::raytracer::embree::EmbreeTracer CreateScene(float llx, float lly, float urx, float ury, float res, TerrainElevationFunction elevation_function) {
 	mavs::MavsDataPath mdp;
 	std::string mavs_data_path = mdp.GetPath();
 	mavs::terraingen::HeightMap heightmap;
 	int nx = 1000;
 	int ny = 1000;
 	heightmap.Resize(nx, ny);
-	heightmap.SetCorners(-500.0f, -500.0f, 500.0f, 500.0f);
-	heightmap.SetResolution(1.0f);
+	heightmap.SetCorners(llx, lly, urx, ury);
+	heightmap.SetResolution(res);
 	for (int i = 0; i < nx; i++) {
+		float x = llx + (i + 0.5f) * res;
 		for (int j = 0; j < ny; j++) {
-			heightmap.SetHeight(i, j, 0.0f);
+			float y = lly + (j + 0.5f) * res;
+			float z = elevation_function(x, y);
+			heightmap.SetHeight(i, j, z);
 }
 	}
 	std::string file_path = mavs_data_path + "/scenes/meshes/";
@@ -78,6 +84,59 @@ mavs::raytracer::embree::EmbreeTracer CreateScene() {
 	return scene;
 }
 
+float FiftyPercentSlope(float x, float y) {
+	float z = 0.5f * x;
+	return z;
+}
+
+float ParabolicSlope(float x, float y) {
+	float z = 0.01f * x*x;
+	return z;
+}
+
+class Ditch {
+public:
+	Ditch(float bottom_width, float top_width, float depth, float x_coord) {
+		b = bottom_width;
+		a = top_width;
+		h = depth;
+		x0 = x_coord;
+	}
+
+	float (*GetElevation())(float, float) {
+		return TrapezoidalDitch;
+	}
+
+	// Function to define the trapezoidal ditch profile
+	static float TrapezoidalDitch(float x, float y) {
+		float h = 2.0f; // ditch depth
+		float b = 6.0f; // width at bottom
+		float a = 12.0f; // width at top
+		float x0 = 20.0f; // center of ditch
+		float halfTop = a / 2.0f;
+		float halfBottom = b / 2.0f;
+
+		if (x < x0 - halfTop || x > x0 + halfTop) {
+			return 0.0f; // Outside the ditch
+		}
+		else if (x >= x0 - halfBottom && x <= x0 + halfBottom) {
+			return -h; // Flat bottom
+		}
+		else {
+			// Sloped sides
+			float slope = h / ((a - b) / 2.0);
+			if (x < x0) {
+				return -slope * (x - (x0 - halfTop));
+			}
+			else {
+				return -slope * ((x0 + halfTop) - x);
+			}
+		}
+	}
+
+private:
+	float h, a, b, x0;
+};
 
 int main(int argc, char *argv[]) {
 #ifndef USE_EMBREE
@@ -90,7 +149,8 @@ int main(int argc, char *argv[]) {
 	}
 	std::string vehic_file(argv[1]);
 
-	mavs::raytracer::embree::EmbreeTracer scene = CreateScene();
+	Ditch ditch(6.0f, 12.0f, 2.0f, 20.0f);
+	mavs::raytracer::embree::EmbreeTracer scene = CreateScene(-500.0f, -500.0f, 500.0f, 500.0f, 2.0f, ditch.GetElevation());
 	
 
 	mavs::environment::Environment env;
@@ -122,7 +182,6 @@ int main(int argc, char *argv[]) {
 	int nsteps = 0;
 
 	while(camera.DisplayOpen() || nsteps==0){
-
 		float throttle = 0.3f;
 		float steering = 0.0f;
 		float braking = 0.0f;

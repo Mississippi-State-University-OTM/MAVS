@@ -31,6 +31,7 @@ plotting/map_viewer.cpp
 
 terrain_generator/species.cpp
 terrain_generator/heightmap.cpp
+terrain_generator/terrain_elevation_functions.cpp
 terrain_generator/surface.cpp
 terrain_generator/random_surface.cpp
 terrain_generator/grd_surface.cpp

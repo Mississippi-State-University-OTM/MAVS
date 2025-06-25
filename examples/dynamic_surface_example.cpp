@@ -24,7 +24,7 @@ SOFTWARE.
 /**
 * \file dynamic_surface_example.cpp
 *
-* Drive a MAVS vehicle implemented in RP3D
+* Creates terrains / scenes programattically and drives a vehicle in them
 *
 * Usage: >./dynamic_surface_example rp3d_vehicle_file.json 
 *
@@ -34,167 +34,82 @@ SOFTWARE.
 *
 * \date 6/25/2025
 */
-#include <iostream>
-#include <functional>
-#include <stdlib.h>
-#include <mavs_core/math/utils.h>
-#include <mavs_core/data_path.h>
-#include <mavs_core/terrain_generator/heightmap.h>
+#include <mavs_core/terrain_generator/terrain_elevation_functions.h>
 #include <vehicles/rp3d_veh/mavs_rp3d_veh.h>
-#include <sensors/mavs_sensors.h>
-#ifdef USE_EMBREE
-#include <raytracers/embree_tracer/embree_tracer.h>
-#endif
-
-using TerrainElevationFunction = float(*)(float, float);
-
-mavs::raytracer::embree::EmbreeTracer CreateScene(float llx, float lly, float urx, float ury, float res, TerrainElevationFunction elevation_function) {
-	mavs::MavsDataPath mdp;
-	std::string mavs_data_path = mdp.GetPath();
-	mavs::terraingen::HeightMap heightmap;
-	int nx = 1000;
-	int ny = 1000;
-	heightmap.Resize(nx, ny);
-	heightmap.SetCorners(llx, lly, urx, ury);
-	heightmap.SetResolution(res);
-	for (int i = 0; i < nx; i++) {
-		float x = llx + (i + 0.5f) * res;
-		for (int j = 0; j < ny; j++) {
-			float y = lly + (j + 0.5f) * res;
-			float z = elevation_function(x, y);
-			heightmap.SetHeight(i, j, z);
-}
-	}
-	std::string file_path = mavs_data_path + "/scenes/meshes/";
-	mavs::raytracer::Mesh surf_mesh = heightmap.GetAsMesh();
-	mavs::raytracer::embree::EmbreeTracer scene;
-	glm::mat3x4 rot_scale = scene.GetAffineIdentity();
-
-	scene.SetLayeredSurfaceMesh(surf_mesh, rot_scale);
-	scene.SetSurfaceMesh(surf_mesh, rot_scale);
-	std::string layer_file = file_path + "surface_textures/road_surfaces.json";
-	mavs::raytracer::LayeredSurface layers;
-	layers.LoadSurfaceTextures(file_path, layer_file);
-	scene.AddLayeredSurface(layers);
-	scene.LoadSemanticLabels(file_path + "labels.json");
-	scene.SetLabelsLoaded(true);
-	scene.CommitScene();
-	scene.SetLoaded(true);
-	scene.SetFilePath(file_path);
-	return scene;
-}
-
-float FiftyPercentSlope(float x, float y) {
-	float z = 0.5f * x;
-	return z;
-}
-
-float ParabolicSlope(float x, float y) {
-	float z = 0.01f * x*x;
-	return z;
-}
-
-class Ditch {
-public:
-	Ditch(float bottom_width, float top_width, float depth, float x_coord) {
-		b = bottom_width;
-		a = top_width;
-		h = depth;
-		x0 = x_coord;
-	}
-
-	float (*GetElevation())(float, float) {
-		return TrapezoidalDitch;
-	}
-
-	// Function to define the trapezoidal ditch profile
-	static float TrapezoidalDitch(float x, float y) {
-		float h = 2.0f; // ditch depth
-		float b = 6.0f; // width at bottom
-		float a = 12.0f; // width at top
-		float x0 = 20.0f; // center of ditch
-		float halfTop = a / 2.0f;
-		float halfBottom = b / 2.0f;
-
-		if (x < x0 - halfTop || x > x0 + halfTop) {
-			return 0.0f; // Outside the ditch
-		}
-		else if (x >= x0 - halfBottom && x <= x0 + halfBottom) {
-			return -h; // Flat bottom
-		}
-		else {
-			// Sloped sides
-			float slope = h / ((a - b) / 2.0);
-			if (x < x0) {
-				return -slope * (x - (x0 - halfTop));
-			}
-			else {
-				return -slope * ((x0 + halfTop) - x);
-			}
-		}
-	}
-
-private:
-	float h, a, b, x0;
-};
+#include <sensors/camera/rgb_camera.h>
 
 int main(int argc, char *argv[]) {
-#ifndef USE_EMBREE
-	std::cerr << "The Driving Example can only be run with Embree enabled" << std::endl;
-	return 0;
-#endif
+	// check that the vehicle command line arg is provided
 	if (argc < 2) {
-		std::cerr << "ERROR, must provide scene file and vehicle file as arguments" << std::endl;
+		std::cerr << "ERROR, must provide a vehicle file as argument" << std::endl;
 		return 1;
 	}
 	std::string vehic_file(argv[1]);
 
-	Ditch ditch(6.0f, 12.0f, 2.0f, 20.0f);
-	mavs::raytracer::embree::EmbreeTracer scene = CreateScene(-500.0f, -500.0f, 500.0f, 500.0f, 2.0f, ditch.GetElevation());
-	
+	// create the different types of terrains for testing and add them to a vector
+	std::vector< mavs::terraingen::TerrainElevationFunction*> terrains;
+	terrains.push_back(new mavs::terraingen::TrapezoidalObstacle(6.0f, 12.0f, 2.0f, 20.0f));
+	terrains.push_back(new mavs::terraingen::TrapezoidalObstacle(6.0f, 12.0f, -2.0f, 20.0f));
+	terrains.push_back(new mavs::terraingen::SlopedTerrain(0.25f));
+	terrains.push_back(new mavs::terraingen::RoughTerrain(0.065f));
+	terrains.push_back(new mavs::terraingen::ParabolicTerrain(0.005f));
 
-	mavs::environment::Environment env;
-	env.SetRaytracer(&scene);
+	// loop over all the terrain types
+	for (int i = 0; i < (int)terrains.size(); i++) {
 
-	glm::vec3 sensor_offset(-10.0f, 0.0f, 1.5f);
-	glm::quat sensor_orient(1.0f, 0.0f, 0.0f, 0.0f);
-	glm::vec3 position(0.0f, 0.0f, 1.0f);
-	glm::quat orient(1.0f, 0.0f, 0.0f, 0.0f);
-	mavs::sensor::camera::RgbCamera camera;
-	camera.SetEnvironmentProperties(&env);
-	camera.Initialize(480, 320, 0.00525f, 0.0035f, 0.0035f);
-	camera.SetRelativePose(sensor_offset, sensor_orient);
-	camera.SetName("camera");
-	//camera.SetAntiAliasing("oversampled");
-	//camera.SetPixelSampleFactor(3);
-	camera.SetPose(position, orient);
-	camera.SetElectronics(0.65f, 1.0f);
-	
-	mavs::vehicle::Rp3dVehicle veh;
-	veh.Load(vehic_file);
-	float zstart = scene.GetSurfaceHeight(0.0f, 0.0f);
-	veh.SetPosition(0.0f,0.0f, zstart + 0.25f);
-	veh.SetOrientation(1.0f, 0.0f, 0.0f, 0.0f);
-	//veh.SetPosition(20.0f, -20.0f, 2.5f);
-	//veh.SetOrientation(0.7071f, 0.0f, 0.0f, 0.7071f);
+		// create the scene based on the current terrain definition
+		mavs::raytracer::embree::EmbreeTracer scene = mavs::terraingen::CreateTerrain(-25.0f, -25.0f, 200.0f, 25.0f, 1.0f, terrains[i]);
 
-	float dt = 1.0f / 100.0f;
-	int nsteps = 0;
+		// create the environment and add the scene to it
+		mavs::environment::Environment env;
+		env.SetRaytracer(&scene);
+		env.SetDateTime(2025, 6, 25, 19, 0, 0, 6); // 7 PM so we have long shadows
 
-	while(camera.DisplayOpen() || nsteps==0){
-		float throttle = 0.3f;
-		float steering = 0.0f;
-		float braking = 0.0f;
-		
-		veh.Update(&env, throttle, steering, braking, dt);
-		
-		if (nsteps % 4 == 0) {
-			mavs::VehicleState veh_state = veh.GetState();
-			camera.SetPose(veh_state);
-			camera.Update(&env, 4 * dt);
-			camera.Display();
-		}
-		nsteps++;
+		// create the camera and set it's propoerties
+		mavs::sensor::camera::RgbCamera camera;
+		camera.Initialize(480, 320, 0.00525f, 0.0035f, 0.0035f);
+		camera.SetRelativePose(glm::vec3(-12.0f, 0.0f, 2.0f), glm::quat(1.0f, 0.0f, 0.0f, 0.0f));
+		camera.SetElectronics(0.75f, 1.0f);
+
+		// load the vehicle and set it's initial position
+		mavs::vehicle::Rp3dVehicle veh;
+		veh.Load(vehic_file);
+		veh.SetPosition(0.0f, 0.0f, scene.GetSurfaceHeight(0.0f, 0.0f) + 0.25f);
+		veh.SetOrientation(1.0f, 0.0f, 0.0f, 0.0f);
+
+		// initiate the main sim loop
+		float elapsed_time = 0.0f;
+		float dt = 1.0f / 100.0f;
+		int nsteps = 0;
+		while (elapsed_time<15.0f){
+			// constant throttle, steering, and braking
+			float throttle = 0.3f;
+			float steering = 0.0f;
+			float braking = 0.0f;
+
+			// update the vehicle
+			veh.Update(&env, throttle, steering, braking, dt);
+
+			// update the vehicle every 4 steps (25 Hz)
+			if (nsteps % 4 == 0) {
+				glm::vec3 look_to = veh.GetLookTo();
+				float yaw = atan2f(look_to.y, look_to.x);
+				glm::quat ori(cosf(0.5 * yaw), 0.0f, 0.0f, sin(0.5f * yaw));
+				glm::vec3 pos = veh.GetPosition();
+				camera.SetPose(pos, ori);
+				camera.Update(&env, 4 * dt);
+				camera.Display();
+			}
+
+			// update the loop counters
+			nsteps++;
+			elapsed_time += dt;
+		} // sim loop
+	} // loop over terrain types
+
+	// clean up terrain pointers
+	for (int i = 0; i < (int)terrains.size(); i++) {
+		delete terrains[i];
 	}
 
 	return 0;

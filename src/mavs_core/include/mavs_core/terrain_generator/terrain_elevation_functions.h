@@ -96,6 +96,33 @@ private:
 	float m_;
 };
 
+/// Create a terrain with a circular hole in it
+class HoleTerrain : public TerrainElevationFunction {
+public:
+	/**
+	* Initialize the hole terrain
+	* Specify the (x,y) location of the hole, it's depth, it's diameter, and the side steepness parameter
+	* \param x X (easting) coordinate of the center of the hole in local ENU meters
+	* \param y Y (northing) coordinate of the center of the hole in local ENU meters
+	* \param d Depth of the hole in meters. Negative depth is an obstacle
+	* \param s Steepness of the hole sides
+	*/
+	HoleTerrain(float x, float y, float depth, float diameter, float steepness);
+
+	/**
+	* Overwrites the virtual method of the base calss
+	* Args are the x-y coordinates in ENU meters.
+	* Returns the elevation (z) in ENU metrs
+	* \param x X (easting) coordinate in local ENU meters
+	* \param y Y (northing) coordinate in local ENU meters
+	*/
+	float GetElevation(float x, float y);
+
+private:
+	float x0_, y0_, radius_, n_, h_;
+	float b_, c_;
+};
+
 /// Create a rough terrain with a constant RMS roughness value
 class RoughTerrain : public TerrainElevationFunction {
 public:

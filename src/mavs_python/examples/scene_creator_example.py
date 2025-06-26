@@ -8,6 +8,18 @@ mavs_data_path = mavs_python_paths.mavs_data_path
 # create the different terrain types to test
 terrains = []
 ditch = mavs.MavsTerrainCreator()
+ditch.CreateTrapezoidalTerrain(6.0, 12.0, 0.5, 20.0)
+terrains.append(ditch)
+
+ditch = mavs.MavsTerrainCreator()
+ditch.CreateTrapezoidalTerrain(6.0, 12.0, 1.0, 20.0)
+terrains.append(ditch)
+
+ditch = mavs.MavsTerrainCreator()
+ditch.CreateTrapezoidalTerrain(6.0, 12.0, 1.5, 20.0)
+terrains.append(ditch)
+
+ditch = mavs.MavsTerrainCreator()
 ditch.CreateTrapezoidalTerrain(6.0, 12.0, 2.0, 20.0)
 terrains.append(ditch)
 

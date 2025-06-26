@@ -48,6 +48,8 @@ int main(int argc, char *argv[]) {
 
 	// create the different types of terrains for testing and add them to a vector
 	std::vector< mavs::terraingen::TerrainElevationFunction*> terrains;
+	terrains.push_back(new mavs::terraingen::HoleTerrain(20.0f, 0.0f, 2.0f, 15.0f, 1.0f));
+	terrains.push_back(new mavs::terraingen::HoleTerrain(20.0f, 0.0f, -3.0f, 1.0f, 1000.0f));
 	terrains.push_back(new mavs::terraingen::TrapezoidalObstacle(6.0f, 12.0f, 2.0f, 20.0f));
 	terrains.push_back(new mavs::terraingen::TrapezoidalObstacle(6.0f, 12.0f, -2.0f, 20.0f));
 	terrains.push_back(new mavs::terraingen::SlopedTerrain(0.25f));
@@ -58,7 +60,7 @@ int main(int argc, char *argv[]) {
 	for (int i = 0; i < (int)terrains.size(); i++) {
 
 		// create the scene based on the current terrain definition
-		terrains[i]->CreateTerrain(-25.0f, -25.0f, 200.0f, 25.0f, 1.0f);
+		terrains[i]->CreateTerrain(-25.0f, -25.0f, 200.0f, 25.0f, 0.1f);
 		
 		// Get a pointer to the created scene
 		mavs::raytracer::embree::EmbreeTracer *scene = terrains[i]->GetScenePointer();

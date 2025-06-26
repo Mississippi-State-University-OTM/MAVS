@@ -3,7 +3,7 @@ from math import sqrt
 import time
 from noise import pnoise2
 # Set the path to the mavs python api, mavs.py
-sys.path.append(r'C:\mavs\src\mavs_python')
+sys.path.append(r'C:/Users/cgoodin/Desktop/goodin_docs/repos/mavs/src/mavs_python')
 # Load the mavs python modules
 import mavs_interface as mavs
 import mavs_python_paths

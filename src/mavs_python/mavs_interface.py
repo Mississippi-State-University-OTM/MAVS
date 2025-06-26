@@ -2795,8 +2795,8 @@ class MavsEmbreeScene(MavsScene):
     def __init__(self):
         """Constructor for a MavsEmbreeScene."""
         ## scene (void): Poiner to a MAVS Embree scene.
-        #self.scene = mavs_lib.NewEmbreeScene()
-        self.scene = None
+        self.scene = mavs_lib.NewEmbreeScene()
+        #self.scene = None
     def __del__(self):
         if (self.scene):
             mavs_lib.DeleteEmbreeScene(self.scene)
@@ -3026,7 +3026,7 @@ class MavsEnvironment(object):
         ## Seconds of the minute, 0-59
         self.second = 0
         # The scene to use
-        self.scene = None #MavsEmbreeScene()
+        self.scene = MavsEmbreeScene()
         #Lat of local origin
         self.local_origin_lat = 32.3033
         #Lon of local origin

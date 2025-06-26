@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include <limits>
 #include <mavs_core/terrain_generator/terrain_elevation_functions.h>
 #include <mavs_core/data_path.h>
 #ifdef USE_EMBREE
@@ -79,7 +80,6 @@ namespace terraingen {
 RoughTerrain::RoughTerrain(float rms) : distribution_(0.0f, rms) {
 	std::random_device rd;
 	generator_.seed(rd());
-
 }
 
 float RoughTerrain::GetElevation(float x, float y) {
@@ -101,6 +101,31 @@ ParabolicTerrain::ParabolicTerrain(float square_coeff) {
 }
 float ParabolicTerrain::GetElevation(float x, float y) {
 	float z = a_ * x * x;
+	return z;
+}
+
+HoleTerrain::HoleTerrain(float x, float y, float depth, float diameter, float steepness) {
+	x0_ = x;
+	y0_ = y; 
+	if (steepness == 0.0f) {
+		n_ = std::numeric_limits<float>::max();
+	}
+	else {
+		n_ = 1.0f / fabsf(steepness);
+	}
+	radius_ = 0.5f * fabsf(diameter);
+	h_ = -depth;
+	c_ = h_ / powf(2.0f, n_);
+	b_ = acosf(-1.0f)/radius_;
+}
+float HoleTerrain::GetElevation(float x, float y) {
+	float dx = x - x0_;
+	float dy = y - y0_;
+	float r = sqrtf(dx * dx + dy * dy);
+	float z = 0.0f;
+	if (r < radius_) {
+		z = c_ * powf(1.0f + cosf(b_ * r), n_);
+	}
 	return z;
 }
 

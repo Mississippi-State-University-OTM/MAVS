@@ -40,6 +40,7 @@ SOFTWARE.
 #include <sensors/sensor.h>
 #include <sensors/imu/mems_sensor.h>
 #include <mavs_core/terrain_generator/random_scene.h>
+#include <mavs_core/terrain_generator/terrain_elevation_functions.h>
 #include <mavs_core/plotting/mavs_plotting.h>
 #include "vehicles/controllers/pure_pursuit_controller.h"
 #include <simulation/ortho_viewer.h>
@@ -106,6 +107,21 @@ EXPORT_CMD void SetMavsAnimationPosition(mavs::raytracer::Animation *anim, float
 EXPORT_CMD void SetMavsAnimationHeading(mavs::raytracer::Animation *anim, float heading);
 
 EXPORT_CMD void ViewRp3dDebug(char* input_file_name);
+
+EXPORT_CMD mavs::terraingen::TerrainElevationFunction* CreateTrapezoidalObstacleTerrain(float bottom_width, float top_width, float depth, float x0);
+
+EXPORT_CMD mavs::terraingen::TerrainElevationFunction* CreateRoughTerrain(float rms);
+
+EXPORT_CMD mavs::terraingen::TerrainElevationFunction* CreateSlopedTerrain(float slope);
+
+EXPORT_CMD mavs::terraingen::TerrainElevationFunction* CreateParabolicTerrain(float coeff);
+
+EXPORT_CMD void DeleteTerrainElevationFunction(mavs::terraingen::TerrainElevationFunction* terrain);
+
+EXPORT_CMD float GetTerrainElevation(float x, float y, mavs::terraingen::TerrainElevationFunction* terrain);
+
+EXPORT_CMD mavs::raytracer::embree::EmbreeTracer* CreateSceneFromTerrain(float llx, float lly, float urx, float ury, float res, mavs::terraingen::TerrainElevationFunction* terrain);
+
 #endif //use EMBREE
 
 EXPORT_CMD mavs::terraingen::GridSurface *LoadDem(char* input_file_name, bool interp_no_data, bool recenter);

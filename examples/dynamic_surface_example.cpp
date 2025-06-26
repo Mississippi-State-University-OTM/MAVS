@@ -58,11 +58,14 @@ int main(int argc, char *argv[]) {
 	for (int i = 0; i < (int)terrains.size(); i++) {
 
 		// create the scene based on the current terrain definition
-		mavs::raytracer::embree::EmbreeTracer scene = mavs::terraingen::CreateTerrain(-25.0f, -25.0f, 200.0f, 25.0f, 1.0f, terrains[i]);
+		terrains[i]->CreateTerrain(-25.0f, -25.0f, 200.0f, 25.0f, 1.0f);
+		
+		// Get a pointer to the created scene
+		mavs::raytracer::embree::EmbreeTracer *scene = terrains[i]->GetScenePointer();
 
 		// create the environment and add the scene to it
 		mavs::environment::Environment env;
-		env.SetRaytracer(&scene);
+		env.SetRaytracer(scene);
 		env.SetDateTime(2025, 6, 25, 19, 0, 0, 6); // 7 PM so we have long shadows
 
 		// create the camera and set it's propoerties
@@ -74,7 +77,7 @@ int main(int argc, char *argv[]) {
 		// load the vehicle and set it's initial position
 		mavs::vehicle::Rp3dVehicle veh;
 		veh.Load(vehic_file);
-		veh.SetPosition(0.0f, 0.0f, scene.GetSurfaceHeight(0.0f, 0.0f) + 0.25f);
+		veh.SetPosition(0.0f, 0.0f, scene->GetSurfaceHeight(0.0f, 0.0f) + 0.25f);
 		veh.SetOrientation(1.0f, 0.0f, 0.0f, 0.0f);
 
 		// initiate the main sim loop

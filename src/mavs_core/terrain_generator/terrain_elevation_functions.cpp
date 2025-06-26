@@ -41,7 +41,7 @@ namespace terraingen {
 * \param ury Y (northing) coordinate of the upper-right (northeast) coordinate of the terrain in local ENU meters
 * \param elevation_function Pointer to a derived class of the TerrainElevationFunction base-classs
 */
-mavs::raytracer::embree::EmbreeTracer CreateTerrain(float llx, float lly, float urx, float ury, float res, TerrainElevationFunction* elevation_function) {
+ void TerrainElevationFunction::CreateTerrain(float llx, float lly, float urx, float ury, float res) {
 	mavs::MavsDataPath mdp;
 	std::string mavs_data_path = mdp.GetPath();
 	mavs::terraingen::HeightMap heightmap;
@@ -54,27 +54,26 @@ mavs::raytracer::embree::EmbreeTracer CreateTerrain(float llx, float lly, float 
 		float x = llx + i * res;
 		for (int j = 0; j < ny; j++) {
 			float y = lly + j * res;
-			float z = elevation_function->GetElevation(x, y);
+			float z = GetElevation(x, y);
 			heightmap.SetHeight(i, j, z);
 		}
 	}
 	std::string file_path = mavs_data_path + "/scenes/meshes/";
 	mavs::raytracer::Mesh surf_mesh = heightmap.GetAsMesh();
-	mavs::raytracer::embree::EmbreeTracer scene;
-	glm::mat3x4 rot_scale = scene.GetAffineIdentity();
+	//mavs::raytracer::embree::EmbreeTracer scene;
+	glm::mat3x4 rot_scale = scene_.GetAffineIdentity();
 
-	scene.SetLayeredSurfaceMesh(surf_mesh, rot_scale);
-	scene.SetSurfaceMesh(surf_mesh, rot_scale);
+	scene_.SetLayeredSurfaceMesh(surf_mesh, rot_scale);
+	scene_.SetSurfaceMesh(surf_mesh, rot_scale);
 	std::string layer_file = file_path + "surface_textures/road_surfaces.json";
 	mavs::raytracer::LayeredSurface layers;
 	layers.LoadSurfaceTextures(file_path, layer_file);
-	scene.AddLayeredSurface(layers);
-	scene.LoadSemanticLabels(file_path + "labels.json");
-	scene.SetLabelsLoaded(true);
-	scene.CommitScene();
-	scene.SetLoaded(true);
-	scene.SetFilePath(file_path);
-	return scene;
+	scene_.AddLayeredSurface(layers);
+	scene_.LoadSemanticLabels(file_path + "labels.json");
+	scene_.SetLabelsLoaded(true);
+	scene_.CommitScene();
+	scene_.SetLoaded(true);
+	scene_.SetFilePath(file_path);
 } // function CreateScene
 
 RoughTerrain::RoughTerrain(float rms) : distribution_(0.0f, rms) {

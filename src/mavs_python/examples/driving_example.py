@@ -51,7 +51,7 @@ env.SetWind( [2.5, 1.0] ) # Horizontal windspeed in m/s
 veh = mavs.MavsRp3d()
 # vehicle files are in the mavs "data/vehicles/rp3d_vehicles" folder
 #veh_file = 'forester_2017_rp3d.json'
-veh_file = 'mrzr4_tires.json'
+veh_file = 'mrzr4_tires_low_gear.json'
 #veh_file = 'clearpath_warthog.json'
 #veh_file = 'hmmwv_rp3d.json'
 #veh_file = 'mrzr4.json'

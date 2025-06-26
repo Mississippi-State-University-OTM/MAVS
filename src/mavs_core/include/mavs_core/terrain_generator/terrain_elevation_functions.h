@@ -30,6 +30,8 @@ SOFTWARE.
  *
  * \date 6/25/2025
  */
+#ifndef TERRAIN_ELEVATION_FUNCTIONS_H
+#define TERRAIN_ELEVATION_FUNCTIONS_H
 #include <random>
 #ifdef USE_EMBREE
 #include <raytracers/embree_tracer/embree_tracer.h>
@@ -48,7 +50,26 @@ public:
 	* \param x X (easting) coordinate in local ENU meters
 	* \param y Y (northing) coordinate in local ENU meters
 	*/
-	virtual float GetElevation(float x, float y) = 0;
+	virtual float GetElevation(float x, float y) { return 0.0f; }
+
+	/**
+	* Creates a terrain surface with a user-defined size and shape.
+	* User provides the boundaries for the lower-left and upper-right corners,
+	* And a pointer to a terrain geometry class that inherits from the TerrainElevationFuction base class
+	* \param llx X (easting) coordinate of the lower-left (southwest) coordinate of the terrain in local ENU meters
+	* \param lly Y (northing) coordinate of the lower-left (southwest) coordinate of the terrain in local ENU meters
+	* \param urx X (easting) coordinate of the upper-right (northeast) coordinate of the terrain in local ENU meters
+	* \param ury Y (northing) coordinate of the upper-right (northeast) coordinate of the terrain in local ENU meters
+	*/
+	void CreateTerrain(float llx, float lly, float urx, float ury, float res);
+
+	/// Return the created scene. Must be called after the "CreateScene" function
+	mavs::raytracer::embree::EmbreeTracer GetScene() { return scene_; }
+
+	/// Return a pointer to the created scene. Must be called after the "CreateScene" function
+	mavs::raytracer::embree::EmbreeTracer* GetScenePointer() { return &scene_; }
+protected:
+	mavs::raytracer::embree::EmbreeTracer scene_;
 };
 
 /// Create a terrain with a constant slope in the x direction
@@ -150,17 +171,7 @@ private:
 	float h_, a_, b_, x0_;
 };
 
-/**
-* Creates a terrain surface with a user-defined size and shape. 
-* User provides the boundaries for the lower-left and upper-right corners,
-* And a pointer to a terrain geometry class that inherits from the TerrainElevationFuction base class
-* \param llx X (easting) coordinate of the lower-left (southwest) coordinate of the terrain in local ENU meters
-* \param lly Y (northing) coordinate of the lower-left (southwest) coordinate of the terrain in local ENU meters
-* \param urx X (easting) coordinate of the upper-right (northeast) coordinate of the terrain in local ENU meters
-* \param ury Y (northing) coordinate of the upper-right (northeast) coordinate of the terrain in local ENU meters
-* \param elevation_function Pointer to a derived class of the TerrainElevationFunction base-classs
-*/
-mavs::raytracer::embree::EmbreeTracer CreateTerrain(float llx, float lly, float urx, float ury, float res, TerrainElevationFunction* elevation_function);
-
 } // namespace terraingen
 } // namespace mavs
+
+#endif

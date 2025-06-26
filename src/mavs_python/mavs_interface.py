@@ -39,6 +39,7 @@
 # MAVS is natively in C++, with C interfaces written to make features accessible from python.
 
 import ctypes
+from genericpath import samefile
 import math
 import sys
 import json
@@ -74,6 +75,21 @@ mavs_lib.TurnOffMavsSceneLabeling.restype = ctypes.c_void_p
 mavs_lib.TurnOffMavsSceneLabeling.argtypes = [ctypes.c_void_p]
 mavs_lib.GetSurfaceHeight.restype = ctypes.c_float
 mavs_lib.GetSurfaceHeight.argtypes = [ctypes.c_void_p,ctypes.c_float,ctypes.c_float]
+# ------ programmatic terrain functions ----------------------------------------------#
+mavs_lib.CreateTrapezoidalObstacleTerrain.restype = ctypes.c_void_p
+mavs_lib.CreateTrapezoidalObstacleTerrain.argtypes = [ctypes.c_float, ctypes.c_float, ctypes.c_float, ctypes.c_float]
+mavs_lib.CreateRoughTerrain.restype = ctypes.c_void_p
+mavs_lib.CreateRoughTerrain.argtypes = [ctypes.c_float]
+mavs_lib.CreateSlopedTerrain.restype = ctypes.c_void_p
+mavs_lib.CreateSlopedTerrain.argtypes = [ctypes.c_float]
+mavs_lib.CreateParabolicTerrain.restype = ctypes.c_void_p
+mavs_lib.CreateParabolicTerrain.argtypes = [ctypes.c_float]
+mavs_lib.DeleteTerrainElevationFunction.restype = ctypes.c_void_p
+mavs_lib.DeleteTerrainElevationFunction.argtypes = [ctypes.c_void_p]
+mavs_lib.CreateSceneFromTerrain.restype = ctypes.c_void_p 
+mavs_lib.CreateSceneFromTerrain.argtypes = [ctypes.c_float, ctypes.c_float, ctypes.c_float, ctypes.c_float, ctypes.c_float, ctypes.c_void_p]
+mavs_lib.GetTerrainElevation.argtypes = [ctypes.c_float, ctypes.c_float, ctypes.c_void_p]
+mavs_lib.GetTerrainElevation.restype = ctypes.c_float
 #------ Animations -------#
 mavs_lib.NewMavsAnimation.restype = ctypes.c_void_p
 mavs_lib.DeleteMavsAnimation.restype = ctypes.c_void_p
@@ -2779,7 +2795,12 @@ class MavsEmbreeScene(MavsScene):
     def __init__(self):
         """Constructor for a MavsEmbreeScene."""
         ## scene (void): Poiner to a MAVS Embree scene.
-        self.scene = mavs_lib.NewEmbreeScene()
+        #self.scene = mavs_lib.NewEmbreeScene()
+        self.scene = None
+    def __del__(self):
+        if (self.scene):
+            mavs_lib.DeleteEmbreeScene(self.scene)
+        self.scene = None
     def WriteStats(self,output_directory):
         mavs_lib.WriteEmbreeSceneStats(self.scene,PyStringToChar(output_directory))
     def Load(self,fname):
@@ -2798,6 +2819,35 @@ class MavsEmbreeScene(MavsScene):
         fname (string): The scene file name, relative to the MAVS data path
         """
         mavs_lib.LoadEmbreeSceneWithRandomSeed(self.scene,PyStringToChar(fname))
+
+class MavsTerrainCreator(object):
+    def __init__(self):
+        self.terrain = None
+        
+    def __del__(self):
+        if (self.terrain):
+            mavs_lib.DeleteTerrainElevationFunction(self.terrain)
+        self.terrain = None
+        
+    def CreateTrapezoidalTerrain(self, bottom_width, top_width, depth, x0):
+        self.terrain = mavs_lib.CreateTrapezoidalObstacleTerrain(ctypes.c_float(bottom_width), ctypes.c_float(top_width), ctypes.c_float(depth), ctypes.c_float(x0))
+    
+    def CreateRoughTerrain(self, rms):
+        self.terrain = mavs_lib.CreateRoughTerrain(ctypes.c_float(rms))
+        
+    def CreateSlopedTerrain(self, slope):
+        self.terrain = mavs_lib.CreateSlopedTerrain(ctypes.c_float(slope))
+        
+    def CreateParabolicTerrain(self, coeff):
+        self.terrain = mavs_lib.CreateParabolicTerrain(ctypes.c_float(coeff))
+    
+    def CreateMavsScenePointer(self, llx, lly, urx, ury, res):
+        scene_ptr = mavs_lib.CreateSceneFromTerrain(ctypes.c_float(llx), ctypes.c_float(lly), ctypes.c_float(urx), ctypes.c_float(ury), ctypes.c_float(res), self.terrain)
+        return scene_ptr
+    
+    def GetElevation(self, x, y):
+        z =  mavs_lib.GetTerrainElevation( ctypes.c_float(x), ctypes.c_float(y), self.terrain)
+        return z
 
 class MavsRandomScene(MavsScene):
     """MavsRandomScene class.
@@ -2976,7 +3026,7 @@ class MavsEnvironment(object):
         ## Seconds of the minute, 0-59
         self.second = 0
         # The scene to use
-        self.scene = MavsEmbreeScene()
+        self.scene = None #MavsEmbreeScene()
         #Lat of local origin
         self.local_origin_lat = 32.3033
         #Lon of local origin
@@ -3014,8 +3064,8 @@ class MavsEnvironment(object):
             self.scene = scene
             mavs_lib.SetEnvironmentScene(self.obj, self.scene.scene)
         else:
-            print("WARNING, setting scene with pointer may cause seg fault if scene goes out of scope!")
-            sys.stdout.flush()
+            #print("WARNING, setting scene with pointer may cause seg fault if scene goes out of scope!")
+            #sys.stdout.flush()
             mavs_lib.SetEnvironmentScene(self.obj,scene)
     def GetVegDensityOnAGrid(self,ll,ur,res):
         """Get the vegetation density on a 3d grid

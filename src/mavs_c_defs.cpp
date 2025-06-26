@@ -40,6 +40,7 @@ SOFTWARE.
 #include <iostream>
 #include <new>
 #include <mavs_core/data_path.h>
+#include <mavs_core/terrain_generator/terrain_elevation_functions.h>
 #ifdef USE_CHRONO
 #include <vehicles/chrono/chrono_wheeled_json.h>
 #endif
@@ -253,6 +254,42 @@ extern "C" {
 	EXPORT_CMD void LoadAnimationPathFile(mavs::raytracer::Animation *anim, char *path_file) {
 		std::string path(path_file);
 		anim->LoadPathFile(path);
+	}
+
+	EXPORT_CMD mavs::terraingen::TerrainElevationFunction* CreateTrapezoidalObstacleTerrain(float bottom_width, float top_width, float depth, float x0) {
+		mavs::terraingen::TerrainElevationFunction* terrain = new mavs::terraingen::TrapezoidalObstacle(bottom_width, top_width, depth, x0);
+		return terrain;
+	}
+
+	EXPORT_CMD mavs::terraingen::TerrainElevationFunction* CreateRoughTerrain(float rms) {
+		mavs::terraingen::TerrainElevationFunction* terrain = new mavs::terraingen::RoughTerrain(rms);
+		return terrain;
+	}
+
+	EXPORT_CMD mavs::terraingen::TerrainElevationFunction* CreateSlopedTerrain(float slope) {
+		mavs::terraingen::TerrainElevationFunction* terrain = new mavs::terraingen::SlopedTerrain(slope);
+		return terrain;
+	}
+
+	EXPORT_CMD mavs::terraingen::TerrainElevationFunction* CreateParabolicTerrain(float coeff) {
+		mavs::terraingen::TerrainElevationFunction* terrain = new mavs::terraingen::ParabolicTerrain(coeff);
+		return terrain;
+	}
+
+	EXPORT_CMD float GetTerrainElevation(float x, float y, mavs::terraingen::TerrainElevationFunction *terrain) {
+		return terrain->GetElevation(x, y);
+	}
+
+	EXPORT_CMD void DeleteTerrainElevationFunction(mavs::terraingen::TerrainElevationFunction* terrain) {
+		if (terrain) {
+			delete terrain;
+		}
+	}
+
+	EXPORT_CMD mavs::raytracer::embree::EmbreeTracer* CreateSceneFromTerrain(float llx, float lly, float urx, float ury, float res, mavs::terraingen::TerrainElevationFunction* terrain) {
+		terrain->CreateTerrain(llx, lly, urx, ury, res);
+		mavs::raytracer::embree::EmbreeTracer* scene = terrain->GetScenePointer();
+		return scene;
 	}
 
 #endif //use EMBREE

@@ -31,6 +31,40 @@ SOFTWARE.
 
 namespace mavs {
 namespace terraingen {
+TerrainCreator::TerrainCreator() {
+
+}
+
+TerrainCreator::~TerrainCreator() {
+	for (int i = 0; i < (int)terrain_features_.size(); i++)delete terrain_features_[i];
+	terrain_features_.clear();
+}
+
+TerrainCreator::TerrainCreator(const TerrainCreator& s) {
+	this->scene_ = s.scene_;
+	this->terrain_features_ = s.terrain_features_;
+}
+
+void TerrainCreator::AddTrapezoid(float bottom_width, float top_width, float depth, float x0) {
+	mavs::terraingen::TerrainElevationFunction* terrain_feature = new mavs::terraingen::TrapezoidalObstacle(bottom_width, top_width, depth, x0);
+	terrain_features_.push_back(terrain_feature);
+}
+void TerrainCreator::AddRoughness(float rms) {
+	mavs::terraingen::TerrainElevationFunction* terrain_feature = new mavs::terraingen::RoughTerrain(rms);
+	terrain_features_.push_back(terrain_feature);
+}
+void TerrainCreator::AddHole(float x, float y, float depth, float diameter, float steepness) {
+	mavs::terraingen::TerrainElevationFunction* terrain_feature = new mavs::terraingen::HoleTerrain(x,y, depth, diameter, steepness);
+	terrain_features_.push_back(terrain_feature);
+}
+void TerrainCreator::AddParabolic(float square_coeff) {
+	mavs::terraingen::TerrainElevationFunction* terrain_feature = new mavs::terraingen::ParabolicTerrain(square_coeff);
+	terrain_features_.push_back(terrain_feature);
+}
+void TerrainCreator::AddSlope(float fractional_slope) {
+	mavs::terraingen::TerrainElevationFunction* terrain_feature = new mavs::terraingen::SlopedTerrain(fractional_slope);
+	terrain_features_.push_back(terrain_feature);
+}
 
 /**
 * Creates a terrain surface with a user-defined size and shape.
@@ -57,37 +91,26 @@ namespace terraingen {
 			float y = lly + j * res;
 			float z = 0.0f;
 			for (int k = 0; k < (int)terrain_features_.size(); k++) {
-				//std::cout << k << std::endl;
 				float znew = terrain_features_[k]->GetElevation(x, y);
-				//std::cout << znew << std::endl;
 				z += znew;
 			}
-			//std::cout << "Completed: " << i << " " << j << " " << z << std::endl;
 			heightmap.SetHeight(i, j, z);
 		}
 	}
-	std::cout << "Done generating heightmap " << std::endl;
 	std::string file_path = mavs_data_path + "/scenes/meshes/";
 	mavs::raytracer::Mesh surf_mesh = heightmap.GetAsMesh();
-	std::cout << "Surface mesh poperties: " << surf_mesh.GetNumVertices() << " " << surf_mesh.GetNumFaces() << std::endl;
-	//mavs::raytracer::embree::EmbreeTracer scene_;
 	glm::mat3x4 rot_scale = scene_.GetAffineIdentity();
-	std::cout << "Set the layered surface and surface " << std::endl;
 	scene_.SetLayeredSurfaceMesh(surf_mesh, rot_scale);
 	scene_.SetSurfaceMesh(surf_mesh, rot_scale);
 	std::string layer_file = file_path + "surface_textures/road_surfaces.json";
 	mavs::raytracer::LayeredSurface layers;
-	std::cout << "Loading the surface textures " << file_path << " " << layer_file << std::endl;
 	layers.LoadSurfaceTextures(file_path, layer_file);
-	std::cout << "Setting up scene " << std::endl;
 	scene_.AddLayeredSurface(layers);
 	scene_.LoadSemanticLabels(file_path + "labels.json");
 	scene_.SetLabelsLoaded(true);
 	scene_.CommitScene();
 	scene_.SetLoaded(true);
 	scene_.SetFilePath(file_path);
-	std::cout << "Done creating scene " << std::endl;
-	//scene__ = scene_;
 } // function CreateScene
 
 RoughTerrain::RoughTerrain(float rms) : distribution_(0.0f, rms) {

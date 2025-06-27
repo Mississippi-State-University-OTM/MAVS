@@ -53,37 +53,6 @@ public:
 	virtual float GetElevation(float x, float y) { return 0.0f; }
 };
 
-
-/// Class to dynamically create a terrain from a series of elevation functions
-class TerrainCreator {
-public:
-	//TerrainCreator(){}
-
-	/**
-	* Creates a terrain surface with a user-defined size and shape.
-	* User provides the boundaries for the lower-left and upper-right corners,
-	* And a pointer to a terrain geometry class that inherits from the TerrainElevationFuction base class
-	* \param llx X (easting) coordinate of the lower-left (southwest) coordinate of the terrain in local ENU meters
-	* \param lly Y (northing) coordinate of the lower-left (southwest) coordinate of the terrain in local ENU meters
-	* \param urx X (easting) coordinate of the upper-right (northeast) coordinate of the terrain in local ENU meters
-	* \param ury Y (northing) coordinate of the upper-right (northeast) coordinate of the terrain in local ENU meters
-	*/
-	void CreateTerrain(float llx, float lly, float urx, float ury, float res);
-
-	void AddTerrainFeature(TerrainElevationFunction* feature) { terrain_features_.push_back(feature); }
-
-	void ClearTerrainFeatures() { terrain_features_.clear(); }
-
-	/// Return the created scene. Must be called after the "CreateScene" function
-	mavs::raytracer::embree::EmbreeTracer GetScene() { return scene_; }
-
-	/// Return a pointer to the created scene. Must be called after the "CreateScene" function
-	mavs::raytracer::embree::EmbreeTracer* GetScenePointer() { return &scene_; }
-private:
-	mavs::raytracer::embree::EmbreeTracer scene_;
-	std::vector<TerrainElevationFunction*> terrain_features_;
-};
-
 /// Create a terrain with a constant slope in the x direction
 class SlopedTerrain : public TerrainElevationFunction {
 public:
@@ -209,6 +178,84 @@ public:
 private:
 	float h_, a_, b_, x0_;
 };
+
+/// Class to dynamically create a terrain from a series of elevation functions
+class TerrainCreator {
+public:
+	/// TerrainCreator constructor
+	TerrainCreator();
+
+	/// TerrainCreator destructor 
+	~TerrainCreator();
+
+	/// TerrainCreator copy constructor
+	TerrainCreator(const TerrainCreator& s);
+
+	/**
+	* Creates a terrain surface with a user-defined size and shape.
+	* User provides the boundaries for the lower-left and upper-right corners,
+	* And a pointer to a terrain geometry class that inherits from the TerrainElevationFuction base class
+	* \param llx X (easting) coordinate of the lower-left (southwest) coordinate of the terrain in local ENU meters
+	* \param lly Y (northing) coordinate of the lower-left (southwest) coordinate of the terrain in local ENU meters
+	* \param urx X (easting) coordinate of the upper-right (northeast) coordinate of the terrain in local ENU meters
+	* \param ury Y (northing) coordinate of the upper-right (northeast) coordinate of the terrain in local ENU meters
+	*/
+	void CreateTerrain(float llx, float lly, float urx, float ury, float res);
+
+	/// Return the created scene. Must be called after the "CreateScene" function
+	mavs::raytracer::embree::EmbreeTracer GetScene() { return scene_; }
+
+	/// Return a pointer to the created scene. Must be called after the "CreateScene" function
+	mavs::raytracer::embree::EmbreeTracer* GetScenePointer() { return &scene_; }
+
+	/**
+	* Add a trapezoidal obstacle to the terrain.
+	* The obstacle can be a ditch (positive depth) or a hill (negative depth)
+	* Runs along the y-direction, traveling along X will cross the obstacle
+	* \param bottom_width Width in meters at the bottom of th ditch / apex of the obstacle
+	* \param top_width Width in meters at the ground level. Top width must be greater than bottom width
+	* \param depth Depth of the ditch in meters (positive number) or height of the obstacle (negative number)
+	* \param x0 X (easting) position of the center of the trapezoid
+	*/
+	void AddTrapezoid(float bottom_width, float top_width, float depth, float x0);
+
+	/**
+	* Add roughness to the terrain. Uses a simple RMS model.
+	* Input is the desired RMS roughness in meters
+	* \param rms The RMS roughness in meters
+	*/
+	void AddRoughness(float rms);
+
+	/**
+	* Add a hole feature to the terrain
+	* Specify the (x,y) location of the hole, it's depth, it's diameter, and the side steepness parameter
+	* \param x X (easting) coordinate of the center of the hole in local ENU meters
+	* \param y Y (northing) coordinate of the center of the hole in local ENU meters
+	* \param d Depth of the hole in meters. Negative depth is an obstacle
+	* \param s Steepness of the hole sides
+	*/
+	void AddHole(float x, float y, float depth, float diameter, float steepness);
+
+	/**
+	* Add parabolic (constantly increasing slope) to the terrain. Change in slope is along the x-direction
+	* There is no variation in the y direction. Elevation = 0 at X = 0
+	* Input is the quadratic coefficient
+	* \param square_coeff The coefficient as you would define for a parabola with the equation y = a*x*x
+	*/
+	void AddParabolic(float square_coeff);
+
+	/**
+	* Add a slope feature to the terrain. Slope is along the x-direction
+	* There is no variation in the y direction. Elevation = 0 at X = 0
+	* Input is the fractional slope, i.e. fractional_slope = 45 degrees
+	* \param fractional_slope The slope as you would define for a line with the equation y = m*x
+	*/
+	void AddSlope(float fractional_slope);
+
+private:
+	mavs::raytracer::embree::EmbreeTracer scene_;
+	std::vector<TerrainElevationFunction*> terrain_features_;
+}; // TerrainCreator class
 
 } // namespace terraingen
 } // namespace mavs

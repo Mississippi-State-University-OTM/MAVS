@@ -51,6 +51,13 @@ public:
 	* \param y Y (northing) coordinate in local ENU meters
 	*/
 	virtual float GetElevation(float x, float y) { return 0.0f; }
+};
+
+
+/// Class to dynamically create a terrain from a series of elevation functions
+class TerrainCreator {
+public:
+	//TerrainCreator(){}
 
 	/**
 	* Creates a terrain surface with a user-defined size and shape.
@@ -63,13 +70,18 @@ public:
 	*/
 	void CreateTerrain(float llx, float lly, float urx, float ury, float res);
 
+	void AddTerrainFeature(TerrainElevationFunction* feature) { terrain_features_.push_back(feature); }
+
+	void ClearTerrainFeatures() { terrain_features_.clear(); }
+
 	/// Return the created scene. Must be called after the "CreateScene" function
 	mavs::raytracer::embree::EmbreeTracer GetScene() { return scene_; }
 
 	/// Return a pointer to the created scene. Must be called after the "CreateScene" function
 	mavs::raytracer::embree::EmbreeTracer* GetScenePointer() { return &scene_; }
-protected:
+private:
 	mavs::raytracer::embree::EmbreeTracer scene_;
+	std::vector<TerrainElevationFunction*> terrain_features_;
 };
 
 /// Create a terrain with a constant slope in the x direction

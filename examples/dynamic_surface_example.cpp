@@ -39,7 +39,12 @@ SOFTWARE.
 #include <sensors/camera/rgb_camera.h>
 
 int main(int argc, char *argv[]) {
-	// check that the vehicle command line arg is provided
+	mavs::terraingen::HoleTerrain hole(20.0f, 0.0f, 2.0f, 15.0f, 1.0f);
+	mavs::terraingen::TerrainCreator terrain;
+	terrain.AddTerrainFeature(&hole);
+	terrain.CreateTerrain(-25.0f, -25.0f, 200.0f, 25.0f, 1.0f);
+	mavs::raytracer::embree::EmbreeTracer* scene = terrain.GetScenePointer();
+	/*// check that the vehicle command line arg is provided
 	if (argc < 2) {
 		std::cerr << "ERROR, must provide a vehicle file as argument" << std::endl;
 		return 1;
@@ -47,24 +52,32 @@ int main(int argc, char *argv[]) {
 	std::string vehic_file(argv[1]);
 
 	// create the different types of terrains for testing and add them to a vector
-	std::vector< mavs::terraingen::TerrainElevationFunction*> terrains;
-	terrains.push_back(new mavs::terraingen::HoleTerrain(20.0f, 0.0f, 2.0f, 15.0f, 1.0f));
-	terrains.push_back(new mavs::terraingen::HoleTerrain(20.0f, 0.0f, -3.0f, 1.0f, 1000.0f));
-	terrains.push_back(new mavs::terraingen::TrapezoidalObstacle(6.0f, 12.0f, 2.0f, 20.0f));
-	terrains.push_back(new mavs::terraingen::TrapezoidalObstacle(6.0f, 12.0f, -2.0f, 20.0f));
-	terrains.push_back(new mavs::terraingen::SlopedTerrain(0.25f));
-	terrains.push_back(new mavs::terraingen::RoughTerrain(0.065f));
-	terrains.push_back(new mavs::terraingen::ParabolicTerrain(0.005f));
+	//std::vector< mavs::terraingen::TerrainElevationFunction*> terrains;
+	std::vector<mavs::terraingen::TerrainCreator> terrains;
+	mavs::terraingen::TerrainCreator hole_terrain;
+	mavs::terraingen::HoleTerrain hole(20.0f, 0.0f, 2.0f, 15.0f, 1.0f);
+	mavs::terraingen::HoleTerrain obstacle(40.0f, 0.0f, -3.0f, 1.0f, 1000.0f);
+	hole_terrain.AddTerrainFeature(&hole);
+	hole_terrain.AddTerrainFeature(&obstacle);
+	terrains.push_back(hole_terrain);
+	//terrains.push_back();
+	//terrains.push_back(new mavs::terraingen::HoleTerrain(20.0f, 0.0f, -3.0f, 1.0f, 1000.0f));
+	//terrains.push_back(new mavs::terraingen::TrapezoidalObstacle(6.0f, 12.0f, 2.0f, 20.0f));
+	//terrains.push_back(new mavs::terraingen::TrapezoidalObstacle(6.0f, 12.0f, -2.0f, 20.0f));
+	//terrains.push_back(new mavs::terraingen::SlopedTerrain(0.25f));
+	//terrains.push_back(new mavs::terraingen::RoughTerrain(0.065f));
+	//terrains.push_back(new mavs::terraingen::ParabolicTerrain(0.005f));
 
 	// loop over all the terrain types
 	for (int i = 0; i < (int)terrains.size(); i++) {
 
 		// create the scene based on the current terrain definition
-		terrains[i]->CreateTerrain(-25.0f, -25.0f, 200.0f, 25.0f, 0.1f);
-		
+		std::cout << "Creating terrain " << std::endl;
+		terrains[i].CreateTerrain(-25.0f, -25.0f, 200.0f, 25.0f, 1.0f);
+		std::cout << "Getting scene pointer " << std::endl;
 		// Get a pointer to the created scene
-		mavs::raytracer::embree::EmbreeTracer *scene = terrains[i]->GetScenePointer();
-
+		mavs::raytracer::embree::EmbreeTracer *scene = terrains[i].GetScenePointer();
+		std::cout << "Creating environment " << std::endl;
 		// create the environment and add the scene to it
 		mavs::environment::Environment env;
 		env.SetRaytracer(scene);
@@ -81,7 +94,7 @@ int main(int argc, char *argv[]) {
 		veh.Load(vehic_file);
 		veh.SetPosition(0.0f, 0.0f, scene->GetSurfaceHeight(0.0f, 0.0f) + 0.25f);
 		veh.SetOrientation(1.0f, 0.0f, 0.0f, 0.0f);
-
+		std::cout << "Runnig sim loop " << std::endl;
 		// initiate the main sim loop
 		float elapsed_time = 0.0f;
 		float dt = 1.0f / 100.0f;
@@ -111,11 +124,6 @@ int main(int argc, char *argv[]) {
 			elapsed_time += dt;
 		} // sim loop
 	} // loop over terrain types
-
-	// clean up terrain pointers
-	for (int i = 0; i < (int)terrains.size(); i++) {
-		delete terrains[i];
-	}
-
+	*/
 	return 0;
 }

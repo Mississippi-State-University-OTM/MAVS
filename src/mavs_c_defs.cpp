@@ -287,8 +287,8 @@ extern "C" {
 	}
 
 	EXPORT_CMD mavs::raytracer::embree::EmbreeTracer* CreateSceneFromTerrain(float llx, float lly, float urx, float ury, float res, mavs::terraingen::TerrainElevationFunction* terrain) {
-		terrain->CreateTerrain(llx, lly, urx, ury, res);
-		mavs::raytracer::embree::EmbreeTracer* scene = terrain->GetScenePointer();
+		//terrain->CreateTerrain(llx, lly, urx, ury, res);
+		mavs::raytracer::embree::EmbreeTracer* scene; // = terrain->GetScenePointer();
 		return scene;
 	}
 

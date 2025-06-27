@@ -42,7 +42,7 @@ namespace terraingen {
 * \param ury Y (northing) coordinate of the upper-right (northeast) coordinate of the terrain in local ENU meters
 * \param elevation_function Pointer to a derived class of the TerrainElevationFunction base-classs
 */
- void TerrainElevationFunction::CreateTerrain(float llx, float lly, float urx, float ury, float res) {
+ void TerrainCreator::CreateTerrain(float llx, float lly, float urx, float ury, float res) {
 	mavs::MavsDataPath mdp;
 	std::string mavs_data_path = mdp.GetPath();
 	mavs::terraingen::HeightMap heightmap;
@@ -55,26 +55,39 @@ namespace terraingen {
 		float x = llx + i * res;
 		for (int j = 0; j < ny; j++) {
 			float y = lly + j * res;
-			float z = GetElevation(x, y);
+			float z = 0.0f;
+			for (int k = 0; k < (int)terrain_features_.size(); k++) {
+				//std::cout << k << std::endl;
+				float znew = terrain_features_[k]->GetElevation(x, y);
+				//std::cout << znew << std::endl;
+				z += znew;
+			}
+			//std::cout << "Completed: " << i << " " << j << " " << z << std::endl;
 			heightmap.SetHeight(i, j, z);
 		}
 	}
+	std::cout << "Done generating heightmap " << std::endl;
 	std::string file_path = mavs_data_path + "/scenes/meshes/";
 	mavs::raytracer::Mesh surf_mesh = heightmap.GetAsMesh();
-	//mavs::raytracer::embree::EmbreeTracer scene;
+	std::cout << "Surface mesh poperties: " << surf_mesh.GetNumVertices() << " " << surf_mesh.GetNumFaces() << std::endl;
+	//mavs::raytracer::embree::EmbreeTracer scene_;
 	glm::mat3x4 rot_scale = scene_.GetAffineIdentity();
-
+	std::cout << "Set the layered surface and surface " << std::endl;
 	scene_.SetLayeredSurfaceMesh(surf_mesh, rot_scale);
 	scene_.SetSurfaceMesh(surf_mesh, rot_scale);
 	std::string layer_file = file_path + "surface_textures/road_surfaces.json";
 	mavs::raytracer::LayeredSurface layers;
+	std::cout << "Loading the surface textures " << file_path << " " << layer_file << std::endl;
 	layers.LoadSurfaceTextures(file_path, layer_file);
+	std::cout << "Setting up scene " << std::endl;
 	scene_.AddLayeredSurface(layers);
 	scene_.LoadSemanticLabels(file_path + "labels.json");
 	scene_.SetLabelsLoaded(true);
 	scene_.CommitScene();
 	scene_.SetLoaded(true);
 	scene_.SetFilePath(file_path);
+	std::cout << "Done creating scene " << std::endl;
+	//scene__ = scene_;
 } // function CreateScene
 
 RoughTerrain::RoughTerrain(float rms) : distribution_(0.0f, rms) {

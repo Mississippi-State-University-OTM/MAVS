@@ -39,10 +39,7 @@ SOFTWARE.
 #include <sensors/camera/rgb_camera.h>
 
 int main(int argc, char *argv[]) {
-	mavs::terraingen::TerrainCreator* terrain = new mavs::terraingen::TerrainCreator;
-
-	delete terrain;
-	/*
+	
 	// check that the vehicle command line arg is provided
 	if (argc < 2) {
 		std::cerr << "ERROR, must provide a vehicle file as argument" << std::endl;
@@ -125,6 +122,6 @@ int main(int argc, char *argv[]) {
 			elapsed_time += dt;
 		} // sim loop
 	} // loop over terrain types
-	*/
+	
 	return 0;
 }

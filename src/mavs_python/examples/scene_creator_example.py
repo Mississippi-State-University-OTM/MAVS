@@ -1,7 +1,7 @@
 import math
 import sys
-sys.path.append(r'C:/Users/cgoodin/Desktop/goodin_docs/repos/mavs/src/mavs_python')
-#sys.path.append(r'/cavs/projects/MAVS/software/mavs/src/mavs_python')
+#sys.path.append(r'C:/Users/cgoodin/Desktop/goodin_docs/repos/mavs/src/mavs_python')
+sys.path.append(r'/cavs/projects/MAVS/software/mavs/src/mavs_python')
 import mavs_interface as mavs
 import mavs_python_paths
 mavs_data_path = mavs_python_paths.mavs_data_path
@@ -20,7 +20,7 @@ terrains.append(slope)
 
 parabolic = mavs.MavsTerrainCreator()
 parabolic.AddParabolicFeature(0.005)
-parabolic.AddHoleFeature(20.0, 0.0, 3.0, 3.0, 1.0)
+parabolic.AddHoleFeature(20.0, 0.0, 2.0, 10.0, 1.0)
 terrains.append(parabolic)
 
 nterrains = len(terrains)

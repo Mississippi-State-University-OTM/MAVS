@@ -256,39 +256,39 @@ extern "C" {
 		anim->LoadPathFile(path);
 	}
 
-	EXPORT_CMD mavs::terraingen::TerrainElevationFunction* CreateTrapezoidalObstacleTerrain(float bottom_width, float top_width, float depth, float x0) {
-		mavs::terraingen::TerrainElevationFunction* terrain = new mavs::terraingen::TrapezoidalObstacle(bottom_width, top_width, depth, x0);
-		return terrain;
+	EXPORT_CMD void AddTrapezoidalFeature(float bottom_width, float top_width, float depth, float x0, mavs::terraingen::TerrainCreator* terrain) {
+		terrain->AddTrapezoid(bottom_width, top_width, depth, x0);
 	}
 
-	EXPORT_CMD mavs::terraingen::TerrainElevationFunction* CreateRoughTerrain(float rms) {
-		mavs::terraingen::TerrainElevationFunction* terrain = new mavs::terraingen::RoughTerrain(rms);
-		return terrain;
+	EXPORT_CMD void AddRoughFeature(float rms, mavs::terraingen::TerrainCreator* terrain) {
+		terrain->AddRoughness(rms);
 	}
 
-	EXPORT_CMD mavs::terraingen::TerrainElevationFunction* CreateSlopedTerrain(float slope) {
-		mavs::terraingen::TerrainElevationFunction* terrain = new mavs::terraingen::SlopedTerrain(slope);
-		return terrain;
+	EXPORT_CMD void AddSlopedFeature(float slope, mavs::terraingen::TerrainCreator* terrain) {
+		terrain->AddSlope(slope);
 	}
 
-	EXPORT_CMD mavs::terraingen::TerrainElevationFunction* CreateParabolicTerrain(float coeff) {
-		mavs::terraingen::TerrainElevationFunction* terrain = new mavs::terraingen::ParabolicTerrain(coeff);
-		return terrain;
+	EXPORT_CMD void AddParabolicFeature(float coeff, mavs::terraingen::TerrainCreator* terrain) {
+		terrain->AddParabolic(coeff);
 	}
 
-	EXPORT_CMD float GetTerrainElevation(float x, float y, mavs::terraingen::TerrainElevationFunction *terrain) {
-		return terrain->GetElevation(x, y);
+	EXPORT_CMD void AddHoleFeature(float x, float y, float depth, float diameter, float steepness, mavs::terraingen::TerrainCreator* terrain) {
+		terrain->AddHole(x, y, depth, diameter, steepness);
 	}
 
-	EXPORT_CMD void DeleteTerrainElevationFunction(mavs::terraingen::TerrainElevationFunction* terrain) {
-		if (terrain) {
+	EXPORT_CMD void DeleteTerrainCreator(mavs::terraingen::TerrainCreator* terrain) {
+		if (terrain!=NULL) {
 			delete terrain;
 		}
 	}
 
-	EXPORT_CMD mavs::raytracer::embree::EmbreeTracer* CreateSceneFromTerrain(float llx, float lly, float urx, float ury, float res, mavs::terraingen::TerrainElevationFunction* terrain) {
-		//terrain->CreateTerrain(llx, lly, urx, ury, res);
-		mavs::raytracer::embree::EmbreeTracer* scene; // = terrain->GetScenePointer();
+	EXPORT_CMD mavs::terraingen::TerrainCreator* NewMavsTerrainCreator(void) {
+		return new mavs::terraingen::TerrainCreator;
+	}
+
+	EXPORT_CMD mavs::raytracer::embree::EmbreeTracer* CreateSceneFromTerrain(float llx, float lly, float urx, float ury, float res, mavs::terraingen::TerrainCreator* terrain) {
+		terrain->CreateTerrain(llx, lly, urx, ury, res);
+		mavs::raytracer::embree::EmbreeTracer* scene = terrain->GetScenePointer();
 		return scene;
 	}
 

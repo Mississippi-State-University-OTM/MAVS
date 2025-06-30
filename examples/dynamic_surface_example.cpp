@@ -39,7 +39,10 @@ SOFTWARE.
 #include <sensors/camera/rgb_camera.h>
 
 int main(int argc, char *argv[]) {
-	
+	mavs::terraingen::TerrainCreator* terrain = new mavs::terraingen::TerrainCreator;
+
+	delete terrain;
+	/*
 	// check that the vehicle command line arg is provided
 	if (argc < 2) {
 		std::cerr << "ERROR, must provide a vehicle file as argument" << std::endl;
@@ -51,7 +54,7 @@ int main(int argc, char *argv[]) {
 
 	// create the different types of terrains for testing and add them to a vector
 	std::vector<mavs::terraingen::TerrainCreator> terrains;
-	terrains.resize(2);
+	terrains.resize(4);
 	// Add a terrain with a positive and negative hole obstacle
 	terrains[0].AddHole(20.0f, 0.0f, 2.0f, 15.0f, 1.0f);
 	terrains[0].AddHole(40.0f, 0.0f, -3.0f, 1.0f, 1000.0f);
@@ -60,6 +63,15 @@ int main(int argc, char *argv[]) {
 	terrains[1].AddTrapezoid(6.0f, 12.0f, 2.0f, 20.0f);
 	terrains[1].AddTrapezoid(6.0f, 12.0f, -2.0f, 30.0f);
 	terrains[1].CreateTerrain(-25.0f, -25.0f, 200.0f, 25.0f, 0.5f);
+	// create a parabolic terrain with some roughness
+	terrains[2].AddParabolic(0.005f);
+	terrains[2].AddRoughness(0.065f);
+	terrains[2].CreateTerrain(-25.0f, -25.0f, 200.0f, 25.0f, 0.25f);
+	// create a sloped terrain with a hole
+	terrains[3].AddSlope(0.25f);
+	terrains[3].AddHole(20.0f, 0.0f, 2.0f, 15.0f, 1.0f);
+	terrains[3].CreateTerrain(-25.0f, -25.0f, 200.0f, 25.0f, 0.5f);
+
 
 	// loop over all the terrain types
 	for (int i = 0; i < (int)terrains.size(); i++) {
@@ -113,6 +125,6 @@ int main(int argc, char *argv[]) {
 			elapsed_time += dt;
 		} // sim loop
 	} // loop over terrain types
-	
+	*/
 	return 0;
 }

@@ -76,20 +76,21 @@ mavs_lib.TurnOffMavsSceneLabeling.argtypes = [ctypes.c_void_p]
 mavs_lib.GetSurfaceHeight.restype = ctypes.c_float
 mavs_lib.GetSurfaceHeight.argtypes = [ctypes.c_void_p,ctypes.c_float,ctypes.c_float]
 # ------ programmatic terrain functions ----------------------------------------------#
-mavs_lib.CreateTrapezoidalObstacleTerrain.restype = ctypes.c_void_p
-mavs_lib.CreateTrapezoidalObstacleTerrain.argtypes = [ctypes.c_float, ctypes.c_float, ctypes.c_float, ctypes.c_float]
-mavs_lib.CreateRoughTerrain.restype = ctypes.c_void_p
-mavs_lib.CreateRoughTerrain.argtypes = [ctypes.c_float]
-mavs_lib.CreateSlopedTerrain.restype = ctypes.c_void_p
-mavs_lib.CreateSlopedTerrain.argtypes = [ctypes.c_float]
-mavs_lib.CreateParabolicTerrain.restype = ctypes.c_void_p
-mavs_lib.CreateParabolicTerrain.argtypes = [ctypes.c_float]
-mavs_lib.DeleteTerrainElevationFunction.restype = ctypes.c_void_p
-mavs_lib.DeleteTerrainElevationFunction.argtypes = [ctypes.c_void_p]
+mavs_lib.AddTrapezoidalFeature.restype = ctypes.c_void_p
+mavs_lib.AddTrapezoidalFeature.argtypes = [ctypes.c_float, ctypes.c_float, ctypes.c_float, ctypes.c_float, ctypes.c_void_p]
+mavs_lib.AddHoleFeature.restype = ctypes.c_void_p
+mavs_lib.AddHoleFeature.argtypes = [ctypes.c_float, ctypes.c_float, ctypes.c_float, ctypes.c_float, ctypes.c_float, ctypes.c_void_p]
+mavs_lib.AddRoughFeature.restype = ctypes.c_void_p
+mavs_lib.AddRoughFeature.argtypes = [ctypes.c_float, ctypes.c_void_p]
+mavs_lib.AddSlopedFeature.restype = ctypes.c_void_p
+mavs_lib.AddSlopedFeature.argtypes = [ctypes.c_float, ctypes.c_void_p]
+mavs_lib.AddParabolicFeature.restype = ctypes.c_void_p
+mavs_lib.AddParabolicFeature.argtypes = [ctypes.c_float, ctypes.c_void_p]
+mavs_lib.DeleteTerrainCreator.restype = ctypes.c_void_p
+mavs_lib.DeleteTerrainCreator.argtypes = [ctypes.c_void_p]
 mavs_lib.CreateSceneFromTerrain.restype = ctypes.c_void_p 
 mavs_lib.CreateSceneFromTerrain.argtypes = [ctypes.c_float, ctypes.c_float, ctypes.c_float, ctypes.c_float, ctypes.c_float, ctypes.c_void_p]
-mavs_lib.GetTerrainElevation.argtypes = [ctypes.c_float, ctypes.c_float, ctypes.c_void_p]
-mavs_lib.GetTerrainElevation.restype = ctypes.c_float
+mavs_lib.NewMavsTerrainCreator.restypes = ctypes.c_void_p
 #------ Animations -------#
 mavs_lib.NewMavsAnimation.restype = ctypes.c_void_p
 mavs_lib.DeleteMavsAnimation.restype = ctypes.c_void_p
@@ -2822,33 +2823,32 @@ class MavsEmbreeScene(MavsScene):
 
 class MavsTerrainCreator(object):
     def __init__(self):
-        self.terrain = None
+        self.terrain = mavs_lib.NewMavsTerrainCreator()
         
     def __del__(self):
-        if (self.terrain):
-            mavs_lib.DeleteTerrainElevationFunction(self.terrain)
+        if self.terrain:
+            mavs_lib.DeleteTerrainCreator(self.terrain)
         self.terrain = None
         
-    def CreateTrapezoidalTerrain(self, bottom_width, top_width, depth, x0):
-        self.terrain = mavs_lib.CreateTrapezoidalObstacleTerrain(ctypes.c_float(bottom_width), ctypes.c_float(top_width), ctypes.c_float(depth), ctypes.c_float(x0))
+    def AddTrapezoidalFeature(self, bottom_width, top_width, depth, x0):
+        mavs_lib.AddTrapezoidalFeature(ctypes.c_float(bottom_width), ctypes.c_float(top_width), ctypes.c_float(depth), ctypes.c_float(x0), self.terrain)
     
-    def CreateRoughTerrain(self, rms):
-        self.terrain = mavs_lib.CreateRoughTerrain(ctypes.c_float(rms))
+    def AddRoughFeature(self, rms):
+        mavs_lib.AddRoughFeature(ctypes.c_float(rms), self.terrain)
         
-    def CreateSlopedTerrain(self, slope):
-        self.terrain = mavs_lib.CreateSlopedTerrain(ctypes.c_float(slope))
+    def AddSlopeFeature(self, slope):
+        mavs_lib.AddSlopedFeature(ctypes.c_float(slope), self.terrain)
         
-    def CreateParabolicTerrain(self, coeff):
-        self.terrain = mavs_lib.CreateParabolicTerrain(ctypes.c_float(coeff))
+    def AddParabolicFeature(self, coeff):
+        mavs_lib.AddParabolicFeature(ctypes.c_float(coeff), self.terrain)
+    
+    def AddHoleFeature(self, x, y, depth, diameter, steepness):
+        mavs_lib.AddHoleFeature(ctypes.c_float(x), ctypes.c_float(y), ctypes.c_float(depth), ctypes.c_float(diameter), ctypes.c_float(steepness), self.terrain)
     
     def CreateMavsScenePointer(self, llx, lly, urx, ury, res):
         scene_ptr = mavs_lib.CreateSceneFromTerrain(ctypes.c_float(llx), ctypes.c_float(lly), ctypes.c_float(urx), ctypes.c_float(ury), ctypes.c_float(res), self.terrain)
         return scene_ptr
     
-    def GetElevation(self, x, y):
-        z =  mavs_lib.GetTerrainElevation( ctypes.c_float(x), ctypes.c_float(y), self.terrain)
-        return z
-
 class MavsRandomScene(MavsScene):
     """MavsRandomScene class.
     

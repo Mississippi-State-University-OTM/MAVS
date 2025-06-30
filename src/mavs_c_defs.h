@@ -108,19 +108,21 @@ EXPORT_CMD void SetMavsAnimationHeading(mavs::raytracer::Animation *anim, float 
 
 EXPORT_CMD void ViewRp3dDebug(char* input_file_name);
 
-EXPORT_CMD mavs::terraingen::TerrainElevationFunction* CreateTrapezoidalObstacleTerrain(float bottom_width, float top_width, float depth, float x0);
+EXPORT_CMD void AddTrapezoidalFeature(float bottom_width, float top_width, float depth, float x0, mavs::terraingen::TerrainCreator* terrain);
 
-EXPORT_CMD mavs::terraingen::TerrainElevationFunction* CreateRoughTerrain(float rms);
+EXPORT_CMD void AddRoughFeature(float rms, mavs::terraingen::TerrainCreator* terrain);
 
-EXPORT_CMD mavs::terraingen::TerrainElevationFunction* CreateSlopedTerrain(float slope);
+EXPORT_CMD void AddSlopedFeature(float slope, mavs::terraingen::TerrainCreator* terrain);
 
-EXPORT_CMD mavs::terraingen::TerrainElevationFunction* CreateParabolicTerrain(float coeff);
+EXPORT_CMD void AddParabolicFeature(float coeff, mavs::terraingen::TerrainCreator* terrain);
 
-EXPORT_CMD void DeleteTerrainElevationFunction(mavs::terraingen::TerrainElevationFunction* terrain);
+EXPORT_CMD void AddHoleFeature(float x, float y, float depth, float diameter, float steepness, mavs::terraingen::TerrainCreator* terrain);
 
-EXPORT_CMD float GetTerrainElevation(float x, float y, mavs::terraingen::TerrainElevationFunction* terrain);
+EXPORT_CMD void DeleteTerrainCreator(mavs::terraingen::TerrainCreator* terrain);
 
-EXPORT_CMD mavs::raytracer::embree::EmbreeTracer* CreateSceneFromTerrain(float llx, float lly, float urx, float ury, float res, mavs::terraingen::TerrainElevationFunction* terrain);
+EXPORT_CMD mavs::terraingen::TerrainCreator* NewMavsTerrainCreator(void);
+
+EXPORT_CMD mavs::raytracer::embree::EmbreeTracer* CreateSceneFromTerrain(float llx, float lly, float urx, float ury, float res, mavs::terraingen::TerrainCreator* terrain);
 
 #endif //use EMBREE
 

@@ -33,6 +33,7 @@ SOFTWARE.
 #ifndef TERRAIN_ELEVATION_FUNCTIONS_H
 #define TERRAIN_ELEVATION_FUNCTIONS_H
 #include <random>
+#include <memory>
 #ifdef USE_EMBREE
 #include <raytracers/embree_tracer/embree_tracer.h>
 #endif
@@ -40,46 +41,32 @@ SOFTWARE.
 namespace mavs {
 namespace terraingen {
 
-/// Base class for dynamically-created terrains
+/// Class for dynamically created terrains
 class TerrainElevationFunction {
 public:
-	/** 
-	* Pure virtual method that derived classes must implement. 
+	TerrainElevationFunction();
+
+	~TerrainElevationFunction();
+
+	/// TerrainElevationFunction copy constructor
+	TerrainElevationFunction(const TerrainElevationFunction& s);
+
+	/** . 
 	* Args are the x-y coordinates in ENU meters. 
-	* Returns the elevation (z) in ENU metrs
-	* \param x X (easting) coordinate in local ENU meters
-	* \param y Y (northing) coordinate in local ENU meters
-	*/
-	virtual float GetElevation(float x, float y) { return 0.0f; }
-};
-
-/// Create a terrain with a constant slope in the x direction
-class SlopedTerrain : public TerrainElevationFunction {
-public:
-	/** 
-	* Initialize a sloped terrain. Slope is along the x-direction
-	* There is no variation in the y direction. Elevation = 0 at X = 0
-	* Input is the fractional slope, i.e. fractional_slope = 45 degrees
-	* \param fractional_slope The slope as you would define for a line with the equation y = m*x
-	*/
-	SlopedTerrain(float fractional_slope);
-
-	/**
-	* Overwrites the virtual method of the base calss
-	* Args are the x-y coordinates in ENU meters.
 	* Returns the elevation (z) in ENU metrs
 	* \param x X (easting) coordinate in local ENU meters
 	* \param y Y (northing) coordinate in local ENU meters
 	*/
 	float GetElevation(float x, float y);
 
-private:
-	float m_;
-};
+	/**
+	* Initialize a sloped terrain. Slope is along the x-direction
+	* There is no variation in the y direction. Elevation = 0 at X = 0
+	* Input is the fractional slope, i.e. fractional_slope = 45 degrees
+	* \param fractional_slope The slope as you would define for a line with the equation y = m*x
+	*/
+	void SlopedTerrain(float fractional_slope);
 
-/// Create a terrain with a circular hole in it
-class HoleTerrain : public TerrainElevationFunction {
-public:
 	/**
 	* Initialize the hole terrain
 	* Specify the (x,y) location of the hole, it's depth, it's diameter, and the side steepness parameter
@@ -88,75 +75,25 @@ public:
 	* \param d Depth of the hole in meters. Negative depth is an obstacle
 	* \param s Steepness of the hole sides
 	*/
-	HoleTerrain(float x, float y, float depth, float diameter, float steepness);
+	void HoleTerrain(float x, float y, float depth, float diameter, float steepness);
 
-	/**
-	* Overwrites the virtual method of the base calss
-	* Args are the x-y coordinates in ENU meters.
-	* Returns the elevation (z) in ENU metrs
-	* \param x X (easting) coordinate in local ENU meters
-	* \param y Y (northing) coordinate in local ENU meters
-	*/
-	float GetElevation(float x, float y);
-
-private:
-	float x0_, y0_, radius_, n_, h_;
-	float b_, c_;
-};
-
-/// Create a rough terrain with a constant RMS roughness value
-class RoughTerrain : public TerrainElevationFunction {
-public:
 	/**
 	* Initialize a rough terrain. Uses a simple RMS model.
 	* Input is the desired RMS roughness in meters
 	* \param rms The RMS roughness in meters
 	*/
-	RoughTerrain(float rms);
+	void RoughTerrain(float rms);
 
-	/**
-	* Overwrites the virtual method of the base calss
-	* Args are the x-y coordinates in ENU meters.
-	* Returns the elevation (z) in ENU metrs
-	* \param x X (easting) coordinate in local ENU meters
-	* \param y Y (northing) coordinate in local ENU meters
-	*/
-	float GetElevation(float x, float y);
-
-private:
-	std::default_random_engine generator_;
-	std::normal_distribution<float> distribution_;
-};
-
-/// Create a terrain with a constantly increasing slope in the x direction
-class ParabolicTerrain : public TerrainElevationFunction {
-public:
 	/**
 	* Initialize a parabolic terrain. Change in slope is along the x-direction
 	* There is no variation in the y direction. Elevation = 0 at X = 0
 	* Input is the quadratic coefficient
 	* \param square_coeff The coefficient as you would define for a parabola with the equation y = a*x*x
 	*/
-	ParabolicTerrain(float square_coeff);
+	void ParabolicTerrain(float square_coeff);
 
 	/**
-	* Overwrites the virtual method of the base calss
-	* Args are the x-y coordinates in ENU meters.
-	* Returns the elevation (z) in ENU metrs
-	* \param x X (easting) coordinate in local ENU meters
-	* \param y Y (northing) coordinate in local ENU meters
-	*/
-	float GetElevation(float x, float y);
-
-private:
-	float a_;
-};
-
-/// Create a terrain with a trapezoidal obstacle. Can be positiive (hill) or negative (ditch)
-class TrapezoidalObstacle : public TerrainElevationFunction {
-public:
-	/**
-	* Initialize a terrain with a trapezoidal obstacle. 
+	* Initialize a terrain with a trapezoidal obstacle.
 	* The obstacle can be a ditch (positive depth) or a hill (negative depth)
 	* Runs along the y-direction, traveling along X will cross the obstacle
 	* \param bottom_width Width in meters at the bottom of th ditch / apex of the obstacle
@@ -164,19 +101,13 @@ public:
 	* \param depth Depth of the ditch in meters (positive number) or height of the obstacle (negative number)
 	* \param x0 X (easting) position of the center of the trapezoid
 	*/
-	TrapezoidalObstacle(float bottom_width, float top_width, float depth, float x0);
-
-	/**
-	* Overwrites the virtual method of the base calss
-	* Args are the x-y coordinates in ENU meters.
-	* Returns the elevation (z) in ENU metrs
-	* \param x X (easting) coordinate in local ENU meters
-	* \param y Y (northing) coordinate in local ENU meters
-	*/
-	float GetElevation(float x, float y);
+	void TrapezoidalObstacle(float bottom_width, float top_width, float depth, float x0);
 
 private:
-	float h_, a_, b_, x0_;
+	std::string terrain_type_;
+	float terrain_params_[6];
+	std::default_random_engine generator_;
+	std::normal_distribution<float> distribution_;
 };
 
 /// Class to dynamically create a terrain from a series of elevation functions
@@ -254,7 +185,7 @@ public:
 
 private:
 	mavs::raytracer::embree::EmbreeTracer scene_;
-	std::vector<TerrainElevationFunction*> terrain_features_;
+	std::vector<TerrainElevationFunction> terrain_features_;
 }; // TerrainCreator class
 
 } // namespace terraingen

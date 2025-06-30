@@ -31,12 +31,11 @@ SOFTWARE.
 
 namespace mavs {
 namespace terraingen {
-TerrainCreator::TerrainCreator() {
 
+TerrainCreator::TerrainCreator() {
 }
 
 TerrainCreator::~TerrainCreator() {
-	for (int i = 0; i < (int)terrain_features_.size(); i++)delete terrain_features_[i];
 	terrain_features_.clear();
 }
 
@@ -46,23 +45,28 @@ TerrainCreator::TerrainCreator(const TerrainCreator& s) {
 }
 
 void TerrainCreator::AddTrapezoid(float bottom_width, float top_width, float depth, float x0) {
-	mavs::terraingen::TerrainElevationFunction* terrain_feature = new mavs::terraingen::TrapezoidalObstacle(bottom_width, top_width, depth, x0);
+	TerrainElevationFunction terrain_feature;
+	terrain_feature.TrapezoidalObstacle(bottom_width, top_width, depth, x0);
 	terrain_features_.push_back(terrain_feature);
 }
 void TerrainCreator::AddRoughness(float rms) {
-	mavs::terraingen::TerrainElevationFunction* terrain_feature = new mavs::terraingen::RoughTerrain(rms);
+	TerrainElevationFunction terrain_feature;
+	terrain_feature.RoughTerrain(rms);
 	terrain_features_.push_back(terrain_feature);
 }
 void TerrainCreator::AddHole(float x, float y, float depth, float diameter, float steepness) {
-	mavs::terraingen::TerrainElevationFunction* terrain_feature = new mavs::terraingen::HoleTerrain(x,y, depth, diameter, steepness);
+	TerrainElevationFunction terrain_feature;
+	terrain_feature.HoleTerrain(x, y, depth, diameter, steepness);
 	terrain_features_.push_back(terrain_feature);
 }
 void TerrainCreator::AddParabolic(float square_coeff) {
-	mavs::terraingen::TerrainElevationFunction* terrain_feature = new mavs::terraingen::ParabolicTerrain(square_coeff);
+	TerrainElevationFunction terrain_feature;
+	terrain_feature.ParabolicTerrain(square_coeff);
 	terrain_features_.push_back(terrain_feature);
 }
 void TerrainCreator::AddSlope(float fractional_slope) {
-	mavs::terraingen::TerrainElevationFunction* terrain_feature = new mavs::terraingen::SlopedTerrain(fractional_slope);
+	TerrainElevationFunction terrain_feature;
+	terrain_feature.SlopedTerrain(fractional_slope);
 	terrain_features_.push_back(terrain_feature);
 }
 
@@ -91,7 +95,7 @@ void TerrainCreator::AddSlope(float fractional_slope) {
 			float y = lly + j * res;
 			float z = 0.0f;
 			for (int k = 0; k < (int)terrain_features_.size(); k++) {
-				float znew = terrain_features_[k]->GetElevation(x, y);
+				float znew = terrain_features_[k].GetElevation(x, y);
 				z += znew;
 			}
 			heightmap.SetHeight(i, j, z);
@@ -113,86 +117,124 @@ void TerrainCreator::AddSlope(float fractional_slope) {
 	scene_.SetFilePath(file_path);
 } // function CreateScene
 
-RoughTerrain::RoughTerrain(float rms) : distribution_(0.0f, rms) {
-	std::random_device rd;
-	generator_.seed(rd());
-}
+ TerrainElevationFunction::TerrainElevationFunction() {
+	 terrain_type_ = "NONE";
+	 terrain_params_[0] = 0.0f;
+	 terrain_params_[1] = 0.0f;
+	 terrain_params_[2] = 0.0f;
+	 terrain_params_[3] = 0.0f;
+	 terrain_params_[4] = 0.0f;
+	 terrain_params_[5] = 0.0f;
+ }
 
-float RoughTerrain::GetElevation(float x, float y) {
-	float z = distribution_(generator_);
-	return z;
-}
+ TerrainElevationFunction::TerrainElevationFunction(const TerrainElevationFunction& s) {
+	 this->distribution_ = s.distribution_;
+	 this->generator_ = s.generator_;
+	 for (int i = 0; i < 6; i++) {
+		 this->terrain_params_[i] = s.terrain_params_[i];
+	 }
+	 this->terrain_type_ = s.terrain_type_;
+ }
 
-SlopedTerrain::SlopedTerrain(float fractional_slope) {
-	m_ = fractional_slope;
-}
+ TerrainElevationFunction::~TerrainElevationFunction() {
+	 //terrain_params_.clear();
+ }
 
-float SlopedTerrain::GetElevation(float x, float y) {
-	float z = m_ * x;
-	return z;
-}
-
-ParabolicTerrain::ParabolicTerrain(float square_coeff) {
-	a_ = square_coeff;
-}
-float ParabolicTerrain::GetElevation(float x, float y) {
-	float z = a_ * x * x;
-	return z;
-}
-
-HoleTerrain::HoleTerrain(float x, float y, float depth, float diameter, float steepness) {
-	x0_ = x;
-	y0_ = y; 
-	if (steepness == 0.0f) {
-		n_ = std::numeric_limits<float>::max();
-	}
-	else {
-		n_ = 1.0f / fabsf(steepness);
-	}
-	radius_ = 0.5f * fabsf(diameter);
-	h_ = -depth;
-	c_ = h_ / powf(2.0f, n_);
-	b_ = acosf(-1.0f)/radius_;
-}
-float HoleTerrain::GetElevation(float x, float y) {
-	float dx = x - x0_;
-	float dy = y - y0_;
-	float r = sqrtf(dx * dx + dy * dy);
+float TerrainElevationFunction::GetElevation(float x, float y) {
 	float z = 0.0f;
-	if (r < radius_) {
-		z = c_ * powf(1.0f + cosf(b_ * r), n_);
+	if (terrain_type_ == "rough") {
+		z = distribution_(generator_);
 	}
-	return z;
-}
-
-TrapezoidalObstacle::TrapezoidalObstacle(float bottom_width, float top_width, float depth, float x_coord) {
-	b_ = bottom_width;
-	a_ = top_width;
-	h_ = depth;
-	x0_ = x_coord;
-}
-
-// Function to define the trapezoidal ditch profile
-float TrapezoidalObstacle::GetElevation(float x, float y) {
-	float halfTop = a_ / 2.0f;
-	float halfBottom = b_ / 2.0f;
-
-	if (x < x0_ - halfTop || x > x0_ + halfTop) {
-		return 0.0f; // Outside the ditch
+	else if (terrain_type_ == "sloped") {
+		z = terrain_params_[0] * x;
 	}
-	else if (x >= x0_ - halfBottom && x <= x0_ + halfBottom) {
-		return -h_; // Flat bottom
+	else if (terrain_type_ == "parabolic") {
+		z = terrain_params_[0] * x * x;
 	}
-	else {
-		// Sloped sides
-		float slope = h_ / ((a_ - b_) / 2.0f);
-		if (x < x0_) {
-			return -slope * (x - (x0_ - halfTop));
+	else if (terrain_type_ == "hole") {
+		float dx = x - terrain_params_[0];
+		float dy = y - terrain_params_[1];
+		float r = sqrtf(dx * dx + dy * dy);
+		z = 0.0f;
+		if (r < terrain_params_[3]) {
+			z = terrain_params_[4] * powf(1.0f + cosf(terrain_params_[5] * r), terrain_params_[2]);
+		}
+	}
+	else if (terrain_type_ == "trapezoid") {
+		float a = terrain_params_[1];
+		float b = terrain_params_[0];
+		float h = terrain_params_[2];
+		float x0 = terrain_params_[3];
+		float halfTop = a / 2.0f;
+		float halfBottom = b / 2.0f;
+
+		if (x < x0 - halfTop || x > x0 + halfTop) {
+			return 0.0f; // Outside the ditch
+		}
+		else if (x >= x0 - halfBottom && x <= x0 + halfBottom) {
+			return -h; // Flat bottom
 		}
 		else {
-			return -slope * ((x0_ + halfTop) - x);
+			// Sloped sides
+			float slope = h / ((a - b) / 2.0f);
+			if (x < x0) {
+				return -slope * (x - (x0 - halfTop));
+			}
+			else {
+				return -slope * ((x0 + halfTop) - x);
+			}
 		}
 	}
+	return z;
+}
+void TerrainElevationFunction::RoughTerrain(float rms) {
+	distribution_ = std::normal_distribution<float>(0.0f, rms);
+	std::random_device rd;
+	generator_.seed(rd());
+	terrain_type_ = "rough";
+}
+
+void TerrainElevationFunction::SlopedTerrain(float fractional_slope) {
+	terrain_type_ = "sloped";
+	terrain_params_[0] = fractional_slope;
+}
+
+void TerrainElevationFunction::ParabolicTerrain(float square_coeff) {
+	terrain_type_ = "parabolic";
+	terrain_params_[0] = square_coeff;
+}
+
+void TerrainElevationFunction::HoleTerrain(float x, float y, float depth, float diameter, float steepness) {
+	terrain_type_ = "hole";
+	terrain_params_[0] = x; // 0
+	terrain_params_[1] = y; // 1
+	float n = 0.0f;
+	if (steepness == 0.0f) {
+		n = std::numeric_limits<float>::max();
+	}
+	else {
+		n = 1.0f / fabsf(steepness);
+	}
+	terrain_params_[2] = n; // 2
+	float radius = 0.5f * fabsf(diameter);
+	terrain_params_[3] = radius; // 3
+	float h = -depth;
+	float c = h / powf(2.0f, n);
+	terrain_params_[4] = c; // 4
+	float b = acosf(-1.0f)/radius;
+	terrain_params_[5] = b; // 5
+}
+
+void TerrainElevationFunction::TrapezoidalObstacle(float bottom_width, float top_width, float depth, float x_coord) {
+	terrain_type_ = "trapezoid";
+	float b = bottom_width;
+	terrain_params_[0] = b; // 0
+	float a = top_width;
+	terrain_params_[1] = a; // 1
+	float h = depth;
+	terrain_params_[2] =h; // 2
+	float x0 = x_coord;
+	terrain_params_[3] =x0; // 3
 }
 
 } // namespace terraingen

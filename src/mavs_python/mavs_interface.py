@@ -90,7 +90,7 @@ mavs_lib.DeleteTerrainCreator.restype = ctypes.c_void_p
 mavs_lib.DeleteTerrainCreator.argtypes = [ctypes.c_void_p]
 mavs_lib.CreateSceneFromTerrain.restype = ctypes.c_void_p 
 mavs_lib.CreateSceneFromTerrain.argtypes = [ctypes.c_float, ctypes.c_float, ctypes.c_float, ctypes.c_float, ctypes.c_float, ctypes.c_void_p]
-mavs_lib.NewMavsTerrainCreator.restypes = ctypes.c_void_p
+mavs_lib.NewMavsTerrainCreator.restype = ctypes.c_void_p
 #------ Animations -------#
 mavs_lib.NewMavsAnimation.restype = ctypes.c_void_p
 mavs_lib.DeleteMavsAnimation.restype = ctypes.c_void_p
@@ -2831,21 +2831,54 @@ class MavsTerrainCreator(object):
         self.terrain = None
         
     def AddTrapezoidalFeature(self, bottom_width, top_width, depth, x0):
+        """Add a trapezoidal feature
+
+        Parameters:
+        bottom_width (float): Width at apex/bottom of trapezoid
+        top_width (float): Width at base of trapezoid - ground level
+        depth (float): Depth of ditch in meters. Negative depth is a postive obstacle
+        x0 (float): X-coordinate of the center of the ditch/obstacle
+        """
         mavs_lib.AddTrapezoidalFeature(ctypes.c_float(bottom_width), ctypes.c_float(top_width), ctypes.c_float(depth), ctypes.c_float(x0), self.terrain)
     
     def AddRoughFeature(self, rms):
+        """Add terrain roughness
+
+        Parameters:
+        rms (float): RMS roughness (meters)
+        """
         mavs_lib.AddRoughFeature(ctypes.c_float(rms), self.terrain)
         
     def AddSlopeFeature(self, slope):
+        """Add constant slope in the x direction
+
+        Parameters:
+        slope (float): Fractional slope, 1.0 = 45 degrees
+        """
         mavs_lib.AddSlopedFeature(ctypes.c_float(slope), self.terrain)
         
     def AddParabolicFeature(self, coeff):
+        """Add a parabolic shaped terrain, ie constantly increasing slope
+
+        Parameters:
+        coeff (float): Coefficient to the equation y = c*x^2
+        """
         mavs_lib.AddParabolicFeature(ctypes.c_float(coeff), self.terrain)
     
     def AddHoleFeature(self, x, y, depth, diameter, steepness):
+        """Add a hole feature. Negative depth is an obstacle
+
+        Parameters:
+        x (float): X-coordinate of the hole center
+        y (float): y-coordinate of the hole center
+        depth (float): Depth of hole in meters. Negative depth is a postive obstacle
+        diameter (float): Diameter of the hole in meters
+        steepness (float): Parameter that controls the slope. Higher value is steeper sides and flatter bottom
+        """
         mavs_lib.AddHoleFeature(ctypes.c_float(x), ctypes.c_float(y), ctypes.c_float(depth), ctypes.c_float(diameter), ctypes.c_float(steepness), self.terrain)
     
     def CreateMavsScenePointer(self, llx, lly, urx, ury, res):
+        """Create a scene using the added features and return a pointer to the MAVS scene"""
         scene_ptr = mavs_lib.CreateSceneFromTerrain(ctypes.c_float(llx), ctypes.c_float(lly), ctypes.c_float(urx), ctypes.c_float(ury), ctypes.c_float(res), self.terrain)
         return scene_ptr
     

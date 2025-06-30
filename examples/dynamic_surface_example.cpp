@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
 	terrains[3].AddHole(20.0f, 0.0f, 2.0f, 15.0f, 1.0f);
 	terrains[3].CreateTerrain(-25.0f, -25.0f, 200.0f, 25.0f, 0.5f);
 
-
+	
 	// loop over all the terrain types
 	for (int i = 0; i < (int)terrains.size(); i++) {
 		

@@ -134,7 +134,7 @@ public:
 	void CreateTerrain(float llx, float lly, float urx, float ury, float res);
 
 	/// Return the created scene. Must be called after the "CreateScene" function
-	mavs::raytracer::embree::EmbreeTracer GetScene() { return scene_; }
+	//mavs::raytracer::embree::EmbreeTracer GetScene() { return scene_; }
 
 	/// Return a pointer to the created scene. Must be called after the "CreateScene" function
 	mavs::raytracer::embree::EmbreeTracer* GetScenePointer() { return &scene_; }

@@ -16,6 +16,11 @@
     "Max Braking Torque": 1500.0
   },
 
+  "Radial Spring Tire Model": {
+    "Num Slices": 3,
+    "Theta Step": 2.5
+  },
+
   "Axles": [
     {
       "Longitudinal Offset": 1.34625,

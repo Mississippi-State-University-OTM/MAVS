@@ -18,7 +18,7 @@
 
   "Radial Spring Tire Model": {
     "Num Slices": 3,
-    "Theta Step": 2.5
+    "Theta Step": 1.5
   },
 
   "Axles": [

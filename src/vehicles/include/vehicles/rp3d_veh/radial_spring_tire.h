@@ -142,7 +142,10 @@ public:
 	* \param env Pointer to a MAVS environment
 	*/
 	float GetNormalForce(environment::Environment *env);
+	//glm::vec3 GetNormalForce(environment::Environment* env);
 
+	/// Get the current ground normal
+	glm::vec3 GetGroundNormal() { return current_ground_normal_; }
 	/**
 	* Set the position of the tire in world coordinates
 	* \param pos The position vector of the tire
@@ -176,6 +179,7 @@ private:
 	// input parameters from the vehicle dynamics
 	glm::mat3 orientation_;
 	glm::vec3 tire_position_;
+	glm::vec3 current_ground_normal_;
 
 	// data structures for holding calculation variables
 	std::vector<Slice> slices_;

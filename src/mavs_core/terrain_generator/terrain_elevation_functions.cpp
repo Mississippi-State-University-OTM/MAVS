@@ -49,21 +49,25 @@ void TerrainCreator::AddTrapezoid(float bottom_width, float top_width, float dep
 	terrain_feature.TrapezoidalObstacle(bottom_width, top_width, depth, x0);
 	terrain_features_.push_back(terrain_feature);
 }
+
 void TerrainCreator::AddRoughness(float rms) {
 	TerrainElevationFunction terrain_feature;
 	terrain_feature.RoughTerrain(rms);
 	terrain_features_.push_back(terrain_feature);
 }
+
 void TerrainCreator::AddHole(float x, float y, float depth, float diameter, float steepness) {
 	TerrainElevationFunction terrain_feature;
 	terrain_feature.HoleTerrain(x, y, depth, diameter, steepness);
 	terrain_features_.push_back(terrain_feature);
 }
+
 void TerrainCreator::AddParabolic(float square_coeff) {
 	TerrainElevationFunction terrain_feature;
 	terrain_feature.ParabolicTerrain(square_coeff);
 	terrain_features_.push_back(terrain_feature);
 }
+
 void TerrainCreator::AddSlope(float fractional_slope) {
 	TerrainElevationFunction terrain_feature;
 	terrain_feature.SlopedTerrain(fractional_slope);

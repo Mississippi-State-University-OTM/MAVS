@@ -179,7 +179,10 @@ int main(int argc, char *argv[]) {
 		mavs::VehicleState veh_state = veh.GetState();
 
 		if (std::isinf(veh_state.pose.position.x) || std::isnan(veh_state.pose.position.x)) break;
-		camera.SetPose(veh_state);
+
+		glm::vec3 look_to = veh.GetLookTo();
+		float heading = 0.5f*(atan2f(look_to.y, look_to.x));
+		camera.SetPose(veh.GetPosition(), glm::quat(cosf(heading), 0.0f, 0.0f, sinf(heading)));
 
 		if (nsteps%pose_log_steps == 0 && logging) {
 			logged_wp.AddPoint(glm::vec2(veh_state.pose.position.x, veh_state.pose.position.y));

@@ -86,7 +86,8 @@ for i in range(nterrains):
     veh.SetInitialHeading(0.0) # in radians
 
     cam = mavs.MavsCamera()
-    cam.Initialize(960,640,0.00525,0.0035,0.0035)
+    #cam.Initialize(960,640,0.00525,0.0035,0.0035)
+    cam.Initialize(640,428,0.00525,0.0035,0.0035)
     #cam.SetOffset([-12.0,0.0,2.0],[1.0,0.0,0.0,0.0])
     cam.SetOffset([0.0,6.0,0.5],[0.7071,0.0,0.0,-0.7071])
     cam.SetGammaAndGain(0.85,1.0)
@@ -108,7 +109,7 @@ for i in range(nterrains):
             cam.SetPose(pos,ori)
             cam.Update(env,dt)
             cam.Display()
-            cam.SaveCameraImage(str(frame_num).zfill(5)+"_image.bmp")
+            #cam.SaveCameraImage(str(frame_num).zfill(5)+"_image.bmp")
             frame_num += 1
         
         n = n+1

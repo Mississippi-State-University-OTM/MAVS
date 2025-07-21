@@ -33,7 +33,7 @@
       "Max Steer Angle": 17.5,
       "Unsprung Mass": 34.8,
       "Tire": {
-        "Spring Constant": 100000.0,
+        "Spring Constant": 70000.0,
         "Damping Constant": 34003.0,
         "Radius": 0.3302,
         "Width": 0.2286,
@@ -52,7 +52,7 @@
       "Powered": true,
       "Unsprung Mass": 34.8,
       "Tire": {
-        "Spring Constant": 100000.0,
+        "Spring Constant": 70000.0,
         "Damping Constant": 34003.0,
         "Radius": 0.3302,
         "Width": 0.2286,

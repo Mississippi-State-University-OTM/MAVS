@@ -40,6 +40,7 @@ MavsTire::MavsTire() {
 	num_slices_ = 12;
 	dtheta_slice_ = 0.1f;
 	startup_ = true;
+	reactphysics3d::Quaternion current_orientation_ = reactphysics3d::Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 MavsTire::MavsTire(float tire_mass, float tire_radius, float tire_width, float tire_section_height, float tire_spring_constant) {
@@ -51,7 +52,6 @@ MavsTire::MavsTire(float tire_mass, float tire_radius, float tire_width, float t
 
 void MavsTire::Init(float tire_mass, float tire_radius, float tire_width, float tire_section_height, float tire_spring_constant) {
 	// class members
-	angular_velocity_ = 0.0f;
 	height_function_set_ = false;
 	soil_type_set_ = false;
 	current_deflection_ = 0.0f;
@@ -62,7 +62,6 @@ void MavsTire::Init(float tire_mass, float tire_radius, float tire_width, float 
 	radius_ = tire_radius;
 	width_ = tire_width;
 	section_height_ = tire_section_height;
-	angular_velocity_ = 0.0f;
 	//moment_ = 0.5f*tire_mass * tire_radius*tire_radius;
 	moment_ = 10.0f*tire_mass * tire_radius*tire_radius;
 	viscous_friction_coeff_ = 0.5f;
@@ -227,7 +226,7 @@ rp3d::Vector3 MavsTire::Update(environment::Environment *env, float dt, rp3d::Tr
 			dz = radial_spring_tire_.GetCurrentEquivalentDeflection();
 			glm::vec3 ground_normal = radial_spring_tire_.GetGroundNormal();
 			rp3d::Vector3 gn(ground_normal.x, ground_normal.y, ground_normal.z);
-			float k = k_*section_height_ / std::max(0.01f,(section_height_- dz));
+			float k = k_*section_height_ / std::max(0.1f*section_height_,(section_height_- dz));
 			fz = rp3d::decimal(k * dz - c_ * tire_velocity.z) * gn;
 			normal_force = fz.length();
 		}

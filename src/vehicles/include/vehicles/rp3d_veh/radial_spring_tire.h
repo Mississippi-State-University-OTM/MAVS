@@ -37,6 +37,8 @@ public:
 	Spring() {
 		deflection_ = 0.0f;
 		theta_ = 0.0f;
+		direction_ = glm::vec3(0.0f, 0.0f, -1.0f);
+		position_ = glm::vec3(0.0f, 0.0f, 1.0f);
 	}
 
 	/// Copy constructor
@@ -124,6 +126,7 @@ public:
 		nslices_ = tire.nslices_;
 		initialized_ = tire.initialized_;
 		current_equivalent_deflection_ = tire.current_equivalent_deflection_;
+		current_ground_normal_ = tire.current_ground_normal_;
 	}
 
 	/**

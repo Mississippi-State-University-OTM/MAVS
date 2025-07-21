@@ -93,7 +93,8 @@ for i in range(nterrains):
     cam.SetGammaAndGain(0.85,1.0)
     cam.RenderShadows(True)
 
-    dt = 1.0/1000.0 
+    dt = 1.0/100.0 
+    nstep = int(0.04/dt)
     elapsed_time = 0.0
     n = 0 
     pid = PidController(kp=0.5, ki=0.1, kd=0.05, setpoint=5.0)
@@ -102,7 +103,7 @@ for i in range(nterrains):
         throttle = pid.Update(speed)
         veh.Update(env, throttle, 0.0, 0.0, dt)
 
-        if n%40==0:
+        if n%nstep==0:
             pos = veh.GetPosition()
             yaw = veh.GetHeading()
             ori = [math.cos(0.5*yaw), 0.0, 0.0, math.sin(0.5*yaw)]

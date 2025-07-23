@@ -227,7 +227,9 @@ rp3d::Vector3 MavsTire::Update(environment::Environment *env, float dt, rp3d::Tr
 			glm::vec3 ground_normal = radial_spring_tire_.GetGroundNormal();
 			rp3d::Vector3 gn(ground_normal.x, ground_normal.y, ground_normal.z);
 			float k = k_*section_height_ / std::max(0.1f*section_height_,(section_height_- dz));
-			fz = rp3d::decimal(k * dz - c_ * tire_velocity.z) * gn;
+			float c = c_ * sqrtf(k / k_);
+			fz = rp3d::decimal(k * dz - c * tire_velocity.z) * gn;
+			//fz = rp3d::decimal(k * dz) * gn - rp3d::decimal(c) * gn;
 			normal_force = fz.length();
 		}
 

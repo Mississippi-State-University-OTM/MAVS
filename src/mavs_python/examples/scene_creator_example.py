@@ -48,7 +48,7 @@ class PidController:
 # create the different terrain types to test
 terrains = []
 ditch_nogo = mavs.MavsTerrainCreator()
-ditch_nogo.AddTrapezoidalFeature(6.0, 12.0, 3.0, 20.0)
+ditch_nogo.AddTrapezoidalFeature(6.0, 12.0, 4.0, 20.0)
 terrains.append(ditch_nogo)
 
 ditch = mavs.MavsTerrainCreator()

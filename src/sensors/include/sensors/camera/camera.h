@@ -68,6 +68,19 @@ public:
 		gain_ = cam.gain_;
 		pixel_solid_angle_ = cam.pixel_solid_angle_;
 		blur_on_ = cam.blur_on_;
+		disp_is_free_ = cam.disp_is_free_;
+		exposure_time_ = cam.exposure_time_;
+		first_display_ = cam.first_display_;
+		first_seg_display_ = cam.first_seg_display_;
+		frame_grabbed_ = cam.frame_grabbed_;
+		horizontal_mag_scale_ = cam.horizontal_mag_scale_;
+		img_saturation_ = cam.img_saturation_;
+		img_temperature_ = cam.img_temperature_;
+		is_fisheye_ = cam.is_fisheye_;
+		key_rot_rate_ = cam.key_rot_rate_;
+		key_step_size_ = cam.key_step_size_;
+		ncalled_ = cam.ncalled_;
+		pixel_sample_factor_ = cam.pixel_sample_factor_;
 	}
 
 	/// Return the camera focal length

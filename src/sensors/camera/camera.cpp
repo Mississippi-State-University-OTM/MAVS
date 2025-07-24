@@ -93,10 +93,12 @@ Camera::~Camera() {
 
 }
 
+static char camera_input_read_buffer[65536];
+
 void Camera::Load(std::string input_file) {
 	FILE* fp = fopen(input_file.c_str(), "rb");
-	char readBuffer[65536];
-	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+	
+	rapidjson::FileReadStream is(fp, camera_input_read_buffer, sizeof(camera_input_read_buffer));
 	rapidjson::Document d;
 	d.ParseStream(is);
 	fclose(fp);
@@ -636,7 +638,7 @@ void Camera::CreateRainMask(mavs::environment::Environment *env, double dt) {
 			}
 		}
 		image_ = new_image;
-	}
+	} // raindrops on lens
 }
 
 void Camera::CopyBufferToImage() {

@@ -80,10 +80,14 @@ int main(int argc, char* argv[]) {
 	mavs::sensor::CameraSoiling soiling;
 
 	float dt = 0.025f;
+	int nframes = 0;
 	while (camera.DisplayOpen()) {
 		camera.Update(&env, dt);
 		soiling.AddRaindropsToCamera(&env, &camera, dt);
+		soiling.AddMudToCamera(&env, &camera, dt);
 		camera.Display();
+		nframes++;
+		if (nframes % 100 == 0)soiling.AddMudMask();
 	}
 
 	return 0;

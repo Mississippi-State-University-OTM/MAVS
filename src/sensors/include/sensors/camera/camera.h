@@ -446,11 +446,15 @@ public:
 	void UseBlur(bool blur_on) { blur_on_ = blur_on; }
 
 	/// Get the total area of the imaging plane
-	float GetLensArea() const { return horizontal_pixdim_ * vertical_pixdim_; }
+	float GetLensArea() const { return focal_array_height_ * focal_array_height_; }
 
 	float GetHorizontalPixdim() const { return horizontal_pixdim_; }
 
 	float GetVerticalPixdim() const { return vertical_pixdim_; }
+
+	float GetFocalArrayWidth() const { return focal_array_width_; }
+
+	float GetFocalArrayHeight() const { return focal_array_height_; }
 
 protected:
 

@@ -29,10 +29,25 @@ Copyright 2018 (C) Mississippi State University
 #include <vector>
 #include <sensors/camera/camera.h>
 #include <sensors/camera/lens_drop.h>
+#include <FastNoise.h>
 
 namespace mavs{
 namespace sensor{
 
+class MudMask {
+public:
+	MudMask();
+
+	void SetMaskFrequency(float freq);
+
+	glm::vec3 GetColor() const { return mud_color_; }
+
+	float GetAlpha(int x, int y);
+
+private:
+	glm::vec3 mud_color_;
+	FastNoise mud_noise_;
+};
 
 class CameraSoiling {
 public:
@@ -41,8 +56,15 @@ public:
 
 	void AddRaindropsToCamera(mavs::environment::Environment* env, camera::Camera* cam, float dt);
 
+	void AddMudToCamera(mavs::environment::Environment* env, camera::Camera* cam, float dt);
+
+	void AddMudMask() { MudMask mask; mud_masks_.push_back(mask); }
+
+	int GetNumMudMasks() { return (int)mud_masks_.size(); }
 private:
+
 	std::vector<camera::LensDrop> droplets_;
+	std::vector<MudMask> mud_masks_;
 };
 
 

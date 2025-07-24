@@ -47,10 +47,7 @@ SOFTWARE.
 
 int main(int argc, char* argv[]) {
 
-#ifndef USE_EMBREE
-	std::cerr << "ERROR: THIS EXAMPLE REQUIRES MAVS TO BE BUILT WITH EMBREE FUNCTIONALITY" << std::endl;
-	return 37;
-#endif
+	// check that the scene file is supplied on the command line
 	if (argc < 2) {
 		std::cerr << "Usage: ./camera_soiling_example scenefile.json" << std::endl;
 		return 1;
@@ -63,8 +60,7 @@ int main(int argc, char* argv[]) {
 
 	// create the camera and set parameters
 	mavs::sensor::camera::RgbCamera camera;
-	camera.FreePose();
-	//camera.SetRaindropsOnLens(true);
+	camera.FreePose(); // move the camera around with WASD, arrows, and PageUp/PageDown
 	camera.SetPose(glm::vec3(0.0f, 0.0f, 3.0f), glm::quat(1.0f, 0.0f, 0.0f, 0.0f));
 	camera.Display();
 
@@ -79,13 +75,24 @@ int main(int argc, char* argv[]) {
 	// create the camera soiling class
 	mavs::sensor::CameraSoiling soiling;
 
-	float dt = 0.025f;
+	float dt = 0.025f; // seconds
 	int nframes = 0;
+
+	// start the sim loop
 	while (camera.DisplayOpen()) {
+		// update the camera
 		camera.Update(&env, dt);
+
+		// add raindrops
 		soiling.AddRaindropsToCamera(&env, &camera, dt);
+
+		// add mud (there are no masks at first)
 		soiling.AddMudToCamera(&env, &camera, dt);
+
+		// display the updated camera image
 		camera.Display();
+
+		// increment the frames and add another mud mask every 100 time steps
 		nframes++;
 		if (nframes % 100 == 0)soiling.AddMudMask();
 	}

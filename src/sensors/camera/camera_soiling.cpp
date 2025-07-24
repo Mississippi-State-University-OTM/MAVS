@@ -33,46 +33,56 @@ namespace mavs {
 namespace sensor {
 
 MudMask::MudMask() {
-	mud_color_ = glm::vec3(101.0f, 67.0f, 33.0f);
+	// Default mud color is brown
+	mud_color_ = glm::vec3(101.0f, 67.0f, 33.0f); 
+	// seed the random number generator that defines the mask
 	int seed = static_cast<int>(std::time(nullptr));
 	mud_noise_.SetSeed(seed);
 }
 
 void MudMask::SetMaskFrequency(float freq) {
+	// the spatial frequency of the mud mask, in 1/meters
+	// should be roughly equal to 1/pixel_plane_width
 	mud_noise_.SetFrequency(freq);
 }
 
 float MudMask::GetAlpha(int x, int y) {
+	// Get the alpha value for the mask at a pixel location
+	// Mask is defined by areas where Perlin noise exceeds a threshold
 	float n_thresh = (float)mud_noise_.GetPerlin(x, y); // ranges from -0.5 to 0.5
 	float alpha = 0.0f;
 	if (n_thresh > 0.3f) {
+		// alpha map is stronger in the center of the mask, falls off at edges
 		alpha = powf(std::max(0.0f, std::min(1.0f, (n_thresh - 0.3f) / 0.2f)), 0.1f);
 	}
 	return alpha;
 }
 
 
-CameraSoiling::CameraSoiling() {
+CameraSoiling::CameraSoiling() {}
 
-}
-
+// Add mud using the current mud masks
 void CameraSoiling::AddMudToCamera(mavs::environment::Environment* env, camera::Camera* cam, float dt) {
 
+	// Set the frequency of the mud masks
 	for (int i = 0; i < (int)mud_masks_.size(); i++) {
 		mud_masks_[i].SetMaskFrequency(2.0f / (cam->GetWidth()));
 	}
 
 	cimg_library::CImg<float> image = cam->GetCurrentImage();
 
+	// loop over all pixels and add mud
 	for (int y = 0; y < cam->GetHeight(); ++y) {
 		for (int x = 0; x < cam->GetWidth(); ++x) {
+			// loop over each mud mask
 			for (int i = 0; i < (int)mud_masks_.size(); i++) {
+				// get the alpha value for this mask at this pixel
 				float alpha = mud_masks_[i].GetAlpha(x,y);
+				// if the alpha >0.0, there is mud there
 				if (alpha > 0.0f) { 
 					glm::vec3 base_color(image(x, y, 0), image(x, y, 1), image(x, y, 2));
 					glm::vec3 blended_color = (base_color * (1.0f - alpha) + mud_masks_[i].GetColor() * alpha);
 					image.draw_point(x, y, (float*)&blended_color);
-
 				}
 			}
 		}
@@ -132,12 +142,13 @@ void CameraSoiling::AddRaindropsToCamera(mavs::environment::Environment* env, ca
 #endif
 		for (int i = c.x - rp; i <= c.x + rp; i++) {
 			for (int j = c.y - rp; j <= c.y + rp; j++) {
+				// check all the pixels in the drop
 				if (i >= 0 && i < cam->GetWidth() && j >= 0 && j < cam->GetHeight()) {
 					glm::vec2 pixel(i, j);
 					glm::vec2 center((float)c.x, (float)c.y);
 					float r = glm::length(pixel - center);
 					if (droplets_[d].PixelInDrop(i,j) && r <= rp){
-						//blur filter
+						//blur filter to simulate the effect of refraction through the drop
 						glm::vec3 newcol(0.0f, 0.0f, 0.0f);
 						int nfilt = 5;
 						int nr = (nfilt - 1) / 2;
@@ -150,6 +161,7 @@ void CameraSoiling::AddRaindropsToCamera(mavs::environment::Environment* env, ca
 								}
 							}
 						}
+						// blending the blurred old pixels with the new pixel
 						newcol = newcol / (0.8f*nfilt*nfilt);
 						glm::vec3 oldcol = glm::vec3(image(i, j, 0), image(i, j, 1), image(i, j, 2));
 						float s = 1.0f - exp(-((float)r / rp));

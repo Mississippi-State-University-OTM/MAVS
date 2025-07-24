@@ -41,6 +41,7 @@ SOFTWARE.
 */
 
 #include <sensors/mavs_sensors.h>
+#include <sensors/camera/camera_soiling.h>
 #include <iostream>
 #include <raytracers/embree_tracer/embree_tracer.h>
 
@@ -63,7 +64,7 @@ int main(int argc, char* argv[]) {
 	// create the camera and set parameters
 	mavs::sensor::camera::RgbCamera camera;
 	camera.FreePose();
-	camera.SetRaindropsOnLens(true);
+	//camera.SetRaindropsOnLens(true);
 	camera.SetPose(glm::vec3(0.0f, 0.0f, 3.0f), glm::quat(1.0f, 0.0f, 0.0f, 0.0f));
 	camera.Display();
 
@@ -75,8 +76,13 @@ int main(int argc, char* argv[]) {
 	env.SetWind(2.0f, 1.0f);
 	env.SetRaytracer(&scene);
 
+	// create the camera soiling class
+	mavs::sensor::CameraSoiling soiling;
+
+	float dt = 0.025f;
 	while (camera.DisplayOpen()) {
-		camera.Update(&env, 0.1);
+		camera.Update(&env, dt);
+		soiling.AddRaindropsToCamera(&env, &camera, dt);
 		camera.Display();
 	}
 

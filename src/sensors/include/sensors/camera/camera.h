@@ -81,6 +81,11 @@ public:
 		key_step_size_ = cam.key_step_size_;
 		ncalled_ = cam.ncalled_;
 		pixel_sample_factor_ = cam.pixel_sample_factor_;
+		raindrops_on_lens_ = cam.raindrops_on_lens_;
+		render_shadows_ = cam.render_shadows_;
+		target_brightness_ = cam.target_brightness_;
+		use_distorted_ = cam.use_distorted_;
+		vertical_mag_scale_ = cam.vertical_mag_scale_;
 	}
 
 	/// Return the camera focal length
@@ -231,10 +236,10 @@ public:
 	}
 
 	/// Get the vertical dimension of the image
-	int GetHeight() { return num_vertical_pix_; }
+	int GetHeight() const { return num_vertical_pix_; }
 
 	/// Get the horizontal dimension of the image
-	int GetWidth() { return num_horizontal_pix_; }
+	int GetWidth() const { return num_horizontal_pix_; }
 
 	/// Return a pointer to the image buffer
 	float *GetImageBuffer() {
@@ -346,6 +351,12 @@ public:
 		key_rot_rate_ = rot_rate;
 	}
 
+	void SetImage(cimg_library::CImg<float> img_in) {
+		if (IsImageCompatible(img_in)) {
+			image_ = img_in;
+		}
+	}
+
 	//Return the current CImg Image
 	cimg_library::CImg<float> GetCurrentImage() {
 		return image_;
@@ -434,7 +445,21 @@ public:
 	/// turn image blur calculation on / off
 	void UseBlur(bool blur_on) { blur_on_ = blur_on; }
 
+	/// Get the total area of the imaging plane
+	float GetLensArea() const { return horizontal_pixdim_ * vertical_pixdim_; }
+
+	float GetHorizontalPixdim() const { return horizontal_pixdim_; }
+
+	float GetVerticalPixdim() const { return vertical_pixdim_; }
+
 protected:
+
+	bool IsImageCompatible(const cimg_library::CImg<float>& img) {
+		return (img.width() == image_.width() &&
+			img.height() == image_.height() &&
+			img.depth() == image_.depth() &&
+			img.spectrum() == image_.spectrum());
+	}
 
 	void AdjustSaturationAndTemperature();
 
@@ -459,7 +484,7 @@ protected:
 	/// Set the image buffer to zeros
 	void ZeroBuffer();
 
-	//Draw a rectangle on the segmented_image
+	/// Draw a rectangle on the segmented_image
 	void DrawRectangle(glm::ivec2 ll, glm::ivec2 ur);
 
 	//std::vector<glm::vec3> image_buffer_;

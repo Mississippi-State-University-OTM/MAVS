@@ -32,6 +32,7 @@ SOFTWARE.
 namespace mavs {
 namespace sensor {
 
+/// MudMask class constructor
 MudMask::MudMask() {
 	// Default mud color is brown
 	mud_color_ = glm::vec3(101.0f, 67.0f, 33.0f); 

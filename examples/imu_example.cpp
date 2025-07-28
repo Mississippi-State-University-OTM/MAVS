@@ -116,8 +116,11 @@ int main(int argc, char *argv[]) {
 		imu.SetPose(veh.GetState());
 		imu.Update(&env, dt);
 		glm::quat ori = imu.GetDeadReckoningOrientation();
-		double roll, pitch, yaw;
-		mavs::math::QuatToEulerAngle(ori, pitch, roll, yaw);
+		glm::vec3 angvel = imu.GetAngularVelocity();
+		glm::vec3 linacc = imu.GetAcceleration();
+		std::cout << "[" << ori.w << ", " << ori.x << ", " << ori.y << ", " << ori.z << "], [" << linacc.x << ", " << linacc.y << ", " << linacc.z << "], [" << angvel.x << ", " << angvel.y << ", " << angvel.z << "]" << std::endl;
+		//double roll, pitch, yaw;
+		//mavs::math::QuatToEulerAngle(ori, pitch, roll, yaw);
 
 		// update individual mems plots
 		tp.push_back(elapsed_time);

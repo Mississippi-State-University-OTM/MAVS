@@ -36,14 +36,12 @@ SOFTWARE.
 #include <rapidjson/filereadstream.h>
 #include <rapidjson/document.h>
 
+namespace mavs {
+namespace sensor {
+namespace imu {
 
-namespace mavs{
-namespace sensor{
-namespace imu{
-
-
-ImuSimple::ImuSimple(){
-  type_ = "imu";
+ImuSimple::ImuSimple() {
+	type_ = "imu";
 	subtract_g_ = false;
 	accel_offsets_ = glm::vec3(0.0f, 0.0f, 0.0f);
 	accel_noise_ = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -62,9 +60,29 @@ ImuSimple::ImuSimple(){
 	gyro_x_dist_ = std::uniform_real_distribution<float>(0.0f, 0.0f);
 	gyro_y_dist_ = std::uniform_real_distribution<float>(0.0f, 0.0f);
 	gyro_z_dist_ = std::uniform_real_distribution<float>(0.0f, 0.0f);
+
+	dead_reckon_orientation_ = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 }
 
-ImuSimple::~ImuSimple(){
+ImuSimple::~ImuSimple() {
+}
+
+void ImuSimple::SetGyroNoise(float offset, float magnitude) {
+	SetNoiseModel("gyr", "x", offset, magnitude);
+	SetNoiseModel("gyr", "y", offset, magnitude);
+	SetNoiseModel("gyr", "z", offset, magnitude);
+}
+
+void ImuSimple::SetAccelerometerNoise(float offset, float magnitude) {
+	SetNoiseModel("acc", "x", offset, magnitude);
+	SetNoiseModel("acc", "y", offset, magnitude);
+	SetNoiseModel("acc", "z", offset, magnitude);
+}
+
+void ImuSimple::SetMagnetometerNoise(float offset, float magnitude) {
+	SetNoiseModel("mag", "x", offset, magnitude);
+	SetNoiseModel("mag", "y", offset, magnitude);
+	SetNoiseModel("mag", "z", offset, magnitude);
 }
 
 void ImuSimple::SetNoiseModel(std::string sensor_type, std::string dimension, float noise_offset, float noise_mag) {
@@ -83,24 +101,26 @@ void ImuSimple::SetNoiseModel(std::string sensor_type, std::string dimension, fl
 		return;
 	}
 	if (sensor_type == "mag") {
-		if (dim == 0)mag_x_dist_ = std::uniform_real_distribution<float>(noise_offset-0.5f*noise_mag, noise_offset+0.5f*noise_mag);
-		if (dim == 1)mag_y_dist_ = std::uniform_real_distribution<float>(noise_offset-0.5f*noise_mag, noise_offset+0.5f*noise_mag);
-		if (dim == 2)mag_z_dist_ = std::uniform_real_distribution<float>(noise_offset-0.5f*noise_mag, noise_offset+0.5f*noise_mag);
+		if (dim == 0)mag_x_dist_ = std::uniform_real_distribution<float>(noise_offset - 0.5f * noise_mag, noise_offset + 0.5f * noise_mag);
+		if (dim == 1)mag_y_dist_ = std::uniform_real_distribution<float>(noise_offset - 0.5f * noise_mag, noise_offset + 0.5f * noise_mag);
+		if (dim == 2)mag_z_dist_ = std::uniform_real_distribution<float>(noise_offset - 0.5f * noise_mag, noise_offset + 0.5f * noise_mag);
 	}
 	else if (sensor_type == "gyr") {
-		if (dim == 0)gyro_x_dist_ = std::uniform_real_distribution<float>(noise_offset-0.5*noise_mag, noise_offset+0.5*noise_mag);
-		if (dim == 1)gyro_y_dist_ = std::uniform_real_distribution<float>(noise_offset-0.5*noise_mag, noise_offset+0.5*noise_mag);
-		if (dim == 2)gyro_z_dist_ = std::uniform_real_distribution<float>(noise_offset-0.5*noise_mag, noise_offset+0.5*noise_mag);
+		if (dim == 0)gyro_x_dist_ = std::uniform_real_distribution<float>(noise_offset - 0.5 * noise_mag, noise_offset + 0.5 * noise_mag);
+		if (dim == 1)gyro_y_dist_ = std::uniform_real_distribution<float>(noise_offset - 0.5 * noise_mag, noise_offset + 0.5 * noise_mag);
+		if (dim == 2)gyro_z_dist_ = std::uniform_real_distribution<float>(noise_offset - 0.5 * noise_mag, noise_offset + 0.5 * noise_mag);
 	}
 	else if (sensor_type == "acc") {
-		if (dim == 0)acc_x_dist_ = std::uniform_real_distribution<float>(noise_offset-0.5*noise_mag, noise_offset+0.5*noise_mag);
-		if (dim == 1)acc_y_dist_ = std::uniform_real_distribution<float>(noise_offset-0.5*noise_mag, noise_offset+0.5*noise_mag);
-		if (dim == 2)acc_z_dist_ = std::uniform_real_distribution<float>(noise_offset-0.5*noise_mag, noise_offset+0.5*noise_mag);
+		if (dim == 0)acc_x_dist_ = std::uniform_real_distribution<float>(noise_offset - 0.5 * noise_mag, noise_offset + 0.5 * noise_mag);
+		if (dim == 1)acc_y_dist_ = std::uniform_real_distribution<float>(noise_offset - 0.5 * noise_mag, noise_offset + 0.5 * noise_mag);
+		if (dim == 2)acc_z_dist_ = std::uniform_real_distribution<float>(noise_offset - 0.5 * noise_mag, noise_offset + 0.5 * noise_mag);
 	}
 	else {
 		std::cerr << "Warning, sensor_type " << sensor_type << " not recognzied when calling ImuSimple::SetNoiseModel. Must be \"mag\", \"gyr\", or \"acc\"." << std::endl;
 	}
 }
+
+static char imu_json_read_buffer[65536];
 
 void ImuSimple::Load(std::string input_file) {
 
@@ -111,8 +131,8 @@ void ImuSimple::Load(std::string input_file) {
 	}
 
 	FILE* fp = fopen(input_file.c_str(), "rb");
-	char readBuffer[65536];
-	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+	;
+	rapidjson::FileReadStream is(fp, imu_json_read_buffer, sizeof(imu_json_read_buffer));
 	rapidjson::Document d;
 	d.ParseStream(is);
 	fclose(fp);
@@ -172,21 +192,40 @@ void ImuSimple::Load(std::string input_file) {
 		}
 	} // magnetometer
 
-	acc_x_dist_ = std::uniform_real_distribution<float>(accel_offsets_.x - 0.5f*accel_noise_.x, accel_offsets_.x + 0.5f*accel_noise_.x);
-	acc_y_dist_ = std::uniform_real_distribution<float>(accel_offsets_.y - 0.5f*accel_noise_.y, accel_offsets_.y + 0.5f*accel_noise_.y);
-	acc_z_dist_ = std::uniform_real_distribution<float>(accel_offsets_.z - 0.5f*accel_noise_.z, accel_offsets_.z + 0.5f*accel_noise_.z);
+	acc_x_dist_ = std::uniform_real_distribution<float>(accel_offsets_.x - 0.5f * accel_noise_.x, accel_offsets_.x + 0.5f * accel_noise_.x);
+	acc_y_dist_ = std::uniform_real_distribution<float>(accel_offsets_.y - 0.5f * accel_noise_.y, accel_offsets_.y + 0.5f * accel_noise_.y);
+	acc_z_dist_ = std::uniform_real_distribution<float>(accel_offsets_.z - 0.5f * accel_noise_.z, accel_offsets_.z + 0.5f * accel_noise_.z);
 
-	mag_x_dist_ = std::uniform_real_distribution<float>(mag_offsets_.x - 0.5f*mag_noise_.x, mag_offsets_.x + 0.5f*mag_noise_.x);
-	mag_y_dist_ = std::uniform_real_distribution<float>(mag_offsets_.y - 0.5f*mag_noise_.y, mag_offsets_.y + 0.5f*mag_noise_.y);
-	mag_z_dist_ = std::uniform_real_distribution<float>(mag_offsets_.z - 0.5f*mag_noise_.z, mag_offsets_.z + 0.5f*mag_noise_.z);
+	mag_x_dist_ = std::uniform_real_distribution<float>(mag_offsets_.x - 0.5f * mag_noise_.x, mag_offsets_.x + 0.5f * mag_noise_.x);
+	mag_y_dist_ = std::uniform_real_distribution<float>(mag_offsets_.y - 0.5f * mag_noise_.y, mag_offsets_.y + 0.5f * mag_noise_.y);
+	mag_z_dist_ = std::uniform_real_distribution<float>(mag_offsets_.z - 0.5f * mag_noise_.z, mag_offsets_.z + 0.5f * mag_noise_.z);
 
-	gyro_x_dist_ = std::uniform_real_distribution<float>(gyro_offsets_.x - 0.5f*gyro_noise_.x, gyro_offsets_.x + 0.5f*gyro_noise_.x);
-	gyro_y_dist_ = std::uniform_real_distribution<float>(gyro_offsets_.y - 0.5f*gyro_noise_.y, gyro_offsets_.y + 0.5f*gyro_noise_.y);
-	gyro_z_dist_ = std::uniform_real_distribution<float>(gyro_offsets_.z - 0.5f*gyro_noise_.z, gyro_offsets_.z + 0.5f*gyro_noise_.z);
+	gyro_x_dist_ = std::uniform_real_distribution<float>(gyro_offsets_.x - 0.5f * gyro_noise_.x, gyro_offsets_.x + 0.5f * gyro_noise_.x);
+	gyro_y_dist_ = std::uniform_real_distribution<float>(gyro_offsets_.y - 0.5f * gyro_noise_.y, gyro_offsets_.y + 0.5f * gyro_noise_.y);
+	gyro_z_dist_ = std::uniform_real_distribution<float>(gyro_offsets_.z - 0.5f * gyro_noise_.z, gyro_offsets_.z + 0.5f * gyro_noise_.z);
 }
-void ImuSimple::Update(environment::Environment *env, double dt){
+
+// Updates orientation quaternion using angular velocity and time step
+void ImuSimple::UpdateOrientationDeadReckoning(float dt) {
+	float angle = glm::length(local_angvel_) * dt;
+
+	if (angle < 1.0E-6f)return;
+
+	// Normalize angular velocity to get rotation axis
+	glm::vec3 axis = glm::normalize(local_angvel_);
+
+	// Compute delta quaternion using exponential map
+	glm::quat delta = glm::angleAxis(angle, axis);
+
+	// Apply rotation: new orientation = delta * current
+	glm::quat updated = delta * dead_reckon_orientation_;
+
+	dead_reckon_orientation_ = glm::normalize(updated);
+}
+
+void ImuSimple::Update(environment::Environment* env, double dt) {
 	glm::mat3 Ri = glm::inverse(orientation_);
-	local_acc_ =  Ri * acceleration_;
+	local_acc_ = Ri * acceleration_;
 	local_angvel_ = Ri * angular_velocity_;
 
 	accel_readings_.x = local_acc_.x + acc_x_dist_(generator_);
@@ -201,14 +240,16 @@ void ImuSimple::Update(environment::Environment *env, double dt){
 	//mag_readings_.y = magnetic_field_.y + mag_y_dist_(generator_);
 	//mag_readings_.z = magnetic_field_.z + mag_z_dist_(generator_);
 
-  local_sim_time_ += local_time_step_;
-  updated_ = true;
-  nsteps_++;
+	UpdateOrientationDeadReckoning(dt);
+
+	local_sim_time_ += local_time_step_;
+	updated_ = true;
+	nsteps_++;
 }
 
 #ifdef USE_MPI
-void ImuSimple::PublishData(int root,MPI_Comm broadcast_to){
-  MPI_Bcast(&accel_readings_[0],3,MPI_FLOAT,root,broadcast_to);
+void ImuSimple::PublishData(int root, MPI_Comm broadcast_to) {
+	MPI_Bcast(&accel_readings_[0], 3, MPI_FLOAT, root, broadcast_to);
 	MPI_Bcast(&gyro_readings_[0], 3, MPI_FLOAT, root, broadcast_to);
 	MPI_Bcast(&mag_readings_[0], 3, MPI_FLOAT, root, broadcast_to);
 }
@@ -217,4 +258,3 @@ void ImuSimple::PublishData(int root,MPI_Comm broadcast_to){
 } //namespace imu
 } //namespace sensor
 } //namespace mavs
-

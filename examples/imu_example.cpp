@@ -79,8 +79,6 @@ int main(int argc, char *argv[]) {
 	camera.SetPose(glm::vec3(0.0f, 0.0f, 1.0f), glm::quat(1.0f, 0.0f, 0.0f, 0.0f));
 	camera.SetElectronics(0.75f, 1.0f);
 
-	
-	
 	mavs::vehicle::Rp3dVehicle veh;
 	veh.Load(vehic_file);
 	float zstart = scene.GetSurfaceHeight(0.0f, 0.0f);
@@ -89,25 +87,26 @@ int main(int argc, char *argv[]) {
 
 	float dt = 1.0f / 100.0f;
 
-	mavs::sensor::imu::Imu imu;
-	imu.SetSampleRate(1.0f / dt);
+	mavs::sensor::imu::ImuSimple imu;
+	//imu.SetSampleRate(1.0f / dt);
+	//imu.SetTemperature(10.0f);
+	imu.SetGyroNoise(0.0f, 0.01f);
+	imu.SetAccelerometerNoise(0.0f, 0.01f);
+	imu.SetMagnetometerNoise(0.0f, 0.01f);
 
 	int nsteps = 0;
 	float heading = 0.0f;
 	while(camera.DisplayOpen() || nsteps==0){
 
 		UpdateVehicle(&veh, &camera, &env, dt);
-		auto state = veh.GetState();
-		//std::cout << sqrtf(state.twist.linear.x * state.twist.linear.x + state.twist.linear.y * state.twist.linear.y) << " " << state.twist.angular.z << std::endl;
-		heading += 5000.0f*state.twist.angular.z;
-		glm::vec3 lt = veh.GetLookTo();
-		std::cout << "Heading = " << heading << " "<<atan2f(lt.y, lt.x) << std::endl;
+		mavs::VehicleState state = veh.GetState();
+		heading += dt*state.twist.angular.z;
 		imu.SetPose(veh.GetState());
 		imu.Update(&env, dt);
-		glm::vec3 ang_vel = imu.GetAngularVelocity();
-		glm::vec3 lin_acc = imu.GetAcceleration();
-		//glm::quat ori = imu.GetDeadReckoningOrientation();
-		//std::cout << ang_vel.x << " " << ang_vel.y << " " << ang_vel.z << " " << lin_acc.x << " " << lin_acc.y << " " << lin_acc.z << " " << ori.w << " " << ori.x << " " << ori.y << " " << ori.z << std::endl;
+		glm::quat ori = imu.GetDeadReckoningOrientation();
+		double roll, pitch, yaw;
+		mavs::math::QuatToEulerAngle(ori, pitch, roll, yaw);
+		std::cout <<"(Roll, Pitch, Yaw): (" << roll << ", " << pitch << ", " << yaw << ")" << std::endl;
 		if (nsteps % 4 == 0) {
 			glm::vec3 look_to = veh.GetLookTo();
 			float heading = 0.5f * (atan2f(look_to.y, look_to.x));

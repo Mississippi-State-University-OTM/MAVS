@@ -155,7 +155,7 @@ float MavsTire::CalcSlip(float vx) {
 	return slip;
 }
 
-rp3d::Quaternion AxisAngleToQuat(rp3d::Vector3 axis, float angle) {
+static rp3d::Quaternion AxisAngleToQuat(rp3d::Vector3 axis, float angle) {
 	double at = 0.5*angle;
 	double s = sin(at);
 	rp3d::Quaternion q;
@@ -229,7 +229,6 @@ rp3d::Vector3 MavsTire::Update(environment::Environment *env, float dt, rp3d::Tr
 			float k = k_*section_height_ / std::max(0.1f*section_height_,(section_height_- dz));
 			float c = c_ * sqrtf(k / k_);
 			fz = rp3d::decimal(k * dz - c * tire_velocity.z) * gn;
-			//fz = rp3d::decimal(k * dz) * gn - rp3d::decimal(c) * gn;
 			normal_force = fz.length();
 		}
 
@@ -270,9 +269,10 @@ rp3d::Vector3 MavsTire::Update(environment::Environment *env, float dt, rp3d::Tr
 		if (static_friction.length() > fric_max) {
 			static_friction = static_friction * (fric_max / static_friction.length());
 		}
-		// on startup, set friction to totally staic
+		// on startup, set friction to totally static
 		if (startup_) {
-			static_friction = tire_velocity * dt;
+			fz.x = 0.0f;
+			fz.y = 0.0f;
 		}
 		force = fx + fy + fz - static_friction;
 	}

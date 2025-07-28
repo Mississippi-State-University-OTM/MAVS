@@ -67,6 +67,9 @@ Rp3dVehicle::Rp3dVehicle() {
 	animate_tires_ = false;
 	load_visualization_ = true;
 	vehicle_id_num_ = 0;
+
+	dtheta_slice_ = 5.0f * 3.14159f / 180.0f;
+	num_tire_slices_ = 3;
 }
 
 Rp3dVehicle::~Rp3dVehicle() {

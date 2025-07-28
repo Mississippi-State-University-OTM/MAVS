@@ -5,7 +5,7 @@
     "Heightmap": {
       "Map": "surfaces/mountain_heights.bmp",
       "Resolution": 10.0,
-      "Scale": 10.0
+      "Scale": 2.0
     },
     "Trail": {
       "Trail Width": 4.5,

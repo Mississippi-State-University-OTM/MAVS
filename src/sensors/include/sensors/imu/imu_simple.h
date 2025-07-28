@@ -127,6 +127,12 @@ class ImuSimple : public Sensor {
 	*/
 	void SetNoiseModel(std::string sensor_type, std::string dimension, float noise_offset, float noise_mag);
 
+	void SetGyroNoise(float offset, float magnitude);
+	void SetAccelerometerNoise(float offset, float magnitude);
+	void SetMagnetometerNoise(float offset, float magnitude);
+
+	glm::quat GetDeadReckoningOrientation() const { return dead_reckon_orientation_; }
+
 protected:
 	int nsteps_;
  private:
@@ -156,6 +162,9 @@ protected:
 	 std::uniform_real_distribution<float> gyro_x_dist_;
 	 std::uniform_real_distribution<float> gyro_y_dist_;
 	 std::uniform_real_distribution<float> gyro_z_dist_;
+
+	 void UpdateOrientationDeadReckoning(float dt);
+	 glm::quat dead_reckon_orientation_;
 
 	 bool subtract_g_;
 };

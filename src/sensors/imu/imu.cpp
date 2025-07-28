@@ -249,10 +249,7 @@ void Imu::Load(std::string input_file) {
 void Imu::UpdateOrientationDeadReckoning(float dt) {
 	float angle = glm::length(local_angvel_) * dt;
 
-	// If angular velocity is very small, skip update to avoid numerical issues
-	//if (glm::epsilonEqual(angle, 0.0f, 1e-6f)) {
-	//	return;
-	//}
+	if (angle < 1.0E-6f) return;
 
 	// Normalize angular velocity to get rotation axis
 	glm::vec3 axis = glm::normalize(local_angvel_);

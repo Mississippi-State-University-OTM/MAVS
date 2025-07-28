@@ -26,6 +26,7 @@ SOFTWARE.
 #include <vehicles/rp3d_veh/mavs_rp3d_veh.h>
 #include <mavs_core/math/utils.h>
 #include <numeric>
+#include <glm/gtc/quaternion.hpp>
 
 namespace mavs {
 namespace vehicle {
@@ -562,18 +563,34 @@ void Rp3dVehicle::SetState(VehicleState veh_state) {
 	chassis_.SetLinearAngularVelocity(current_state_.twist.linear.x, current_state_.twist.linear.y, current_state_.twist.linear.z, current_state_.twist.angular.x, current_state_.twist.angular.y, current_state_.twist.angular.z);
 }
 
+static glm::vec3 ComputeAngularVelocity(const glm::quat& q1, const glm::quat& q2, float dt) {
+
+	glm::quat q_rel = q2*glm::conjugate(q1);
+	q_rel = glm::normalize(q_rel);
+
+	// Convert to axis-angle
+	float angle = 2.0f * acosf(q_rel.w);
+	float sin_half_angle = sqrtf(1.0f - q_rel.w * q_rel.w);
+	glm::vec3 axis(0.0f, 0.0f, 0.0f);
+	if (sin_half_angle > 1.0E-10f) {
+		axis = glm::vec3(q_rel.x, q_rel.y, q_rel.z) / sin_half_angle;
+	}
+	glm::vec3 omega = (angle / dt) * axis;
+	return omega;
+}
+
 void Rp3dVehicle::Update(environment::Environment *env, float throttle, float steer, float brake, float dt) {
 	//Initialize the vehicle on the first time step
 	if (local_sim_time_ <= 0.0) {
 		Init(env);
 	}
-
+	float dt_in = dt;
 	int nsteps = 1;
 	if (dt > max_dt_) {
 		nsteps = (int)roundf(dt / max_dt_);
 		dt = max_dt_;
 	}
-
+	chassis_.GetBody()->setIsActive(true);
 	for (int i = 0; i < nsteps; i++) {
 		world_->update(dt);
 		float longitudinal_velocity = chassis_.GetBody()->getLinearVelocity().dot(chassis_.GetLookTo());
@@ -602,7 +619,7 @@ void Rp3dVehicle::Update(environment::Environment *env, float throttle, float st
 	current_state_.accel.angular.y = (chassis_.GetBody()->getAngularVelocity().y - current_state_.twist.angular.y) / delta_t;
 	current_state_.accel.angular.z = (chassis_.GetBody()->getAngularVelocity().z - current_state_.twist.angular.z) / delta_t;
 	
-
+	glm::quat old_orientation = current_state_.pose.quaternion;
 	current_state_.pose.position.x = chassis_.GetPosition().x;
 	current_state_.pose.position.y = chassis_.GetPosition().y;
 	current_state_.pose.position.z = chassis_.GetPosition().z;
@@ -613,12 +630,7 @@ void Rp3dVehicle::Update(environment::Environment *env, float throttle, float st
 	current_state_.twist.linear.x = chassis_.GetBody()->getLinearVelocity().x;
 	current_state_.twist.linear.y = chassis_.GetBody()->getLinearVelocity().y;
 	current_state_.twist.linear.z = chassis_.GetBody()->getLinearVelocity().z;
-	current_state_.twist.angular.x = chassis_.GetBody()->getAngularVelocity().x;
-	current_state_.twist.angular.y = chassis_.GetBody()->getAngularVelocity().y;
-	current_state_.twist.angular.z = chassis_.GetBody()->getAngularVelocity().z;
-
-
-
+	current_state_.twist.angular = ComputeAngularVelocity(old_orientation, current_state_.pose.quaternion, dt_in);
 
 	// update the actor position in the environment
 	env->SetActorPosition(vehicle_id_num_, current_state_.pose.position, current_state_.pose.quaternion, auto_commit_animations_);

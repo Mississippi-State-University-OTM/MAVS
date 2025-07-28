@@ -133,6 +133,11 @@ class Imu : public Sensor {
 	}
 
 	/**
+	* Get the orientation calculated from dead reckonging using the angular velocity measurement;
+	*/
+	glm::quat GetDeadReckoningOrientation() { return dead_reckon_orientation_; }
+
+	/**
 	* Returns the current reading from the magnetometer in
 	* uT. Reading is in the LOCAL FRAME of the sensor.
 	*/
@@ -160,6 +165,8 @@ class Imu : public Sensor {
 protected:
 	int nsteps_;
  private:
+	 void UpdateOrientationDeadReckoning(float dt);
+
 	 //properties
 	 float sample_rate_;
 	 float temperature_;
@@ -178,6 +185,7 @@ protected:
 	 glm::vec3 accel_readings_; // m/s^2
 	 glm::vec3 gyro_readings_; // rad/s
 	 glm::vec3 mag_readings_; // micro-Tesla
+	 glm::quat dead_reckon_orientation_;
 
 };
 

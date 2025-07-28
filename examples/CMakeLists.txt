@@ -45,6 +45,7 @@ if(MAVS_USE_EMBREE)
 		helicopter_example
 		chamfer_distance_example
         drop_test_example
+        imu_example
     )
     if(MAVS_USE_CHRONO)
         set(EXAMPLES ${EXAMPLES} chrono_driving_example)

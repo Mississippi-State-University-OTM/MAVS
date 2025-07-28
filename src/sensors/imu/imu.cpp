@@ -23,13 +23,15 @@ SOFTWARE.
 */
 #include <sensors/imu/imu.h>
 
-
-
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
 
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/constants.hpp>
+#include <glm/gtc/epsilon.hpp>
 #include <mavs_core/math/utils.h>
 
 #ifdef Bool
@@ -43,7 +45,7 @@ namespace mavs{
 namespace sensor{
 namespace imu{
 
-
+static char read_imu_input_buffer[65536];
 static std::ofstream fout_;
 
 Imu::Imu(){
@@ -52,6 +54,13 @@ Imu::Imu(){
 	temperature_ = 25.0f; //Celsius
 	sample_rate_ = 100.0f; //Hz
 	magnetic_field_ = glm::vec3(27.5550, -2.4169, -16.0849); //micro-tesla
+	dead_reckon_orientation_ = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+	nsteps_ = 0;
+	accel_readings_ = glm::vec3(0.0f, 0.0f, 0.0f);
+	gyro_readings_ = glm::vec3(0.0f, 0.0f, 0.0f);
+	mag_readings_ = glm::vec3(0.0f, 0.0f, 0.0f);
+	local_acc_ = glm::vec3(0.0f, 0.0f, 0.0f);
+	local_angvel_ = glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
 Imu::~Imu(){
@@ -59,8 +68,7 @@ Imu::~Imu(){
 
 void Imu::Load(std::string input_file) {
 	FILE* fp = fopen(input_file.c_str(), "rb");
-	char readBuffer[65536];
-	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+	rapidjson::FileReadStream is(fp, read_imu_input_buffer, sizeof(read_imu_input_buffer));
 	rapidjson::Document d;
 	d.ParseStream(is);
 	fclose(fp);
@@ -236,10 +244,36 @@ void Imu::Load(std::string input_file) {
 		}
 	}
 }
+
+// Updates orientation quaternion using angular velocity and time step
+void Imu::UpdateOrientationDeadReckoning(float dt) {
+	float angle = glm::length(local_angvel_) * dt;
+
+	// If angular velocity is very small, skip update to avoid numerical issues
+	//if (glm::epsilonEqual(angle, 0.0f, 1e-6f)) {
+	//	return;
+	//}
+
+	// Normalize angular velocity to get rotation axis
+	glm::vec3 axis = glm::normalize(local_angvel_);
+
+	// Compute delta quaternion using exponential map
+	glm::quat delta = glm::angleAxis(angle, axis);
+
+	// Apply rotation: new orientation = delta * current
+	glm::quat updated = delta * dead_reckon_orientation_;
+
+	dead_reckon_orientation_ = glm::normalize(updated);
+}
+
+
 void Imu::Update(environment::Environment *env, double dt){
 	glm::mat3 Ri = glm::inverse(orientation_);
 	local_acc_ =  Ri * acceleration_;
+	//std::cout << "Angular velocity:" << angular_velocity_.x << " " << angular_velocity_.y << " " << angular_velocity_.z << std::endl;
 	local_angvel_ = Ri * angular_velocity_;
+
+	UpdateOrientationDeadReckoning((float)dt);
 
 	accel_readings_ = accelerometer_.Update(local_acc_, temperature_, sample_rate_);
 	gyro_readings_ = gyro_.Update(local_angvel_, temperature_, sample_rate_);

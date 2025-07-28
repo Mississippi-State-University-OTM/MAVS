@@ -34,6 +34,12 @@ Mplot::Mplot() {
 	image_assigned_ = false;
 	traj_np_ = 512;
 	title_ = "mavs_plot";
+	max_trajectory_width_ = std::numeric_limits<float>::max();
+	traj_xmin_ = 0.0f;
+	traj_ymin_ = 0.0f;
+	traj_dp_x_ = 1.0f;
+	traj_dp_y_ = 1.0f;
+	plot_axis_ = false;
 }
 
 Mplot::~Mplot() {
@@ -41,7 +47,17 @@ Mplot::~Mplot() {
 }
 
 Mplot::Mplot(const Mplot &plot) {
-
+	display_assigned_ = plot.display_assigned_;
+	image_assigned_ = plot.image_assigned_;
+	traj_np_ = plot.traj_np_;
+	title_ = plot.title_;
+	max_trajectory_width_ = plot.max_trajectory_width_;
+	traj_xmin_ = plot.traj_xmin_;
+	traj_ymin_ = plot.traj_ymin_;
+	traj_dp_x_ = plot.traj_dp_x_;
+	traj_dp_y_ = plot.traj_dp_y_;
+	image_ = plot.image_;
+	plot_axis_ = plot.plot_axis_;
 }
 
 Color Mplot::MorelandColormap(float x, float xmin, float xmax){
@@ -61,7 +77,6 @@ Color Mplot::MorelandColormap(float x, float xmin, float xmax){
   color.g = -6584.7f*x6 + 18406.0f*x5 - 18432.0f*x4 + 7588.7f*x3 - 1589.2f*x2 + 541.05f*x + 76.0f;
   return color;
 }
-
 
 std::vector<std::vector<std::vector<float> > > Mplot::UnFlatten3D(int width, int height, int depth, float *data){
 	std::vector<std::vector<std::vector<float> > > vec = Allocate3DVector(width,height,depth,0.0f);
@@ -219,6 +234,13 @@ void Mplot::PlotGrayMap(std::vector<std::vector<float> > &data){
 	disp_ = image_;
 }
 
+void Mplot::AddToExistingTrajectory(float xp, float yp) {
+	std::vector<float> x, y;
+	x.push_back(xp);
+	y.push_back(yp);
+	AddToExistingTrajectory(x, y);
+}
+
 void Mplot::AddToExistingTrajectory(std::vector<float> x, std::vector<float> y) {
 	if (x.size() != y.size() || x.size() <= 1 || y.size() <= 1 || traj_xmin_ == std::numeric_limits<float>::max())return;
 	float color[3];
@@ -226,10 +248,10 @@ void Mplot::AddToExistingTrajectory(std::vector<float> x, std::vector<float> y) 
 	color[1] = 0.0f;
 	color[2] = 0.0;
 	for (int i = 0; i < (int)(x.size() - 1); i++) {
-		int u0 = (int)((x[i] - traj_xmin_) / traj_dp_);
-		int v0 = (int)((y[i] - traj_ymin_) / traj_dp_);
-		int u1 = (int)((x[i + 1] - traj_xmin_) / traj_dp_);
-		int v1 = (int)((y[i + 1] - traj_ymin_) / traj_dp_);
+		int u0 = (int)((x[i] - traj_xmin_) / traj_dp_x_);
+		int v0 = (int)((y[i] - traj_ymin_) / traj_dp_y_);
+		int u1 = (int)((x[i + 1] - traj_xmin_) / traj_dp_x_);
+		int v1 = (int)((y[i + 1] - traj_ymin_) / traj_dp_y_);
 		if (u0 >= 0 && u0 < traj_np_ && v0 >= 0 && v0 < traj_np_ &&
 			u1 >= 0 && u1 < traj_np_ && v1 >= 0 && v1 < traj_np_) {
 			image_.draw_line(u0, traj_np_-v0-1, u1, traj_np_-v1-1, (float *)&color);
@@ -243,7 +265,7 @@ void Mplot::PlotCurveFit(std::vector<float> x, std::vector<float> y, std::vector
 	if (!image_assigned_) {
 		image_.assign(traj_np_, traj_np_, 1, 3, 0.0f);
 		image_assigned_ = true;
-		disp_.assign(traj_np_, traj_np_, "mavs_trajectory_plot");
+		disp_.assign(traj_np_, traj_np_, title_.c_str());
 		display_assigned_ = true;
 	}
 	image_ = 0.0f;
@@ -260,7 +282,8 @@ void Mplot::PlotCurveFit(std::vector<float> x, std::vector<float> y, std::vector
 	}
 	float xr = xmax - traj_xmin_;
 	float yr = ymax - traj_ymin_;
-	traj_dp_ = std::max(xr, yr) / (float)traj_np_;
+	traj_dp_x_ = std::max(xr, yr) / (float)traj_np_;
+	traj_dp_y_ = traj_dp_x_;
 	float white[3];
 	white[0] = 255.0f;
 	white[1] = 255.0f;
@@ -270,11 +293,11 @@ void Mplot::PlotCurveFit(std::vector<float> x, std::vector<float> y, std::vector
 	red[1] = 255.0f;
 	red[2] = 255.0f;
 	for (int i = 0; i < (int)(x.size() - 1); i++) {
-		int u0 = (int)((x[i] - traj_xmin_) / traj_dp_);
-		int v0 = (int)((y_fit[i] - traj_ymin_) / traj_dp_);
-		int u1 = (int)((x[i + 1] - traj_xmin_) / traj_dp_);
-		int v1 = (int)((y_fit[i + 1] - traj_ymin_) / traj_dp_);
-		int vd = (int)((y[i] - traj_ymin_) / traj_dp_);
+		int u0 = (int)((x[i] - traj_xmin_) / traj_dp_x_);
+		int v0 = (int)((y_fit[i] - traj_ymin_) / traj_dp_y_);
+		int u1 = (int)((x[i + 1] - traj_xmin_) / traj_dp_x_);
+		int v1 = (int)((y_fit[i + 1] - traj_ymin_) / traj_dp_y_);
+		int vd = (int)((y[i] - traj_ymin_) / traj_dp_y_);
 		image_.draw_line(u0, v0, u1, v1, (float*)&red);
 		image_.draw_circle(u0, vd, 3, (float*)&white);
 	}
@@ -282,11 +305,15 @@ void Mplot::PlotCurveFit(std::vector<float> x, std::vector<float> y, std::vector
 	disp_ = image_;
 }
 
+void Mplot::SetTrajectoryXSize(float x_max_size) {
+	max_trajectory_width_ = x_max_size;
+}
+
 void Mplot::PlotTrajectory(std::vector<float> x, std::vector<float> y) {
 	if (!image_assigned_) {
 		image_.assign(traj_np_, traj_np_, 1, 3, 0.0f);
 		image_assigned_ = true;
-		disp_.assign(traj_np_, traj_np_, "mavs_trajectory_plot");
+		disp_.assign(traj_np_, traj_np_, title_.c_str());
 		display_assigned_ = true;
 	}
 	image_ = 0.0f;
@@ -301,18 +328,36 @@ void Mplot::PlotTrajectory(std::vector<float> x, std::vector<float> y) {
 		if (y[i] < traj_ymin_)traj_ymin_ = y[i];
 		if (y[i] > ymax)ymax = y[i];
 	}
+	float xrange = xmax - traj_xmin_;
+	if (xrange > max_trajectory_width_)traj_xmin_ = xmax - max_trajectory_width_;
+
 	float xr = xmax - traj_xmin_;
 	float yr = ymax - traj_ymin_;
-	traj_dp_ = std::max(xr, yr) / (float)traj_np_;
+	//traj_dp_ = std::max(xr, yr) / (float)traj_np_;
+	traj_dp_x_ = xr / (float)traj_np_;
+	traj_dp_y_ = yr / (float)traj_np_;
+
+	float axis_color[3];
+	axis_color[0] = 0.0f;
+	axis_color[1] = 255.0f;
+	axis_color[2] = 0.0f;
+	for (int i = 0; i < (int)(x.size() - 1); i++) {
+		int u0 = (int)((x[i] - traj_xmin_) / traj_dp_x_);
+		int v0 = (int)((0.0f - traj_ymin_) / traj_dp_y_);
+		int u1 = (int)((x[i + 1] - traj_xmin_) / traj_dp_x_);
+		int v1 = (int)((0.0f - traj_ymin_) / traj_dp_y_);
+		image_.draw_line(u0, v0, u1, v1, (float*)&axis_color);
+	}
+
 	float color[3];
 	color[0] = 255.0f;
 	color[1] = 255.0f;
 	color[2] = 255.0f;
 	for (int i = 0; i < (int)(x.size()-1); i++) {
-		int u0 = (int)((x[i] - traj_xmin_) / traj_dp_);
-		int v0 = (int)((y[i] - traj_ymin_) / traj_dp_);
-		int u1 = (int)((x[i+1] - traj_xmin_) / traj_dp_);
-		int v1 = (int)((y[i+1] - traj_ymin_) / traj_dp_);
+		int u0 = (int)((x[i] - traj_xmin_) / traj_dp_x_);
+		int v0 = (int)((y[i] - traj_ymin_) / traj_dp_y_);
+		int u1 = (int)((x[i+1] - traj_xmin_) / traj_dp_x_);
+		int v1 = (int)((y[i+1] - traj_ymin_) / traj_dp_y_);
 		image_.draw_line(u0, v0, u1, v1, (float *)&color);
 	}
 	image_.mirror('y');

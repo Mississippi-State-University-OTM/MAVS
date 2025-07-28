@@ -103,6 +103,10 @@ public:
 	*/
 	void PlotTrajectory(std::vector<float> x, std::vector<float> y);
 
+	void TurnOnAxis() { plot_axis_ = true; }
+
+	void TurnOffAxis() { plot_axis_ = false; }
+
 	/**
 	* Plot a trajectory
 	* \param x_data The x values to fit
@@ -117,6 +121,12 @@ public:
 	* \param y The y values
 	*/
 	void AddToExistingTrajectory(std::vector<float> x, std::vector<float> y);
+
+	/// Add a single point to an existing trajectory
+	void AddToExistingTrajectory(float x, float y);
+
+	/// Set the maximum window width (ie time range) for a trajectory plot
+	void SetTrajectoryXSize(float x_max_size);
 
 	/**
 	* Set the title of the plot to be displayed.
@@ -140,8 +150,11 @@ private:
 
 	float traj_xmin_;
 	float traj_ymin_;
-	float traj_dp_;
+	float traj_dp_x_;
+	float traj_dp_y_;
 	int traj_np_;
+	float max_trajectory_width_;
+	bool plot_axis_;
 };
 
 } //namespace utils

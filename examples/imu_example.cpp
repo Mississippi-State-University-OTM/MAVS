@@ -44,13 +44,25 @@ SOFTWARE.
 #include <mavs_core/math/utils.h>
 #include <vehicles/rp3d_veh/mavs_rp3d_veh.h>
 #include <sensors/mavs_sensors.h>
+#include <mavs_core/plotting/mavs_plotting.h>
 
 #ifdef USE_OMP
 #include <omp.h>
 #endif
 #include <raytracers/embree_tracer/embree_tracer.h>
 
-static void UpdateVehicle(mavs::vehicle::Rp3dVehicle* veh, mavs::sensor::camera::Camera* camera, mavs::environment::Environment* env, float dt);
+mavs::environment::Environment env;
+mavs::sensor::camera::RgbCamera camera;
+mavs::raytracer::embree::EmbreeTracer scene;
+mavs::vehicle::Rp3dVehicle veh;
+mavs::sensor::imu::ImuSimple imu;
+
+mavs::utils::Mplot gyr_plot;
+mavs::utils::Mplot acc_plot;
+mavs::utils::Mplot mag_plot;
+std::vector<float> tp, omega_z, acc_x, mag_z;
+
+static void UpdateVehicle(float dt);
 
 int main(int argc, char *argv[]) {
 
@@ -62,16 +74,13 @@ int main(int argc, char *argv[]) {
 	std::string scene_file(argv[1]);
 	std::string vehic_file(argv[2]);
 
-	mavs::raytracer::embree::EmbreeTracer scene;
 	scene.Load(scene_file);
 
-	mavs::environment::Environment env;
 	env.SetTurbidity(9.0);
 	env.SetFog(0.0f);
 	env.SetDateTime(2023, 9, 1, 8, 0, 0, 6);
 	env.SetRaytracer(&scene);
 
-	mavs::sensor::camera::RgbCamera camera;
 	camera.SetEnvironmentProperties(&env);
 	camera.Initialize(480, 320, 0.00525f, 0.0035f, 0.0035f);
 	camera.SetRelativePose(glm::vec3(-10.0f, 0.0f, 1.5f), glm::quat(1.0f, 0.0f, 0.0f, 0.0f));
@@ -79,7 +88,6 @@ int main(int argc, char *argv[]) {
 	camera.SetPose(glm::vec3(0.0f, 0.0f, 1.0f), glm::quat(1.0f, 0.0f, 0.0f, 0.0f));
 	camera.SetElectronics(0.75f, 1.0f);
 
-	mavs::vehicle::Rp3dVehicle veh;
 	veh.Load(vehic_file);
 	float zstart = scene.GetSurfaceHeight(0.0f, 0.0f);
 	veh.SetPosition(0.0f,0.0f, zstart + 0.25f);
@@ -87,26 +95,38 @@ int main(int argc, char *argv[]) {
 
 	float dt = 1.0f / 100.0f;
 
-	mavs::sensor::imu::ImuSimple imu;
-	//imu.SetSampleRate(1.0f / dt);
-	//imu.SetTemperature(10.0f);
-	imu.SetGyroNoise(0.0f, 0.01f);
-	imu.SetAccelerometerNoise(0.0f, 0.01f);
+	imu.SetGyroNoise(0.0f, 0.03f);
+	imu.SetAccelerometerNoise(0.0f, 0.1f);
 	imu.SetMagnetometerNoise(0.0f, 0.01f);
 
-	int nsteps = 0;
-	float heading = 0.0f;
-	while(camera.DisplayOpen() || nsteps==0){
+	acc_plot.SetTrajectoryXSize(10.0f);
+	acc_plot.TurnOnAxis();
+	acc_plot.SetTitle("Accelerometer Longitudinal Acceleration");
+	gyr_plot.SetTrajectoryXSize(10.0f); // display up to 5 seconds at a time
+	gyr_plot.TurnOnAxis();
+	gyr_plot.SetTitle("Gyroscope Angular Velocity");
 
-		UpdateVehicle(&veh, &camera, &env, dt);
-		mavs::VehicleState state = veh.GetState();
-		heading += dt*state.twist.angular.z;
+	int nsteps = 0;
+	float elapsed_time = 0.0f;
+	while(camera.DisplayOpen() || nsteps==0){
+		// update vehicle
+		UpdateVehicle(dt);
+
+		// update imu
 		imu.SetPose(veh.GetState());
 		imu.Update(&env, dt);
 		glm::quat ori = imu.GetDeadReckoningOrientation();
 		double roll, pitch, yaw;
 		mavs::math::QuatToEulerAngle(ori, pitch, roll, yaw);
-		std::cout <<"(Roll, Pitch, Yaw): (" << roll << ", " << pitch << ", " << yaw << ")" << std::endl;
+
+		// update individual mems plots
+		tp.push_back(elapsed_time);
+		omega_z.push_back(imu.GetAngularVelocity().z);
+		acc_x.push_back(imu.GetAcceleration().x);
+		gyr_plot.PlotTrajectory(tp, omega_z);
+		acc_plot.PlotTrajectory(tp, acc_x);
+
+		// update the camera
 		if (nsteps % 4 == 0) {
 			glm::vec3 look_to = veh.GetLookTo();
 			float heading = 0.5f * (atan2f(look_to.y, look_to.x));
@@ -117,17 +137,17 @@ int main(int argc, char *argv[]) {
 		}
 		
 		nsteps++;
-
+		elapsed_time += dt;
 	}
 
 	return 0;
 }
 
-static void UpdateVehicle(mavs::vehicle::Rp3dVehicle *veh, mavs::sensor::camera::Camera *camera, mavs::environment::Environment *env, float dt) {
+static void UpdateVehicle(float dt) {
 	double throttle = 0.0;
 	double steering = 0.0;
 	double braking = 0.0;
-	 std::vector<bool> driving_commands = camera->GetKeyCommands();
+	 std::vector<bool> driving_commands = camera.GetKeyCommands();
 	if (driving_commands[0]) {
 		throttle = 1.0;
 	}
@@ -141,5 +161,5 @@ static void UpdateVehicle(mavs::vehicle::Rp3dVehicle *veh, mavs::sensor::camera:
 		steering = -1.0;
 	}
 
-	veh->Update(env, (float)throttle, (float)steering, (float)braking, dt);
+	veh.Update(&env, (float)throttle, (float)steering, (float)braking, dt);
 }

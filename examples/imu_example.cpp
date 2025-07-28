@@ -113,7 +113,8 @@ int main(int argc, char *argv[]) {
 		UpdateVehicle(dt);
 
 		// update imu
-		imu.SetPose(veh.GetState());
+		mavs::VehicleState veh_state = veh.GetState();
+		imu.SetPose(veh_state);
 		imu.Update(&env, dt);
 		glm::quat ori = imu.GetDeadReckoningOrientation();
 		glm::vec3 angvel = imu.GetAngularVelocity();

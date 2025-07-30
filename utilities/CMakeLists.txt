@@ -17,6 +17,7 @@ if (MAVS_USE_EMBREE)
         obj_viewer
         rp3d_vehicle_viewer
         scene_viewer
+		mavs_benchmark
         heightmap_generator
 		#heightmap_to_mesh
         path_tracer_render

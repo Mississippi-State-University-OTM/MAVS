@@ -82,22 +82,31 @@ int main(int argc, char* argv[]) {
 
 	std::cout << "Running benchmark simulation, please wait..." << std::endl;
 
+	double veh_cumulative = 0.0;
+	double lidar_cumulative = 0.0;
+	double camera_cumulative = 0.0;
 	double t0 = omp_get_wtime();
 	while (current_time<20.0f){
+		double tv = omp_get_wtime();
 		veh.Update(&env, 0.4f, 0.25f, 0.0f, dt);
+		veh_cumulative += omp_get_wtime() - tv;
 
 		mavs::VehicleState veh_state = veh.GetState();
 
 		if (nsteps % 10 == 0) {
+			double tl = omp_get_wtime();
 			os2.SetPose(veh_state);
 			os2.Update(&env, 0.1f);
+			lidar_cumulative += omp_get_wtime() - tl;
 		}
 
 		if (nsteps % 3 == 0) {
+			double tc = omp_get_wtime();
 			glm::vec3 look_to = veh.GetLookTo();
 			float heading = 0.5f * (atan2f(look_to.y, look_to.x));
 			camera.SetPose(veh.GetPosition(), glm::quat(cosf(heading), 0.0f, 0.0f, sinf(heading)));
 			camera.Update(&env, 3 * dt);
+			camera_cumulative += omp_get_wtime() - tc;
 		}
 		
 		nsteps++;
@@ -106,6 +115,9 @@ int main(int argc, char* argv[]) {
 
 	double t1 = omp_get_wtime();
 	std::cout << current_time << " of simulation completed in " << (t1 - t0) << " seconds of wall time with " << omp_get_max_threads() << " threads." << std::endl;
+	std::cout << "Camera wall time: " << camera_cumulative << " seconds." << std::endl;
+	std::cout << "Vehicle wall time: " << veh_cumulative << " seconds." << std::endl;
+	std::cout << "Lidar wall time: " << lidar_cumulative << " seconds." << std::endl;
 
 	return 0;
 }

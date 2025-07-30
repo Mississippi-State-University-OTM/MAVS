@@ -42,6 +42,7 @@ if(MAVS_USE_EMBREE)
         rp3d_driving_example
         dynamic_surface_example
         uav_example
+		gps_example
 		helicopter_example
 		chamfer_distance_example
         drop_test_example

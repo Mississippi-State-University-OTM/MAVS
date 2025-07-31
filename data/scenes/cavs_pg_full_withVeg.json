@@ -3,7 +3,7 @@
 
   "Surface Mesh": [
     {
-      "Mesh": "surfaces/pg_sw_corner/cavs_pg_textured_rotated_smoothed.obj",
+      "Mesh": "surfaces/pg_sw_corner/cavs_pg_reduced.obj",
       "Rotate Y to Z": false,
       "YawPitchRoll": [
         0.0,
@@ -26,7 +26,7 @@
 
   "Objects": [
     {
-      "Mesh": "surfaces/pg_sw_corner/cavs_pg_textured_rotated_smoothed.obj",
+      "Mesh": "surfaces/pg_sw_corner/cavs_pg_reduced.obj",
       "Rotate Y to Z": false,
       "Smooth Normals": false,
       "Instances": [

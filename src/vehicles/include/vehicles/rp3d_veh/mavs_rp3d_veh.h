@@ -347,6 +347,8 @@ public:
 	int GetVehicleIdNum() { return vehicle_id_num_; }
 
 private:
+	glm::vec3 ApplyTerrainChassisForces(environment::Environment* env);
+
 	bool auto_commit_animations_;
 
 	//Initialization Functions

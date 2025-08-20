@@ -582,6 +582,54 @@ static glm::vec3 ComputeAngularVelocity(const glm::quat& q1, const glm::quat& q2
 	return omega;
 }
 
+glm::vec3 Rp3dVehicle::ApplyTerrainChassisForces(environment::Environment* env) {
+	glm::vec3 terrain_force(0.0f, 0.0f, 0.0f);
+	glm::vec3 look_to = GetLookTo();
+	glm::vec3 look_up = GetLookUp();
+	glm::vec3 look_side = GetLookSide();
+
+	float L = chassis_dimensions_.x;
+	float H = chassis_dimensions_.z;
+	float half_l = 0.5f * L;
+	float half_h = 0.5f * H;
+	float theta_c = atanf(H / L);
+	float k = 2.0f*sprung_mass_;
+	int nsprings = 36;
+	float dtheta = (180.0f / nsprings) * (kPi / 180.0f);
+	float theta = dtheta;
+	float ncontact = 0.0f;
+	while (theta < kPi-dtheta) {
+		glm::vec3 direction = mavs::math::RodriguesRotation(look_to, -look_up, theta);
+		
+		raytracer::Intersection inter = env->GetClosestTerrainIntersection(current_state_.pose.position, direction);
+		float r = inter.dist;
+		if (r > 0.0f ) {
+			float r_chassis = 0.0f;
+			if (theta <= theta_c) {
+				r_chassis = half_l / cosf(theta);
+			}
+			else if (theta>theta_c && theta<=kPi_2){
+				r_chassis = half_h / cosf(kPi_2 - theta);
+			}
+			else if (theta > kPi_2) {
+				r_chassis = half_h / cosf(theta - kPi_2);
+			}
+			//
+			if (r < r_chassis) { // intersection with terrain
+				float d = r_chassis - r;
+				float fmag = k * d;
+				rp3d::Vector3 force(-fmag*direction.x, -fmag*direction.y, -fmag*direction.z);
+				rp3d::Vector3 point( current_state_.pose.position.x + r_chassis * direction.x, current_state_.pose.position.y + r_chassis * direction.y, current_state_.pose.position.z + r_chassis * direction.z);
+				
+				chassis_.GetBody()->applyForceAtWorldPosition(force, point);
+
+			}
+		}
+		theta += dtheta;
+	}
+	return terrain_force;
+}
+
 void Rp3dVehicle::Update(environment::Environment *env, float throttle, float steer, float brake, float dt) {
 	//Initialize the vehicle on the first time step
 	if (local_sim_time_ <= 0.0) {
@@ -603,6 +651,7 @@ void Rp3dVehicle::Update(environment::Environment *env, float throttle, float st
 		ApplyGroundForces(env, dt, throttle, brake, steer);
 		ApplySuspensionForces();
 		if (calculate_drag_forces_) ApplyDragForces(longitudinal_velocity);
+		ApplyTerrainChassisForces(env);
 		chassis_.GetBody()->applyForceToCenterOfMass(external_force_);
 		chassis_.GetBody()->applyForceAtWorldPosition(extern_force_at_point_, extern_force_application_point_);
 	}

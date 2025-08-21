@@ -70,6 +70,7 @@ Rp3dVehicle::Rp3dVehicle() {
 
 	dtheta_slice_ = 5.0f * 3.14159f / 180.0f;
 	num_tire_slices_ = 3;
+	veh_mesh_id_ = -1;
 }
 
 Rp3dVehicle::~Rp3dVehicle() {
@@ -91,6 +92,7 @@ float Rp3dVehicle::GetPercentDeflectionOfTire(int i) {
 	return d;
 }
 
+static char rp3d_veh_read_buffer[65536];
 void Rp3dVehicle::Load(std::string input_file) {
 
 	if (!mavs::utils::file_exists(input_file)) {
@@ -99,8 +101,7 @@ void Rp3dVehicle::Load(std::string input_file) {
 	}
 
 	FILE* fp = fopen(input_file.c_str(), "rb");
-	char readBuffer[65536];
-	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+	rapidjson::FileReadStream is(fp, rp3d_veh_read_buffer, sizeof(rp3d_veh_read_buffer));
 	rapidjson::Document d;
 	d.ParseStream(is);
 	fclose(fp);
@@ -476,13 +477,16 @@ void Rp3dVehicle::Init(environment::Environment *env) {
 	if (load_visualization_) {
 		std::vector<int> actor_num = env->AddActor(anim_.file, anim_.y_to_z, anim_.x_to_y, anim_.y_to_x, glm::vec3(anim_.offset.x, anim_.offset.y, anim_.offset.z), glm::vec3(anim_.scale.x, anim_.scale.y, anim_.scale.z));
 		vehicle_id_num_ = env->GetNumberOfActors() - 1;// actor_num.back(); // -current_num_objs;
+		veh_mesh_id_ = env->GetNumberObjects() - 3;
 	}
 	else {
 		if (animate_tires_) {
-			vehicle_id_num_ = env->GetNumberOfActors() - 5;
+			veh_mesh_id_ = env->GetNumberObjects() - 5;
+			vehicle_id_num_ = env->GetNumberOfActors() - 7;
 		}
 		else {
 			vehicle_id_num_ = env->GetNumberOfActors() - 1;
+			veh_mesh_id_ = env->GetNumberObjects() - 3;
 		}
 	}
 	int current_tire_id = vehicle_id_num_ + 1;
@@ -593,17 +597,19 @@ glm::vec3 Rp3dVehicle::ApplyTerrainChassisForces(environment::Environment* env) 
 	float half_l = 0.5f * L;
 	float half_h = 0.5f * H;
 	float theta_c = atanf(H / L);
-	float k = 2.0f*sprung_mass_;
-	int nsprings = 36;
+	float k = 4.0f*sprung_mass_;
+	int nsprings = 90;
 	float dtheta = (180.0f / nsprings) * (kPi / 180.0f);
 	float theta = dtheta;
 	float ncontact = 0.0f;
 	while (theta < kPi-dtheta) {
 		glm::vec3 direction = mavs::math::RodriguesRotation(look_to, -look_up, theta);
 		
-		raytracer::Intersection inter = env->GetClosestTerrainIntersection(current_state_.pose.position, direction);
+		//raytracer::Intersection inter = env->GetClosestTerrainIntersection(current_state_.pose.position, direction);
+		raytracer::Intersection inter = env->GetClosestIntersection(current_state_.pose.position, direction);
 		float r = inter.dist;
-		if (r > 0.0f ) {
+		if (r > 0.0f && inter.object_id!=veh_mesh_id_) {
+			//std::cout << inter.object_id << " " << veh_mesh_id_ << std::endl;
 			float r_chassis = 0.0f;
 			if (theta <= theta_c) {
 				r_chassis = half_l / cosf(theta);
@@ -620,7 +626,7 @@ glm::vec3 Rp3dVehicle::ApplyTerrainChassisForces(environment::Environment* env) 
 				float fmag = k * d;
 				rp3d::Vector3 force(-fmag*direction.x, -fmag*direction.y, -fmag*direction.z);
 				rp3d::Vector3 point( current_state_.pose.position.x + r_chassis * direction.x, current_state_.pose.position.y + r_chassis * direction.y, current_state_.pose.position.z + r_chassis * direction.z);
-				
+				//std::cout << fmag << " " << force.x << " " << force.y << " " << force.z << std::endl;
 				chassis_.GetBody()->applyForceAtWorldPosition(force, point);
 
 			}

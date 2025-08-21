@@ -391,6 +391,7 @@ private:
 	rp3d_anim tire_anim_;
 	bool animate_tires_;
 	int vehicle_id_num_;
+	int veh_mesh_id_;
 	std::vector<int> tire_id_nums_;
 	bool load_visualization_;
 

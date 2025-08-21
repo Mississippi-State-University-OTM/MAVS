@@ -2,9 +2,9 @@
 
   "Chassis": {
     "Sprung Mass": 1140.6,
-    "CG Offset": 0.0,
+    "CG Offset": -0.1,
     "CG Lateral Offset": 0.0,
-    "Dimensions": [ 3.594, 1.2, 1.0 ],
+    "Dimensions": [ 3.5, 1.2, 0.9 ],
     "Drag Coefficient": 28.2
   },
 
@@ -68,7 +68,7 @@
     "Rotate Y to Z": false,
     "Rotate X to Y": false,
     "Rotate Y to X": false,
-    "Offset": [ 0.0, 0.0, -0.1 ],
+    "Offset": [ 0.0, 0.0, 0.0 ],
     "Scale": [ 1.0, 1.0, 1.0 ]
   },
 

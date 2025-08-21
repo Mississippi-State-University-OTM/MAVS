@@ -70,7 +70,7 @@ Rp3dVehicle::Rp3dVehicle() {
 
 	dtheta_slice_ = 5.0f * 3.14159f / 180.0f;
 	num_tire_slices_ = 3;
-	veh_mesh_id_ = -1;
+	do_chassis_collisions_ = false;
 }
 
 Rp3dVehicle::~Rp3dVehicle() {
@@ -156,6 +156,9 @@ void Rp3dVehicle::Load(std::string input_file) {
 		}
 		if (d["Chassis"].HasMember("Drag Coefficient")) {
 			chassis_drag_coeff_ = d["Chassis"]["Drag Coefficient"].GetFloat();
+		}
+		if (d["Chassis"].HasMember("Collisions")) {
+			do_chassis_collisions_ = d["Chassis"]["Collisions"].GetBool();
 		}
 	}
 
@@ -477,16 +480,19 @@ void Rp3dVehicle::Init(environment::Environment *env) {
 	if (load_visualization_) {
 		std::vector<int> actor_num = env->AddActor(anim_.file, anim_.y_to_z, anim_.x_to_y, anim_.y_to_x, glm::vec3(anim_.offset.x, anim_.offset.y, anim_.offset.z), glm::vec3(anim_.scale.x, anim_.scale.y, anim_.scale.z));
 		vehicle_id_num_ = env->GetNumberOfActors() - 1;// actor_num.back(); // -current_num_objs;
-		veh_mesh_id_ = env->GetNumberObjects() - 3;
+		int veh_mesh_id = env->GetNumberObjects() - 3;
+		veh_tire_mesh_ids_.push_back(veh_mesh_id);
 	}
 	else {
 		if (animate_tires_) {
-			veh_mesh_id_ = env->GetNumberObjects() - 5;
+			int veh_mesh_id = env->GetNumberObjects() - 5;
+			veh_tire_mesh_ids_.push_back(veh_mesh_id);
 			vehicle_id_num_ = env->GetNumberOfActors() - 7;
 		}
 		else {
 			vehicle_id_num_ = env->GetNumberOfActors() - 1;
-			veh_mesh_id_ = env->GetNumberObjects() - 3;
+			int veh_mesh_id = env->GetNumberObjects() - 3;
+			veh_tire_mesh_ids_.push_back(veh_mesh_id);
 		}
 	}
 	int current_tire_id = vehicle_id_num_ + 1;
@@ -495,15 +501,17 @@ void Rp3dVehicle::Init(environment::Environment *env) {
 			if (load_visualization_){
 				std::vector<int> tire_num = env->AddActor(tire_anim_.file, tire_anim_.y_to_z, tire_anim_.x_to_y, tire_anim_.y_to_x, glm::vec3(tire_anim_.offset.x, tire_anim_.offset.y, tire_anim_.offset.z), glm::vec3(tire_anim_.scale.x, tire_anim_.scale.y, tire_anim_.scale.z));
 				tire_id_nums_.push_back(env->GetNumberOfActors() - 1);
+				veh_tire_mesh_ids_.push_back(env->GetNumberObjects() - 3);
 			}
 			else {
 				//tire_id_nums_.push_back(tire_num.back()-current_num_objs);
 				tire_id_nums_.push_back(current_tire_id);
+				veh_tire_mesh_ids_.push_back(env->GetNumberObjects() - 5);
 				current_tire_id++;
 			}
 		}
 	}
-	
+	std::sort(veh_tire_mesh_ids_.begin(), veh_tire_mesh_ids_.end());
 }
 
 void Rp3dVehicle::CalculateWheelTorques(float current_velocity, float throttle, float brake, float steering) {
@@ -586,54 +594,86 @@ static glm::vec3 ComputeAngularVelocity(const glm::quat& q1, const glm::quat& q2
 	return omega;
 }
 
-glm::vec3 Rp3dVehicle::ApplyTerrainChassisForces(environment::Environment* env) {
-	glm::vec3 terrain_force(0.0f, 0.0f, 0.0f);
-	glm::vec3 look_to = GetLookTo();
-	glm::vec3 look_up = GetLookUp();
-	glm::vec3 look_side = GetLookSide();
+bool Rp3dVehicle::IsSceneMeshId(int id) {
+	return !(std::binary_search(veh_tire_mesh_ids_.begin(), veh_tire_mesh_ids_.end(), id));
+}
 
-	float L = chassis_dimensions_.x;
-	float H = chassis_dimensions_.z;
-	float half_l = 0.5f * L;
-	float half_h = 0.5f * H;
-	float theta_c = atanf(H / L);
-	float k = 4.0f*sprung_mass_;
-	int nsprings = 90;
-	float dtheta = (180.0f / nsprings) * (kPi / 180.0f);
-	float theta = dtheta;
-	float ncontact = 0.0f;
-	while (theta < kPi-dtheta) {
-		glm::vec3 direction = mavs::math::RodriguesRotation(look_to, -look_up, theta);
-		
-		//raytracer::Intersection inter = env->GetClosestTerrainIntersection(current_state_.pose.position, direction);
-		raytracer::Intersection inter = env->GetClosestIntersection(current_state_.pose.position, direction);
-		float r = inter.dist;
-		if (r > 0.0f && inter.object_id!=veh_mesh_id_) {
-			//std::cout << inter.object_id << " " << veh_mesh_id_ << std::endl;
-			float r_chassis = 0.0f;
-			if (theta <= theta_c) {
-				r_chassis = half_l / cosf(theta);
-			}
-			else if (theta>theta_c && theta<=kPi_2){
-				r_chassis = half_h / cosf(kPi_2 - theta);
-			}
-			else if (theta > kPi_2) {
-				r_chassis = half_h / cosf(theta - kPi_2);
-			}
-			//
-			if (r < r_chassis) { // intersection with terrain
-				float d = r_chassis - r;
-				float fmag = k * d;
-				rp3d::Vector3 force(-fmag*direction.x, -fmag*direction.y, -fmag*direction.z);
-				rp3d::Vector3 point( current_state_.pose.position.x + r_chassis * direction.x, current_state_.pose.position.y + r_chassis * direction.y, current_state_.pose.position.z + r_chassis * direction.z);
-				//std::cout << fmag << " " << force.x << " " << force.y << " " << force.z << std::endl;
-				chassis_.GetBody()->applyForceAtWorldPosition(force, point);
+void Rp3dVehicle::ApplyCollisionForces(environment::Environment* env) {
+	if (local_sim_time_ < 2.0f)return;
+	glm::vec3 lt = GetLookTo();
+	glm::vec3 lu = GetLookUp();
+	glm::vec3 ls = GetLookSide();
+	glm::vec3 pos(current_state_.pose.position.x, current_state_.pose.position.y, current_state_.pose.position.z);
+	//float k = 8.0f*sprung_mass_; // works for mrzr
+	float k = 6.0f * sprung_mass_;
+	float c = sqrtf(k * sprung_mass_);
+	float half_l = 0.5f * chassis_dimensions_.x;
+	float half_w = 0.5f * chassis_dimensions_.y;
+	float half_h = 0.5f * chassis_dimensions_.z;
+	float delta = 0.15f; 
 
+	// front face
+	float y = -half_w;
+	while (y <= half_w) {
+		float z = -half_h;
+		while (z <= half_h) {
+			glm::vec3 p = pos + half_l * lt + y * ls + z * lu;
+			glm::vec3 dir = -lt;
+			raytracer::Intersection inter = env->GetClosestIntersection(p, dir);
+			float r = inter.dist;
+			if (r > 0.0f && IsSceneMeshId(inter.object_id) && r < chassis_dimensions_.x) {
+				float v = dir.x * current_state_.twist.linear.x + dir.y * current_state_.twist.linear.y + dir.z * current_state_.twist.linear.z;
+				float fmag = k * r -c * v;
+				rp3d::Vector3 force(fmag * dir.x, fmag * dir.y, fmag * dir.z);
+				rp3d::Vector3 point(p.x, p.y, p.z);
+				chassis_.GetBody()->applyForceAtWorldPosition(force, point);	
 			}
+			z += delta;
 		}
-		theta += dtheta;
+		y += delta;
 	}
-	return terrain_force;
+
+	// rear face
+	y = -half_w;
+	while (y <= half_w) {
+		float z = -half_h;
+		while (z <= half_h) {
+			glm::vec3 p = pos - half_l * lt + y * ls + z * lu;
+			glm::vec3 dir = lt;
+			raytracer::Intersection inter = env->GetClosestIntersection(p, dir);
+			float r = inter.dist;
+			if (r > 0.0f && IsSceneMeshId(inter.object_id) && r < chassis_dimensions_.x) {
+				float v = dir.x * current_state_.twist.linear.x + dir.y * current_state_.twist.linear.y + dir.z * current_state_.twist.linear.z;
+				float fmag = k * r -c * v;
+				rp3d::Vector3 force(fmag * dir.x, fmag * dir.y, fmag * dir.z);
+				rp3d::Vector3 point(p.x, p.y, p.z);
+				chassis_.GetBody()->applyForceAtWorldPosition(force, point);
+			}
+			z += delta;
+		}
+		y += delta;
+	}
+
+	//bottom face
+	y = -half_w;
+	while (y <= half_w) {
+		float x = -half_l;
+		while (x <= half_l) {
+			glm::vec3 p = pos - half_h * lu + y * ls + x * lt;
+			glm::vec3 dir = lu;
+			raytracer::Intersection inter = env->GetClosestIntersection(p, dir);
+			float r = inter.dist;
+			if (r > 0.0f && IsSceneMeshId(inter.object_id) && r < chassis_dimensions_.x) {
+				float v = dir.x * current_state_.twist.linear.x + dir.y * current_state_.twist.linear.y + dir.z * current_state_.twist.linear.z;
+				float fmag = k * r -c * v;
+				rp3d::Vector3 force(fmag * dir.x, fmag * dir.y, fmag * dir.z);
+				rp3d::Vector3 point(p.x, p.y, p.z);
+				chassis_.GetBody()->applyForceAtWorldPosition(force, point);
+			}
+			x += delta;
+		}
+		y += delta;
+	}
 }
 
 void Rp3dVehicle::Update(environment::Environment *env, float throttle, float steer, float brake, float dt) {
@@ -657,7 +697,7 @@ void Rp3dVehicle::Update(environment::Environment *env, float throttle, float st
 		ApplyGroundForces(env, dt, throttle, brake, steer);
 		ApplySuspensionForces();
 		if (calculate_drag_forces_) ApplyDragForces(longitudinal_velocity);
-		ApplyTerrainChassisForces(env);
+		if (do_chassis_collisions_) ApplyCollisionForces(env);
 		chassis_.GetBody()->applyForceToCenterOfMass(external_force_);
 		chassis_.GetBody()->applyForceAtWorldPosition(extern_force_at_point_, extern_force_application_point_);
 	}

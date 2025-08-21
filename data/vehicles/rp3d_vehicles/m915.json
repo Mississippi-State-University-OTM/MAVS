@@ -1,15 +1,16 @@
 {
-    "Chassis": {
-        "Sprung Mass": 6500.0,
-        "CG Offset": 0.1,
-        "CG Lateral Offset": 0.0,
-        "Dimensions": [
-            6.5,
-            2.36,
-            1.4
-        ],
-        "Drag Coefficient": 28.2
-    },
+  "Chassis": {
+    "Sprung Mass": 6500.0,
+    "CG Offset": 0.1,
+    "CG Lateral Offset": 0.0,
+    "Dimensions": [
+      6.5,
+      2.36,
+      1.4
+    ],
+    "Drag Coefficient": 28.2,
+    "Collisions": true
+  },
     "Powertrain": {
         "Final Drive Ratio": 3.3,
         "Max Engine Torque": 583.0,

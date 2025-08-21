@@ -5,7 +5,8 @@
     "CG Offset": -0.1,
     "CG Lateral Offset": 0.0,
     "Dimensions": [ 3.5, 1.2, 0.9 ],
-    "Drag Coefficient": 28.2
+    "Drag Coefficient": 28.2,
+    "Collisions": true
   },
 
   "Powertrain": {

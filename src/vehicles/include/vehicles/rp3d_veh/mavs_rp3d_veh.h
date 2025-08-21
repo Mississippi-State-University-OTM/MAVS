@@ -346,9 +346,10 @@ public:
 
 	int GetVehicleIdNum() { return vehicle_id_num_; }
 
-private:
-	glm::vec3 ApplyTerrainChassisForces(environment::Environment* env);
+	void SetChassisCollisions(bool cc) { do_chassis_collisions_ = cc; }
 
+private:
+	
 	bool auto_commit_animations_;
 
 	//Initialization Functions
@@ -373,7 +374,9 @@ private:
 	void CalculateSteeringAngles(float dt, float steering);
 	void ApplySuspensionForces();
 	void ApplyGroundForces(environment::Environment *env, float dt, float throttle, float brake, float steering);
+	void ApplyCollisionForces(environment::Environment* env);
 	void ApplyDragForces(float velocity);
+	bool IsSceneMeshId(int id);
 
 	//chassis parameters
 	float sprung_mass_;
@@ -383,15 +386,15 @@ private:
 	rp3d::Vector3 chassis_dimensions_;
 	float torque_mass_scale_factor_;
 	float chassis_drag_coeff_;
+	bool do_chassis_collisions_;
 
 	// Loaded params
 	std::vector<rp3d_axle> axles_;
-	//std::vector<rp3d_tire> tires_;
 	rp3d_anim anim_;
 	rp3d_anim tire_anim_;
 	bool animate_tires_;
 	int vehicle_id_num_;
-	int veh_mesh_id_;
+	std::vector<int> veh_tire_mesh_ids_;
 	std::vector<int> tire_id_nums_;
 	bool load_visualization_;
 

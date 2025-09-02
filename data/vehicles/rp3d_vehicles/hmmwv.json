@@ -9,7 +9,7 @@
       1.2
     ],
     "Drag Coefficient": 28.2,
-    "Collisions": false
+    "Collisions": true
   },
   "Powertrain": {
     "Final Drive Ratio": 3.3,
@@ -22,7 +22,7 @@
     {
       "Longitudinal Offset": 1.53386,
       "Track Width": 1.5865,
-      "Spring Constant": 130000.0,
+      "Spring Constant": 190000.0,
       "Spring Length": 0.339,
       "Max Steer Angle": 30.23,
       "Unsprung Mass": 62.0,
@@ -42,9 +42,9 @@
     {
       "Longitudinal Offset": -1.2847,
       "Track Width": 1.5865,
-      "Spring Constant": 130000.0,
+      "Spring Constant": 190000.0,
       "Spring Length": 0.382,
-      "Max Steer Angle": 168.0,
+      "Max Steer Angle": 0.0,
       "Unsprung Mass": 62.0,
       "Damping Constant": 13110.0,
       "Steered": false,

@@ -605,13 +605,12 @@ void Rp3dVehicle::ApplyCollisionForces(environment::Environment* env) {
 	glm::vec3 ls = GetLookSide();
 	glm::vec3 pos(current_state_.pose.position.x, current_state_.pose.position.y, current_state_.pose.position.z);
 	float delta = 0.05f; // spacing of intersection sample points
-	float k = (1.0f/delta)*sprung_mass_; // works for mrzr
+	float k = 300.0f*delta*delta*sprung_mass_; // works for mrzr
 	//float k = 6.0f * sprung_mass_;
-	float c = 2.0f*sqrtf(k * sprung_mass_);
+	float c = 0.5f*sqrtf(k * sprung_mass_);
 	float half_l = 0.5f * chassis_dimensions_.x;
 	float half_w = 0.5f * chassis_dimensions_.y;
 	float half_h = 0.5f * chassis_dimensions_.z;
-	
 
 	// front face
 	float y = -half_w;

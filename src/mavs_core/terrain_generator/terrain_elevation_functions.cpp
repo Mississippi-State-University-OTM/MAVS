@@ -24,6 +24,7 @@ SOFTWARE.
 #include <limits>
 #include <mavs_core/terrain_generator/terrain_elevation_functions.h>
 #include <mavs_core/data_path.h>
+#include <mavs_core/math/polygon.h>
 #ifdef USE_EMBREE
 #include <raytracers/embree_tracer/embree_tracer.h>
 #endif
@@ -106,14 +107,35 @@ void TerrainCreator::AddSlope(float fractional_slope) {
 		}
 	}
 	std::string file_path = mavs_data_path + "/scenes/meshes/";
+	
 	mavs::raytracer::Mesh surf_mesh = heightmap.GetAsMesh();
-	glm::mat3x4 rot_scale = scene_.GetAffineIdentity();
+	glm::mat3x4 rot_scale = math::GetAffineIdentity();
 	scene_.SetLayeredSurfaceMesh(surf_mesh, rot_scale);
 	scene_.SetSurfaceMesh(surf_mesh, rot_scale);
 	std::string layer_file = file_path + "surface_textures/road_surfaces.json";
 	mavs::raytracer::LayeredSurface layers;
 	layers.LoadSurfaceTextures(file_path, layer_file);
 	scene_.AddLayeredSurface(layers);
+
+	for (int i = 0; i < veg_polys_.size(); i++) {
+		std::string mesh_path = mavs_data_path; 
+		mesh_path.append("/scenes/meshes/");
+		mavs::raytracer::Mesh mesh;
+		mesh.Load(mesh_path, veg_polys_[i].meshfile);
+		math::Polygon area(veg_polys_[i].polygon);
+		for (unsigned j = 0; j < veg_polys_[i].number; j++) {
+			glm::vec2 location = area.GetRandomInside();
+			float z = scene_.GetSurfaceHeight(location.x, location.y);
+			glm::vec3 position(location.x, location.y, z);
+			glm::vec3 euler_angles(0.0f, math::rand_in_range(0.0f, (float)k2Pi), 0.0f);
+			glm::mat3x4 rot_scale = math::GetRotFromEuler(euler_angles);
+			float scale = math::rand_in_range(veg_polys_[i].scale_low, veg_polys_[i].scale_high);
+			rot_scale = math::ScaleAffine(rot_scale, scale, scale, scale);
+			rot_scale = math::SetAffineOffset(rot_scale, position);
+			int mesh_id = scene_.AddMesh(mesh, rot_scale, j, 1);
+		}
+	}
+
 	scene_.LoadSemanticLabels(file_path + "labels.json");
 	scene_.SetLabelsLoaded(true);
 	scene_.CommitScene();

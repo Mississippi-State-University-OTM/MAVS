@@ -46,6 +46,18 @@ Copyright 2018 (C) Mississippi State University
 namespace mavs{
 namespace math{
 
+glm::mat3x4 GetAffineIdentity();
+
+glm::mat3x4 ScaleAffine(glm::mat3x4 rot_scale, float x_scale, float y_scale, float z_scale);
+
+glm::mat3x4 SetAffineOffset(glm::mat3x4 rot_scale, float x_off, float y_off, float z_off);
+
+glm::mat3x4 SetAffineOffset(glm::mat3x4 rot_scale, glm::vec3 offset);
+
+glm::mat3 GetIdentity();
+
+glm::mat3x4 GetRotFromEuler(glm::vec3 euler_angles);
+
 /** 
 * Conversion, euler angles to quaternion 
 * \param pitch Input rotation about y-axis, radians

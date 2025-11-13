@@ -34,12 +34,22 @@ SOFTWARE.
 #define TERRAIN_ELEVATION_FUNCTIONS_H
 #include <random>
 #include <memory>
+#include <string>
+
 #ifdef USE_EMBREE
 #include <raytracers/embree_tracer/embree_tracer.h>
 #endif
 
 namespace mavs {
 namespace terraingen {
+
+struct VegPolygon {
+	std::vector<glm::vec2> polygon;
+	unsigned number;
+	std::string meshfile;
+	float scale_low;
+	float scale_high;
+};
 
 /// Class for dynamically created terrains
 class TerrainElevationFunction {
@@ -183,9 +193,16 @@ public:
 	*/
 	void AddSlope(float fractional_slope);
 
+	/**
+	* Add a polygon filled with vegetation
+	* \param veg_poly The polygon to be filled;
+	*/
+	void AddMeshes(VegPolygon veg_poly) { veg_polys_.push_back(veg_poly); }
+
 private:
 	mavs::raytracer::embree::EmbreeTracer scene_;
 	std::vector<TerrainElevationFunction> terrain_features_;
+	std::vector<VegPolygon> veg_polys_;
 }; // TerrainCreator class
 
 } // namespace terraingen

@@ -84,52 +84,6 @@ EmbreeTracer::EmbreeTracer(){
 	inst_id_ = 0;
 }
 
-static glm::mat3 GetIdentity() {
-	glm::mat3 rot;
-	rot[0][0] = 1.0f; rot[0][1] = 0.0f; rot[0][2] = 0.0f;
-	rot[1][0] = 0.0f; rot[1][1] = 1.0f; rot[1][2] = 0.0f;
-	rot[2][0] = 0.0f; rot[2][1] = 0.0f; rot[2][2] = 1.0f;
-	return rot;
-}
-
-static glm::mat3x4 GetRotFromEuler(glm::vec3 euler_angles) {
-	glm::mat3x4 rot_scale;
-	glm::mat3x3 om = orientate3(euler_angles);
-	for (int ii = 0; ii < 3; ii++) {
-		for (int jj = 0; jj < 3; jj++) {
-			rot_scale[ii][jj] = om[ii][jj];
-		}
-	}
-	rot_scale[0][3] = 0.0f; rot_scale[1][3] = 0.0f; rot_scale[2][3] = 0.0f;
-	return rot_scale;
-}
-
-glm::mat3x4 EmbreeTracer::GetAffineIdentity() {
-	glm::mat3x4 rot_scale;
-	rot_scale[0][0] = 1.0f; rot_scale[0][1] = 0.0f; rot_scale[0][2] = 0.0f;
-	rot_scale[1][0] = 0.0f; rot_scale[1][1] = 1.0f; rot_scale[1][2] = 0.0f;
-	rot_scale[2][0] = 0.0f; rot_scale[2][1] = 0.0f; rot_scale[2][2] = 1.0f;
-	rot_scale[0][3] = 0.0f; rot_scale[1][3] = 0.0f; rot_scale[2][3] = 0.0f;
-	return rot_scale;
-}
-
-static glm::mat3x4 ScaleAffine(glm::mat3x4 rot_scale, float x_scale, float y_scale, float z_scale) {
-	rot_scale[0][0] *= x_scale; rot_scale[0][1] *= y_scale; rot_scale[0][2] *= z_scale;
-	rot_scale[1][0] *= x_scale; rot_scale[1][1] *= y_scale; rot_scale[1][2] *= z_scale;
-	rot_scale[2][0] *= x_scale; rot_scale[2][1] *= y_scale; rot_scale[2][2] *= z_scale;
-	return rot_scale;
-}
-
-static glm::mat3x4 SetAffineOffset(glm::mat3x4 rot_scale, float x_off, float y_off, float z_off) {
-	rot_scale[0][3] = x_off; rot_scale[1][3] = y_off; rot_scale[2][3] = z_off;
-	return rot_scale;
-}
-
-static glm::mat3x4 SetAffineOffset(glm::mat3x4 rot_scale, glm::vec3 offset) {
-	rot_scale[0][3] = offset.x; rot_scale[1][3] = offset.y; rot_scale[2][3] = offset.z;
-	return rot_scale;
-}
-
 EmbreeTracer::~EmbreeTracer(){
 	for (int i = 0; i < (int)instanced_scenes_.size(); i++) {
 		rtcReleaseScene(instanced_scenes_[i]);
@@ -339,15 +293,15 @@ void EmbreeTracer::LoadVegDistribution(const rapidjson::Value& d) {
 						euler_angles.x = 0.0f;
 						euler_angles.y = math::rand_in_range(0.0f, (float)k2Pi);
 						euler_angles.z = 0.0f;
-						glm::mat3x4 rot_scale = GetRotFromEuler(euler_angles);
+						glm::mat3x4 rot_scale = math::GetRotFromEuler(euler_angles);
 						//trunk diameter in cm
 						float trunk_diam = math::rand_in_range(diameter_map[i][j][s].x, diameter_map[i][j][s].y);
 						//tree height in m;
 						float ht = 0.5f*(1.3f + 0.6208f*trunk_diam - 0.00308f*trunk_diam*trunk_diam);
 						float scale_fac = ht / species[s].mesh_height;
-						rot_scale = ScaleAffine(rot_scale, scale_fac, scale_fac, scale_fac);
+						rot_scale = math::ScaleAffine(rot_scale, scale_fac, scale_fac, scale_fac);
 						glm::vec3 final_pos = position; // +offset;
-						rot_scale = SetAffineOffset(rot_scale, final_pos);
+						rot_scale = math::SetAffineOffset(rot_scale, final_pos);
 						if (write_check) {
 							VegCheck vc;
 							vc.name = species[s].name;
@@ -395,7 +349,7 @@ void EmbreeTracer::LoadVegDistribution(const rapidjson::Value& d) {
 
 void EmbreeTracer::LoadLayeredSurface(const rapidjson::Value& d) {
 	mavs::MavsDataPath mavs_data_path;
-	glm::mat3x4 rot_scale = GetAffineIdentity();
+	glm::mat3x4 rot_scale = math::GetAffineIdentity();
 
 	if (d.HasMember("Scale")) {
 		if (d["Scale"].Capacity() != 3) {
@@ -405,7 +359,7 @@ void EmbreeTracer::LoadLayeredSurface(const rapidjson::Value& d) {
 		float sx = d["Scale"][0].GetFloat();
 		float sy = d["Scale"][1].GetFloat();
 		float sz = d["Scale"][2].GetFloat();
-		rot_scale = ScaleAffine(rot_scale, sx, sy, sz);
+		rot_scale = math::ScaleAffine(rot_scale, sx, sy, sz);
 	}
 
 	if (d.HasMember("Mesh")) {
@@ -591,10 +545,10 @@ void EmbreeTracer::LoadSurfaceMesh(const rapidjson::Value& d) {
 			euler_angles.x = d[surfnum]["YawPitchRoll"][0].GetFloat();
 			euler_angles.y = d[surfnum]["YawPitchRoll"][1].GetFloat();
 			euler_angles.z = d[surfnum]["YawPitchRoll"][2].GetFloat();
-			rot_scale = GetRotFromEuler(euler_angles);
+			rot_scale = math::GetRotFromEuler(euler_angles);
 		}
 		else {
-			rot_scale = GetAffineIdentity();
+			rot_scale = math::GetAffineIdentity();
 		}
 		if (d[surfnum].HasMember("Position")) {
 			if (d[surfnum]["Position"].Capacity() == 3) {
@@ -617,12 +571,12 @@ void EmbreeTracer::LoadSurfaceMesh(const rapidjson::Value& d) {
 			float sx = d[surfnum]["Scale"][0].GetFloat();
 			float sy = d[surfnum]["Scale"][1].GetFloat();
 			float sz = d[surfnum]["Scale"][2].GetFloat();
-			rot_scale = ScaleAffine(rot_scale, sx, sy, sz);
+			rot_scale = math::ScaleAffine(rot_scale, sx, sy, sz);
 		}
 
 		if (d[surfnum].HasMember("Mesh")) {
 			glm::vec3 offset = position; // -mesh_center;
-			rot_scale = SetAffineOffset(rot_scale, offset);
+			rot_scale = math::SetAffineOffset(rot_scale, offset);
 			int surf_id = SetSurfaceMesh(mesh, rot_scale);
 		}
 		BoundingBox bb = mesh.GetBoundingBox();
@@ -690,10 +644,10 @@ void EmbreeTracer::LoadObjects(const rapidjson::Value& d) {
 					euler_angles.x = d[m]["Instances"][mi]["YawPitchRoll"][0].GetFloat();
 					euler_angles.y = d[m]["Instances"][mi]["YawPitchRoll"][1].GetFloat();
 					euler_angles.z = d[m]["Instances"][mi]["YawPitchRoll"][2].GetFloat();
-					rot_scale = GetRotFromEuler(euler_angles);
+					rot_scale = math::GetRotFromEuler(euler_angles);
 				}
 				else {
-					rot_scale = GetAffineIdentity();
+					rot_scale = math::GetAffineIdentity();
 				}
 				if (d[m]["Instances"][mi].HasMember("Position")) {
 					if (d[m]["Instances"][mi]["Position"].Capacity() == 3) {
@@ -716,12 +670,12 @@ void EmbreeTracer::LoadObjects(const rapidjson::Value& d) {
 					float sx = d[m]["Instances"][mi]["Scale"][0].GetFloat();
 					float sy = d[m]["Instances"][mi]["Scale"][1].GetFloat();
 					float sz = d[m]["Instances"][mi]["Scale"][2].GetFloat();
-					rot_scale = ScaleAffine(rot_scale, sx, sy, sz);
+					rot_scale = math::ScaleAffine(rot_scale, sx, sy, sz);
 				}
 
 				if (d[m].HasMember("Mesh")) {
 					glm::vec3 offset = position; // -mesh_center;
-					rot_scale = SetAffineOffset(rot_scale, offset);
+					rot_scale = math::SetAffineOffset(rot_scale, offset);
 					int instId = AddMesh(mesh, rot_scale, mi, RTC_BUILD_QUALITY_MEDIUM);
 				}
 			} //loop over instances
@@ -759,7 +713,7 @@ void EmbreeTracer::LoadObjects(const rapidjson::Value& d) {
 						euler_angles.x = 0.0f;
 						euler_angles.y = math::rand_in_range(0.0f, (float)k2Pi);
 						euler_angles.z = 0.0f;
-						glm::mat3x4 rot_scale = GetRotFromEuler(euler_angles);
+						glm::mat3x4 rot_scale = math::GetRotFromEuler(euler_angles);
 						float x_scale = 1; float y_scale = 1; float z_scale = 1;
 						if (d[m]["Random"].HasMember("Scale")) {
 							if (d[m]["Random"]["Scale"].Capacity() == 2) {
@@ -792,11 +746,11 @@ void EmbreeTracer::LoadObjects(const rapidjson::Value& d) {
 								}
 
 							}
-							rot_scale = ScaleAffine(rot_scale, x_scale, y_scale, z_scale);
+							rot_scale = math::ScaleAffine(rot_scale, x_scale, y_scale, z_scale);
 						}
 						//glm::vec3 final_pos = position - mesh_center + offset;
 						glm::vec3 final_pos = position + offset;
-						rot_scale = SetAffineOffset(rot_scale, final_pos);
+						rot_scale = math::SetAffineOffset(rot_scale, final_pos);
 						int instId = AddMesh(mesh, rot_scale, mr, RTC_BUILD_QUALITY_MEDIUM);
 					} // for all random placements, mr
 				}
@@ -1062,14 +1016,14 @@ std::vector<int> EmbreeTracer::AddActor(std::string meshfile, bool y_to_z, bool 
 	if (y_to_x)mesh.RotateYToX();
 	
 	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::mat3x4 rot_scale = GetAffineIdentity();
+	glm::mat3x4 rot_scale = math::GetAffineIdentity();
 	rot_scale[0][0] = rot_scale[0][0] * scale.x;
 	rot_scale[1][1] = rot_scale[1][1] * scale.y;
 	rot_scale[2][2] = rot_scale[2][2] * scale.z;
 
 	//glm::vec3 mesh_center = mesh.GetCenter();
 	//glm::vec3 offset = position - mesh_center;
-	rot_scale = SetAffineOffset(rot_scale, offset);
+	rot_scale = math::SetAffineOffset(rot_scale, offset);
 	int instId = AddMesh(mesh, rot_scale, 0, RTC_SCENE_FLAG_DYNAMIC | RTC_BUILD_QUALITY_LOW);
 	actor_nums_.push_back(instId);
 
@@ -1118,7 +1072,7 @@ std::vector<int> EmbreeTracer::AddActors(std::string actorfile) {
 			if (d["Actors"][m].HasMember("Instances")) {
 				int num_inst = d["Actors"][m]["Instances"].Capacity();
 				for (int mi = 0; mi<num_inst; mi++) {
-					glm::mat3x4 rot_scale = GetAffineIdentity();
+					glm::mat3x4 rot_scale = math::GetAffineIdentity();
 					glm::vec3 position;
 					if (d["Actors"][m]["Instances"][mi].HasMember("Position")) {
 						if (d["Actors"][m]["Instances"][mi]["Position"].Capacity() == 3) {
@@ -1144,7 +1098,7 @@ std::vector<int> EmbreeTracer::AddActors(std::string actorfile) {
 					}
 					if (d["Actors"][m].HasMember("Mesh")) {
 						glm::vec3 offset = position - mesh_center;
-						rot_scale = SetAffineOffset(rot_scale, offset);
+						rot_scale = math::SetAffineOffset(rot_scale, offset);
 						int instId = AddMesh(mesh, rot_scale, mi, RTC_SCENE_FLAG_DYNAMIC | RTC_BUILD_QUALITY_LOW);
 						actor_nums_.push_back(instId);
 					}
@@ -1404,7 +1358,7 @@ void EmbreeTracer::UpdateActor(glm::vec3 position, glm::quat orientation, glm::v
 
 	glm::mat3 rot_o = glm::mat3_cast(orientation);
 	glm::mat3 rot = glm::inverse(rot_o);
-	glm::mat3x4 rot_scale = ScaleAffine(rot, scale[0], scale[1], scale[2]);
+	glm::mat3x4 rot_scale = math::ScaleAffine(rot, scale[0], scale[1], scale[2]);
 	
 	rot_scale[0][3] = offset.x; rot_scale[1][3] = offset.y; rot_scale[2][3] = offset.z;
 
@@ -1568,7 +1522,7 @@ glm::mat3 EmbreeTracer::MatrixFromNormal(float nx, float ny, float nz) {
 	nz = nz / n;
 	float nxy_inv = 1.0f/nxy;
 	float nz_nxy = nz*nxy_inv;
-	glm::mat3 R = GetIdentity(); // kidentity_matrix_;
+	glm::mat3 R = math::GetIdentity(); // kidentity_matrix_;
 	if (nxy > 0.0f) {
 		R[0][0] = ny*nxy_inv;
 		R[0][1] = -nx*nxy_inv;

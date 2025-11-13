@@ -419,9 +419,6 @@ class EmbreeTracer : public Raytracer {
 	/// Inherited ray tracer virtual function
 	void SetActorVelocity(int actor_id, glm::vec3 velocity);
 
-	/// Get an Affience identity matrix
-	glm::mat3x4 GetAffineIdentity();
-
 	/// Set the default MAVS file path
 	void SetFilePath(std::string file_path) { file_path_ = file_path; }
 

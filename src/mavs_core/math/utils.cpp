@@ -29,10 +29,57 @@ SOFTWARE.
 #include <omp.h>
 #include <mavs_core/math/utils.h>
 #include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/euler_angles.hpp>
 #include <tinyfiledialogs.h>
 
 namespace mavs{
 namespace math {
+
+glm::mat3x4 GetAffineIdentity() {
+	glm::mat3x4 rot_scale;
+	rot_scale[0][0] = 1.0f; rot_scale[0][1] = 0.0f; rot_scale[0][2] = 0.0f;
+	rot_scale[1][0] = 0.0f; rot_scale[1][1] = 1.0f; rot_scale[1][2] = 0.0f;
+	rot_scale[2][0] = 0.0f; rot_scale[2][1] = 0.0f; rot_scale[2][2] = 1.0f;
+	rot_scale[0][3] = 0.0f; rot_scale[1][3] = 0.0f; rot_scale[2][3] = 0.0f;
+	return rot_scale;
+}
+
+glm::mat3x4 ScaleAffine(glm::mat3x4 rot_scale, float x_scale, float y_scale, float z_scale) {
+	rot_scale[0][0] *= x_scale; rot_scale[0][1] *= y_scale; rot_scale[0][2] *= z_scale;
+	rot_scale[1][0] *= x_scale; rot_scale[1][1] *= y_scale; rot_scale[1][2] *= z_scale;
+	rot_scale[2][0] *= x_scale; rot_scale[2][1] *= y_scale; rot_scale[2][2] *= z_scale;
+	return rot_scale;
+}
+
+glm::mat3x4 SetAffineOffset(glm::mat3x4 rot_scale, float x_off, float y_off, float z_off) {
+	rot_scale[0][3] = x_off; rot_scale[1][3] = y_off; rot_scale[2][3] = z_off;
+	return rot_scale;
+}
+
+glm::mat3x4 SetAffineOffset(glm::mat3x4 rot_scale, glm::vec3 offset) {
+	rot_scale[0][3] = offset.x; rot_scale[1][3] = offset.y; rot_scale[2][3] = offset.z;
+	return rot_scale;
+}
+
+glm::mat3 GetIdentity() {
+	glm::mat3 rot;
+	rot[0][0] = 1.0f; rot[0][1] = 0.0f; rot[0][2] = 0.0f;
+	rot[1][0] = 0.0f; rot[1][1] = 1.0f; rot[1][2] = 0.0f;
+	rot[2][0] = 0.0f; rot[2][1] = 0.0f; rot[2][2] = 1.0f;
+	return rot;
+}
+
+glm::mat3x4 GetRotFromEuler(glm::vec3 euler_angles) {
+	glm::mat3x4 rot_scale;
+	glm::mat3x3 om = orientate3(euler_angles);
+	for (int ii = 0; ii < 3; ii++) {
+		for (int jj = 0; jj < 3; jj++) {
+			rot_scale[ii][jj] = om[ii][jj];
+		}
+	}
+	rot_scale[0][3] = 0.0f; rot_scale[1][3] = 0.0f; rot_scale[2][3] = 0.0f;
+	return rot_scale;
+}
 
 //ray-triangle intersection routine, see
 // https://en.wikipedia.org/wiki/Moller-Trumbore_intersection_algorithm

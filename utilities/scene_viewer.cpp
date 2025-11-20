@@ -156,7 +156,7 @@ int main(int argc, char *argv[]) {
 					hd_cam.SaveImage(ofname);
 					free_camera.UnsetFrameGrab();
 				}
-				if (free_camera.GetDisplay()->is_keyS()) {
+				if (free_camera.GetDisplay()->is_keyI()) {
 					std::cout << "Scene: " << scene.GetNumberObjects()<<" objects, " << scene.GetNumberMeshes() << " meshes, and " << scene.GetNumberTrianglesLoaded() << " triangles. " << std::endl;
 				}
 				if (free_camera.GetDisplay()->is_keyP()) {

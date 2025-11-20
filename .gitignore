@@ -54,3 +54,5 @@ data/scenes/meshes/surfaces/flw_surface.*
 data/scenes/meshes/surfaces/snow_surface_hm_smoothed.obj
 data/scenes/meshes/surfaces/pg_digital_twin*
 data/scenes/pg_digital_twin*
+data/scenes/meshes/surfaces/jungle/
+data/scenes/jungle_*.json

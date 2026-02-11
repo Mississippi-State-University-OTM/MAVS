@@ -18,15 +18,28 @@ add_subdirectory(glm)
 # reactphysics3d
 add_subdirectory(reactphysics3d)
 
-target_include_directories(reactphysics3d PRIVATE
-    "${CMAKE_SOURCE_DIR}/extern"
+
+# Path to the shim header in your tree
+set(RP3D_COMPAT_HEADER "${CMAKE_SOURCE_DIR}/extern/rp3d_compat.h")
+
+# Make sure the shim exists
+if(NOT EXISTS "${RP3D_COMPAT_HEADER}")
+  message(FATAL_ERROR "Missing ${RP3D_COMPAT_HEADER}. Create it and include \"reactphysics3d/decimal.h\".")
+endif()
+
+# Let rp3d see the extern folder (optional if using absolute -include path)
+target_include_directories(reactphysics3d PRIVATE "${CMAKE_SOURCE_DIR}/extern")
+
+# Force-include for all compilers (absolute path is safest)
+target_compile_options(reactphysics3d PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/FI"${RP3D_COMPAT_HEADER}">
+  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-include "${RP3D_COMPAT_HEADER}">
 )
 
-# Force-include rp3d_compat.h for all compilers in a portable way
-target_compile_options(reactphysics3d PRIVATE
-    $<$<CXX_COMPILER_ID:MSVC>:/FI"${CMAKE_SOURCE_DIR}/extern/rp3d_compat.h">
-    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-include "${CMAKE_SOURCE_DIR}/extern/rp3d_compat.h">
-)
+# Optional: keep examples/tests off & PIC on if you configure rp3d from your superbuild
+set(RP3D_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(RP3D_ENABLE_TESTS   OFF CACHE BOOL "" FORCE)
+set_property(TARGET reactphysics3d PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 
 # wrappers for external libraries that aren't distributed via Git or other usual means

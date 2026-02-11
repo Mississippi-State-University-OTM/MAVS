@@ -24,8 +24,8 @@ target_include_directories(reactphysics3d PRIVATE
 
 # Force-include rp3d_compat.h for all compilers in a portable way
 target_compile_options(reactphysics3d PRIVATE
-    $<$<CXX_COMPILER_ID:MSVC>:/FIrp3d_compat.h>
-    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-include rp3d_compat.h>
+    $<$<CXX_COMPILER_ID:MSVC>:/FI"${CMAKE_SOURCE_DIR}/extern/rp3d_compat.h">
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-include "${CMAKE_SOURCE_DIR}/extern/rp3d_compat.h">
 )
 
 

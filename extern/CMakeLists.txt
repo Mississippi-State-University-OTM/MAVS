@@ -36,6 +36,11 @@ target_compile_options(reactphysics3d PRIVATE
   $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-include "${RP3D_COMPAT_HEADER}">
 )
 
+target_compile_options(reactphysics3d INTERFACE
+  $<$<CXX_COMPILER_ID:MSVC>:/FI"${RP3D_COMPAT_HEADER}">
+  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-include "${RP3D_COMPAT_HEADER}">
+)
+
 # Optional: keep examples/tests off & PIC on if you configure rp3d from your superbuild
 set(RP3D_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(RP3D_ENABLE_TESTS   OFF CACHE BOOL "" FORCE)

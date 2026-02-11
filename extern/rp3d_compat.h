@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 
-// Guard the block to avoid redefinition if another header defines these
+// Guard to avoid redefinition if RP3D introduces these later
 #ifndef RP3D_UINT_TYPES_DEFINED
 #define RP3D_UINT_TYPES_DEFINED
 
@@ -18,7 +18,7 @@ using int32 = int32_t;
 using int64 = int64_t;
 #endif
 
-// (Optional) add smaller widths if you hit them later
+// (Optional) cover other widths if they pop up
 #ifndef uint8
 using uint8 = uint8_t;
 #endif
@@ -26,4 +26,4 @@ using uint8 = uint8_t;
 using int16 = int16_t;
 #endif
 
-#endif  // RP3D_UINT_TYPES_DEFINED
+#endif // RP3D_UINT_TYPES_DEFINED

@@ -17,6 +17,18 @@ add_subdirectory(glm)
 
 # reactphysics3d
 add_subdirectory(reactphysics3d)
+
+target_include_directories(reactphysics3d PRIVATE
+    "${CMAKE_SOURCE_DIR}/extern"
+)
+
+# Force-include rp3d_compat.h for all compilers in a portable way
+target_compile_options(reactphysics3d PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/FIrp3d_compat.h>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-include rp3d_compat.h>
+)
+
+
 # wrappers for external libraries that aren't distributed via Git or other usual means
 
 # CImg

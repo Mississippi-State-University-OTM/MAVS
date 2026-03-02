@@ -26,112 +26,231 @@ SOFTWARE.
 #include <iostream>
 #include <limits>
 #include <algorithm>
+#include <vector>
+#include <random>
+#include <stdexcept>
+#include <cmath>
 #include <mavs_core/math/utils.h>
 
-namespace mavs{
-namespace math{
+namespace mavs {
+namespace math {
 
-Polygon::Polygon(){
+Polygon::Polygon() {
+	InitVars();
+}
+
+Polygon::Polygon(std::vector<glm::vec2> points) {
+	InitVars();
+	polygon_ = points;
+	llx_ = std::numeric_limits<float>::max();
+	lly_ = llx_;
+	urx_ = std::numeric_limits<float>::min();
+	ury_ = urx_;
+	for (int i = 0; i < (int)polygon_.size(); i++) {
+		if (polygon_[i].x < llx_)llx_ = polygon_[i].x;
+		if (polygon_[i].x > urx_)urx_ = polygon_[i].x;
+		if (polygon_[i].y < lly_)lly_ = polygon_[i].y;
+		if (polygon_[i].y > ury_)ury_ = polygon_[i].y;
+	}
+}
+
+void Polygon::InitVars() {
+	max_tries_ = 100000;
+	llx_ = 0.0f;
+	lly_ = 0.0f;
+	urx_ = 0.0f;
+	ury_ = 0.0f;
+}
+
+
+Polygon::~Polygon() {
 
 }
 
-Polygon::Polygon(std::vector<glm::vec2> points){
-  polygon_ = points;
-  llx_ = std::numeric_limits<float>::max();
-  lly_ = llx_;
-  urx_ = std::numeric_limits<float>::min();
-  ury_ = urx_;
-  for (int i=0;i<(int)polygon_.size();i++){
-    if (polygon_[i].x<llx_)llx_=polygon_[i].x;
-    if (polygon_[i].x>urx_)urx_=polygon_[i].x;
-    if (polygon_[i].y<lly_)lly_=polygon_[i].y;
-    if (polygon_[i].y>ury_)ury_=polygon_[i].y;
-  }
+bool Polygon::OnSegment(glm::vec2 p, glm::vec2 q, glm::vec2 r) {
+	if (q.x <= std::max(p.x, r.x) && q.x >= std::min(p.x, r.x) &&
+		q.y <= std::max(p.y, r.y) && q.y >= std::min(p.y, r.y)) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
-Polygon::~Polygon(){
+bool Polygon::SegmentIntersect(glm::vec2 p1, glm::vec2 q1,
+	glm::vec2 p2, glm::vec2 q2) {
+	int o1 = Orientation(p1, q1, p2);
+	int o2 = Orientation(p1, q1, q2);
+	int o3 = Orientation(p2, q2, p1);
+	int o4 = Orientation(p2, q2, q1);
+	if (o1 != o2 && o3 != o4) return true;
 
+	if (o1 == 0 && OnSegment(p1, p2, q1)) return true;
+	if (o2 == 0 && OnSegment(p1, q2, q1)) return true;
+	if (o3 == 0 && OnSegment(p2, p1, q2)) return true;
+	if (o4 == 0 && OnSegment(p2, q1, q2)) return true;
+
+	return false;
 }
 
-bool Polygon::OnSegment(glm::vec2 p, glm::vec2 q, glm::vec2 r){
-  if (q.x<=std::max(p.x,r.x) && q.x>= std::min(p.x,r.x) &&
-      q.y<=std::max(p.y,r.y) && q.y>= std::min(p.y,r.y) ){
-    return true;
-  }
-  else{
-    return false;
-  }
+int Polygon::Orientation(glm::vec2 p, glm::vec2 q, glm::vec2 r) {
+	float val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+
+	if (val == 0) return 0;
+	return (val > 0) ? 1 : 2;
 }
 
-bool Polygon::SegmentIntersect(glm::vec2 p1, glm::vec2 q1, 
-			       glm::vec2 p2, glm::vec2 q2){
-  int o1 = Orientation(p1,q1,p2);
-  int o2 = Orientation(p1,q1,q2);
-  int o3 = Orientation(p2,q2,p1);
-  int o4 = Orientation(p2,q2,q1);
-  if (o1!=o2 && o3!=o4) return true;
-
-  if (o1==0 && OnSegment(p1,p2,q1)) return true;
-  if (o2==0 && OnSegment(p1,q2,q1)) return true;
-  if (o3==0 && OnSegment(p2,p1,q2)) return true;
-  if (o4==0 && OnSegment(p2,q1,q2)) return true;
-
-  return false;
+bool Polygon::IsInside(glm::vec2 p) {
+	size_t n = polygon_.size();
+	if (n < 3) return false;
+	float inf = std::numeric_limits<float>::max();
+	glm::vec2 extreme(inf, p.y);
+	int count = 0;
+	int i = 0;
+	for (int i = 0; i < (int)polygon_.size(); i++) {
+		int next = (i + 1) % n;
+		if (SegmentIntersect(polygon_[i], polygon_[next], p, extreme)) {
+			if (Orientation(polygon_[i], p, polygon_[next]) == 0) {
+				return OnSegment(polygon_[i], p, polygon_[next]);
+			}
+			count++;
+		}
+	}
+	return (count % 2 == 1);
 }
 
-int Polygon::Orientation(glm::vec2 p, glm::vec2 q, glm::vec2 r){
-  float val = (q.y-p.y)*(r.x-q.x)-(q.x-p.x)*(r.y-q.y);
-
-  if (val==0) return 0;
-  return (val>0)? 1: 2;
-}
-
- bool Polygon::IsInside(glm::vec2 p){
-  size_t n = polygon_.size();
-  if (n<3) return false;
-  float inf = std::numeric_limits<float>::max();
-  glm::vec2 extreme(inf,p.y);
-  int count = 0;
-  int i = 0;
-  for (int i=0;i<(int)polygon_.size();i++){
-    int next = (i+1)%n;
-    if (SegmentIntersect(polygon_[i],polygon_[next],p,extreme)){
-      if (Orientation(polygon_[i],p,polygon_[next])==0){
-	return OnSegment(polygon_[i],p,polygon_[next]);
-      }
-      count++;
-    }
-  }
-  return (count%2==1);
-}
-
-glm::vec2 Polygon::GetRandomInside(){
-  glm::vec2 point;
-  int loop_counter = 0;
-  while (true) {
-    float px = rand_in_range(llx_,urx_);
-    float py = rand_in_range(lly_,ury_);
-    glm::vec2 testpoint(px,py);
-    if (IsInside(testpoint)){
-      point = testpoint;
-      break;
-    }
-    loop_counter++;
-  }
-  return point;
+glm::vec2 Polygon::GetRandomInside() {
+	glm::vec2 point;
+	int loop_counter = 0;
+	while (true) {
+		float px = rand_in_range(llx_, urx_);
+		float py = rand_in_range(lly_, ury_);
+		glm::vec2 testpoint(px, py);
+		if (IsInside(testpoint)) {
+			point = testpoint;
+			break;
+		}
+		loop_counter++;
+	}
+	return point;
 }
 
 // https://www.mathopenref.com/coordpolygonarea.html
 float Polygon::GetArea() {
 	float area = 0.0f;
-	for (int i = 0; i < (polygon_.size()-1); i++) {
-		area += (polygon_[i].x*polygon_[i + 1].y - polygon_[i].y*polygon_[i + 1].x);
+	for (int i = 0; i < (polygon_.size() - 1); i++) {
+		area += (polygon_[i].x * polygon_[i + 1].y - polygon_[i].y * polygon_[i + 1].x);
 	}
-	area += (polygon_.back().x*polygon_[0].y - polygon_.back().y*polygon_[0].x);
-	area = 0.5f*area;
+	area += (polygon_.back().x * polygon_[0].y - polygon_.back().y * polygon_[0].x);
+	area = 0.5f * area;
 	area = (float)fabs(area);
 	return area;
 }
+
+//--- The following code was generated by Claude to place points randomly with a minimum desired spacing -------//
+
+// Signed area of triangle (p0, p1, p2)
+static float TriangleSignedArea(const glm::vec2& p0, const glm::vec2& p1, const glm::vec2& p2) {
+	return 0.5f * ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x - p0.x) * (p1.y - p0.y));
+}
+
+// Sample a uniformly random point inside triangle (a, b, c)
+static glm::vec2 SampleTriangle(const glm::vec2& a, const glm::vec2& b, const glm::vec2& c, std::mt19937& rng) {
+	std::uniform_real_distribution<float> U(0.0f, 1.0f);
+	float r1 = U(rng), r2 = U(rng);
+	// Fold the unit square sample back into the triangle
+	if (r1 + r2 > 1.0f) { r1 = 1.0f - r1; r2 = 1.0f - r2; }
+	return { a.x + r1 * (b.x - a.x) + r2 * (c.x - a.x),
+				a.y + r1 * (b.y - a.y) + r2 * (c.y - a.y) };
+}
+
+// Check minimum-distance constraint against already-placed points
+static bool IsFarEnough(const glm::vec2& p, const std::vector<glm::vec2>& placed, float min_dist) {
+	float d2 = min_dist * min_dist;
+	for (const auto& q : placed)
+		if ((p.x - q.x) * (p.x - q.x) + (p.y - q.y) * (p.y - q.y) < d2)
+			return false;
+	return true;
+}
+
+/**
+	* Randomly place `count` points inside a simple polygon such that every pair
+	* of points is at least `minDist` apart.
+	* @param count     Number of points to place.
+	* @param min_dist   Minimum Euclidean distance between any two output points.
+	* @return          Vector of `count` points that satisfy the constraints.
+	*/
+std::vector<glm::vec2> Polygon::GetRandomInsideSpacing(int count, float min_dist) {
+
+	const int n = static_cast<int>(polygon_.size());
+	if (n < 3)
+		throw std::invalid_argument("Polygon must have at least 3 vertices.");
+	if (count <= 0)
+		return {};
+
+	//  1. Fan-triangulate the polygon from vertex 0 
+	//    Works for any simple (convex or concave) polygon.
+	struct Triangle { int a, b, c; float area; };
+	std::vector<Triangle> triangles;
+	triangles.reserve(n - 2);
+	float total_area = 0.0f;
+
+	for (int i = 1; i + 1 < n; ++i) {
+		float area = std::abs(TriangleSignedArea(polygon_[0], polygon_[i], polygon_[i + 1]));
+		triangles.push_back({ 0, i, i + 1, area });
+		total_area += area;
+	}
+
+	if (total_area <= 0.0f)
+		throw std::invalid_argument("Polygon has zero area.");
+
+	// 2. Build a weighted CDF so we can importance-sample triangles 
+	std::vector<float> cdf;
+	cdf.reserve(triangles.size());
+	float running = 0.0f;
+	for (const auto& t : triangles) {
+		running += t.area / total_area;
+		cdf.push_back(running);
+	}
+	cdf.back() = 1.0f; // Guard against floating-point drift
+
+	// 3. Place points with rejection on the distance constraint 
+	std::mt19937 rng(std::random_device{}());
+	std::uniform_real_distribution<float> U01(0.0f, 1.0f);
+
+	std::vector<glm::vec2> result;
+	result.reserve(count);
+	int attempts = 0;
+
+	while (static_cast<int>(result.size()) < count) {
+		if (++attempts > max_tries_) {
+			std::cerr << "Could not place all the points after " << max_tries_ << " tries." << std::endl;
+			throw std::runtime_error(
+				"Could not place all points after " + std::to_string(max_tries_) +
+				" attempts. Consider reducing `count` or `min_dist`.");
+		}
+
+		// Pick a triangle proportional to area, then sample within it
+		float u = (float)U01(rng);
+		int ti = static_cast<int>(
+			std::lower_bound(cdf.begin(), cdf.end(), u) - cdf.begin());
+		ti = std::min(ti, static_cast<int>(triangles.size()) - 1);
+
+		const Triangle& tri = triangles[ti];
+		glm::vec2 candidate = SampleTriangle(polygon_[tri.a], polygon_[tri.b],
+			polygon_[tri.c], rng);
+
+		if (IsFarEnough(candidate, result, min_dist)) {
+			result.push_back(candidate);
+			attempts = 0; // Reset the failure counter on each success
+		}
+	}
+
+	return result;
+}
+
+
+
 
 } //namespace math
 } //namespace mavs

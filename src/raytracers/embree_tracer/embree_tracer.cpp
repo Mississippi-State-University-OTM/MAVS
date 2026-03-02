@@ -697,12 +697,24 @@ void EmbreeTracer::LoadObjects(const rapidjson::Value& d) {
 						node.y = d[m]["Random"]["Polygon"][p][1].GetFloat();
 						nodes.push_back(node);
 					}
+					float minimum_spacing = -1.0f;
+					if (d[m]["Random"].HasMember("Minimum Spacing")) {
+						minimum_spacing = d[m]["Random"]["Minimum Spacing"].GetFloat();
+					}
 					math::Polygon area(nodes);
+					std::vector<glm::vec2> placed_and_spaced_plants;
+					if (minimum_spacing>0.0f)placed_and_spaced_plants = area.GetRandomInsideSpacing(num_rand, minimum_spacing);
 					for (int mr = 0; mr<num_rand; mr++) {
-						glm::vec3 position;
-						glm::vec2 location = area.GetRandomInside();
-						position.x = location.x;
-						position.y = location.y;
+						glm::vec3 position(0.0f, 0.0f, 0.0f);
+						if (minimum_spacing <= 0.0f) {
+							glm::vec2 location = area.GetRandomInside();
+							position.x = location.x;
+							position.y = location.y;
+						}
+						else {
+							position.x = placed_and_spaced_plants[mr].x;
+							position.y = placed_and_spaced_plants[mr].y;
+						}
 						if (surface_loaded_) {
 							position.z = GetSurfaceHeight(position.x, position.y);
 						}

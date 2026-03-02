@@ -16,9 +16,9 @@ Copyright 2018 (C) Mississippi State University
 */
 /**
  * \class Polygon
- * 
+ *
  * A 2D polygon class that with method to check if a point lies inside.
- * See algorithm listed on 
+ * See algorithm listed on
  * https://www.geeksforgeeks.org/how-to-check-if-a-given-point-lies-
  * inside-a-polygon/
  *
@@ -33,32 +33,39 @@ Copyright 2018 (C) Mississippi State University
 
 #include <glm/glm.hpp>
 
-namespace mavs{
-namespace math{
+namespace mavs {
+namespace math {
 
-class Polygon{
- public:
-  ///Construct an empty polygon
-  Polygon();
+class Polygon {
+public:
+	///Construct an empty polygon
+	Polygon();
 
-  /**
-   * Construct a polygon with a list of points. The points should be in either
-   * clockwise or counterclockwise order around the polygon. 
-   * \param points Ordered list of points defining the polygon.
-   */
-  Polygon(std::vector<glm::vec2> points);
+	/**
+		* Construct a polygon with a list of points. The points should be in either
+		* clockwise or counterclockwise order around the polygon.
+		* \param points Ordered list of points defining the polygon.
+		*/
+	Polygon(std::vector<glm::vec2> points);
 
-  ///Destructor
-  ~Polygon();
+	///Destructor
+	~Polygon();
 
-  /**
-   * Checks if a point is inside the polygon.
-   * \param point Point to be checked
-   */
-  bool IsInside(glm::vec2 point);
+	/**
+		* Checks if a point is inside the polygon.
+		* \param point Point to be checked
+		*/
+	bool IsInside(glm::vec2 point);
 
-  ///Returns a point at a random location inside the polygon
-  glm::vec2 GetRandomInside();
+	///Returns a point at a random location inside the polygon
+	glm::vec2 GetRandomInside();
+
+	/**
+	* Returns a list of randomly placed points with an enforced minimum spacing.
+	* \param count The number to place
+	* \param minimum_spacing The minimum allowed spacing in meters
+	*/
+	std::vector<glm::vec2> GetRandomInsideSpacing(int count, float min_dist);
 
 	/// Return the number of points in the polygon
 	int NumPoints() { return (int)polygon_.size(); }
@@ -69,17 +76,27 @@ class Polygon{
 	/// Return the area of the polygon
 	float GetArea();
 
- private:
-  std::vector<glm::vec2> polygon_;
+	/// Set the maximum number of tries for placing an object in the spaced algorithm
+	void SetMaxTries(int mt) { max_tries_ = mt; }
 
-  bool OnSegment(glm::vec2 p, glm::vec2 q, glm::vec2 r);
+	/// Get the maximum number of tries for placing an object in the spaced algorithm
+	int GetMaxTries() const { return max_tries_; }
 
-  bool SegmentIntersect(glm::vec2 p1, glm::vec2 q1, 
-			glm::vec2 p2, glm::vec2 q2);
+private:
+	void InitVars();
 
-  int Orientation(glm::vec2 p, glm::vec2 q, glm::vec2 r);
+	std::vector<glm::vec2> polygon_;
 
-  float llx_,lly_,urx_,ury_;
+	bool OnSegment(glm::vec2 p, glm::vec2 q, glm::vec2 r);
+
+	bool SegmentIntersect(glm::vec2 p1, glm::vec2 q1,
+		glm::vec2 p2, glm::vec2 q2);
+
+	int Orientation(glm::vec2 p, glm::vec2 q, glm::vec2 r);
+
+	float llx_, lly_, urx_, ury_;
+
+	int max_tries_;
 };
 
 } //namespace math

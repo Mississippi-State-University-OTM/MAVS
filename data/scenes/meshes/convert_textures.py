@@ -10,6 +10,10 @@ def convert_to_bmp(directory):
                 bmp_filename = os.path.splitext(filename)[0] + ".bmp"
                 bmp_filename = bmp_filename.replace(" ", "_")
                 bmp_filepath = os.path.join(directory, bmp_filename)
+                
+                if img.mode == "RGBX":
+                    img = img.convert("RGB")
+
                 img.save(bmp_filepath, "BMP")
 
 if __name__ == "__main__":

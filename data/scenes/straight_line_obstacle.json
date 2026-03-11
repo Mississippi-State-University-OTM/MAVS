@@ -1,0 +1,74 @@
+{
+  "Object Labels": "labels.json",
+
+  "Layered Surface": {
+    "Mesh": "surfaces/surface.obj",
+    "Scale": [1.0, 1.0, 1.0],
+    "Trail": {
+      "Trail Width": 2.0,
+      "Track Width": 0.6,
+      "Wheelbase": 1.25,
+      "Path": "waypoints/vehicle2_pos_1.vprp"
+    },
+    "Layers": "surface_textures/road_surfaces.json"
+  },
+
+  "Surface Mesh": [
+    {
+      "Mesh": "surfaces/surface.obj",
+      "Rotate Y to Z": false,
+      "YawPitchRoll": [0.0, 0.0, 0.0],
+      "Position": [0.0, 0.0, 0.0],
+      "Scale": [1.0, 1.0, 1.0]
+    }
+  ],
+
+  "Objects": [
+    {
+      "_comment": "No matter the object, the MRZR will no-clip within it slightly. Therefore, the obstacle detection should be updated. (I did it with cube as well)",
+      "Mesh": "urban/roadblock/RoadBlockade_01.obj",
+      "Random": {
+        "Offset": [0.0, 0.0, 0.0],
+        "Number": 1,
+        "Polygon": [
+          [-55.0, 0.0],
+          [-55.0, 0.0],
+          [-55.0, 0.0],
+          [-55.0, 0.0]
+        ],
+        "Scale": [1.0, 10.0],
+        "Scale Multiplier": [0.5, 2.0]
+      }
+    },
+
+    {
+      "Mesh": "vegetation/pine_tree/pine_tree.obj",
+      "Random": {
+        "Offset": [0.0, 0.0, 0.0],
+        "Number": 1,
+        "Polygon": [
+          [-55.0, -8.0],
+          [-55.0, -8.0],
+          [-55.0, -8.0],
+          [-55.0, -8.0]
+        ],
+        "Scale": [3.0, 6.0]
+      }
+    },
+
+    {
+      "Mesh": "vegetation/pine_tree/pine_tree.obj",
+      "Random": {
+        "Offset": [0.0, 0.0, 0.0],
+        "Number": 1,
+        "Polygon": [
+          [-55.0, 8.0],
+          [-55.0, 8.0],
+          [-55.0, 8.0],
+          [-55.0, 8.0]
+        ],
+        "Scale": [3.0, 6.0]
+      }
+    }
+  ]
+}

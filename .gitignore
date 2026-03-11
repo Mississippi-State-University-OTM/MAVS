@@ -56,3 +56,5 @@ data/scenes/meshes/surfaces/pg_digital_twin*
 data/scenes/pg_digital_twin*
 data/scenes/meshes/surfaces/jungle/
 data/scenes/jungle_*.json
+data/scenes/meshes/vegetation/jungle/
+data/scenes/all_jungle_plants.json

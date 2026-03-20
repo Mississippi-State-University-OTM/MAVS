@@ -1,0 +1,20 @@
+{
+    "Actors": [
+        {
+            "Mesh": "vegetation/pine_tree/pine_tree.obj",
+            "Rotate Y to Z": false,
+            "Rotate X to Y": false,
+            "Rotate Y to X": false,
+            "Locked to Ground": false,
+            "Instances": [
+                {
+                    "Initial Position": [ 0.0, 10.0, 0.0 ],
+                    "Offset": [ 0.0, 0.0, 0.0 ],
+                    "Scale": [ 1.0, 1.0, 1.0 ],
+                    "Speed": 0.0,
+                    "Waypoints File": "waypoints/spa_city_outer_loop.json"
+                }
+            ]
+        }
+	]  
+}

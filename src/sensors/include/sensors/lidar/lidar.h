@@ -301,6 +301,12 @@ public:
 	PointCloud2 GetPointCloud2();
 
 	/**
+	* Returns data in PointCloud2 format, sensor frame
+	* Includes the ring, reflectance, and distance fields as well as x-y-z-intensity
+	*/
+	PointCloud2FullyAttributed GetPointCloud2FullyAttributed();
+
+	/**
 	* Returns registered data in PointCloud2 format, global frame
 	* \param pc The output point cloud
 	*/
@@ -580,6 +586,7 @@ protected:
 	std::vector<float> intensities_;
 	std::vector<glm::vec3> normals_;
 	std::vector<glm::vec3> points_;
+	std::vector<int> ring_;
 	std::vector<int> segment_points_;
 	std::vector<std::string> point_labels_;
 	std::vector<glm::vec3> point_colors_;

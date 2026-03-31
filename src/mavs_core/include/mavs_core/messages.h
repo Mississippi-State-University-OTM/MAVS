@@ -319,6 +319,36 @@ struct PointCloud{
   std::vector<ChannelFloat32> channels;
 };
 
+struct PointCloud2FullyAttributed {
+	/// Time of data acquisition, coordinate frame ID
+	Header header;
+
+	/**
+	 * 2D structure of the point cloud. If the cloud is unordered, height is 1
+	 * and width is the length of the point cloud.
+	 */
+	uint32_t height, width;
+
+	/// Describes the channels and their layout in the point blob
+	std::vector<PointField> fields;
+
+	/// Is the data bigendian?
+	bool is_bigendian;
+
+	/// Length of a point in bytes.
+	uint32_t point_step;
+
+	/// Length of a row in bytes.
+	uint32_t row_step;
+
+	/// Point data, size is row_step*height
+	std::vector<uint8_t> data;
+	//std::vector<glm::vec4> data;
+
+	/// True if there are no invalid points
+	bool is_dense;
+};
+
 struct PointCloud2{
   /// Time of data acquisition, coordinate frame ID
   Header header;
@@ -343,7 +373,7 @@ struct PointCloud2{
 
   /// Point data, size is row_step*height
   //std::vector<uint8_t> data;
-	std::vector<glm::vec4> data;
+  std::vector<glm::vec4> data;
 
   /// True if there are no invalid points
   bool is_dense;

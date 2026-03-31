@@ -221,6 +221,7 @@ void Lidar::SetScanSize(float hfov_low, float hfov_high, int num_h_steps,
 				scan_rotations_[n][2][0] = -cos(alpha)*sin(omega);
 				scan_rotations_[n][2][1] = -sin(alpha)*sin(omega);
 				scan_rotations_[n][2][2] = cos(omega);
+				ring_[n] = j;
 				beam_properties_[n].azimuth = alpha;
 				beam_properties_[n].zenith = omega;
 				beam_properties_[n].blanked = false;
@@ -256,6 +257,7 @@ void Lidar::SetScanSize(float hfov_low, float hfov_high, int num_h_steps,
 	if (mode_ == 3) npoints = 2 * npoints;
 	points_.resize(npoints);
 	normals_.resize(npoints);
+	ring_.resize(npoints);
 	point_colors_.resize(npoints);
 	segment_points_.resize(npoints);
 	point_labels_.resize(npoints);
@@ -394,6 +396,7 @@ void Lidar::ZeroData() {
 	std::fill(intensities_.begin(), intensities_.end(), 0.0f);
 	std::fill(distances_.begin(), distances_.end(), 0.0f);
 	std::fill(points_.begin(), points_.end(), zero);
+	std::fill(ring_.begin(), ring_.end(), 0);
 	std::fill(normals_.begin(), normals_.end(), zero);
 	std::fill(point_colors_.begin(), point_colors_.end(), zero);
 	std::fill(segment_points_.begin(), segment_points_.end(), 0);
@@ -1539,6 +1542,145 @@ PointCloud2 Lidar::GetPointCloud2Registered() {
 		}
 	}
 	return pc;
+}
+
+// --- Packed point struct matching your exact memory layout ---
+// Total: 36 bytes per point
+#pragma pack(push, 1)
+static struct FullyAttributedLidarPoint {
+	float    x;            // offset  0, FLOAT32
+	float    y;            // offset  4, FLOAT32
+	float    z;            // offset  8, FLOAT32
+	uint8_t  _pad[4];      // offset 12, 4-byte padding gap
+	float    intensity;    // offset 16, FLOAT32
+	uint32_t t;            // offset 20, UINT32
+	uint16_t reflectivity; // offset 24, UINT16
+	uint16_t ring;         // offset 26, UINT16
+	uint16_t ambient;      // offset 28, UINT16
+	uint8_t  _pad2[2];     // offset 30, pad to align range to 32
+	uint32_t range;        // offset 32, UINT32
+	// offset 36 — end
+};
+#pragma pack(pop)
+
+PointCloud2FullyAttributed Lidar::GetPointCloud2FullyAttributed() {
+	const uint32_t N = static_cast<uint32_t>((intensities_.size()));
+	const uint32_t POINT_STEP = static_cast<uint32_t>(sizeof(FullyAttributedLidarPoint)); // 36
+
+	PointCloud2FullyAttributed msg;
+
+	// Header
+	//msg.header.stamp_sec = stamp_sec;
+	//msg.header.stamp_nanosec = stamp_nsec;
+	//msg.header.frame_id = frame_id;
+
+	// Dimensions
+	msg.height = 1;
+	msg.width = N;
+	msg.is_bigendian = false;
+	msg.point_step = POINT_STEP;
+	msg.row_step = POINT_STEP * N;
+	msg.is_dense = true;
+
+	// Fields — mirrors your specification exactly
+	//INT8(1), UINT8(2), INT16(3), UINT16(4), INT32(5), UINT32(6), FLOAT32(7), FLOAT64(8)
+	PointField x;
+	x.name = "x";
+	x.offset = 0;
+	x.datatype = 7;
+	x.count = 1;
+	msg.fields.push_back(x);
+
+	PointField y;
+	y.name = "y";
+	y.offset = 4;
+	y.datatype = 7;
+	y.count = 1;
+	msg.fields.push_back(y);
+
+	PointField z;
+	z.name = "z";
+	z.offset = 8;
+	z.datatype = 7;
+	z.count = 1;
+	msg.fields.push_back(z);
+
+	PointField intens;
+	intens.name = "intensity";
+	intens.offset = 16;
+	intens.datatype = 7;
+	intens.count = 1;
+	msg.fields.push_back(intens);
+
+	PointField t;
+	t.name = "t";
+	t.offset = 20;
+	t.datatype = 6;
+	t.count = 1;
+	msg.fields.push_back(t);
+
+	PointField refl;
+	refl.name = "reflectivity";
+	refl.offset = 24;
+	refl.datatype = 4;
+	refl.count = 1;
+	msg.fields.push_back(refl);
+
+	PointField ring;
+	ring.name = "ring";
+	ring.offset = 26;
+	ring.datatype = 4;
+	ring.count = 1;
+	msg.fields.push_back(ring);
+
+	PointField amb;
+	amb.name = "ambient";
+	amb.offset = 28;
+	amb.datatype = 4;
+	amb.count = 1;
+	msg.fields.push_back(amb);
+
+	PointField range;
+	range.name = "range";
+	range.offset = 32;
+	range.datatype = 6;
+	range.count = 1;
+	msg.fields.push_back(range);
+
+	//msg.fields = {
+	//	{"x",            0,  7, 1},
+	//	{"y",            4,  7, 1},
+	//	{"z",            8,  7, 1},
+	//	{"intensity",    16, 7, 1},
+	//	{"t",            20, 6,  1},
+	//	{"reflectivity", 24, 4,  1},
+	//	{"ring",         26, 4,  1},
+	//	{"ambient",      28, 4,  1},
+	//	{"range",        32, 6,  1},
+	//};
+
+	// Serialize points into the byte buffer
+	msg.data.resize(static_cast<size_t>(POINT_STEP) * N, 0);
+
+	for (uint32_t i = 0; i < N; ++i) {
+		FullyAttributedLidarPoint pt{};
+		pt.x = points_[i].x;
+		pt.y = points_[i].y;
+		pt.z = points_[i].z;
+		pt.intensity = intensities_[i];
+		pt.t = 0;  //ts[i];
+		pt.reflectivity = static_cast<float_t> (intensities_[i] * distances_[i] * distances_[i]);    //reflectivities[i];
+		pt.ring = ring_[i];
+		pt.ambient = 0; // ambients[i];
+		pt.range = distances_[i]; // ranges[i];
+
+		std::memcpy(
+			msg.data.data() + static_cast<size_t>(i) * POINT_STEP,
+			&pt,
+			POINT_STEP);
+	}
+
+	return msg;
 }
 
 PointCloud2 Lidar::GetPointCloud2() {

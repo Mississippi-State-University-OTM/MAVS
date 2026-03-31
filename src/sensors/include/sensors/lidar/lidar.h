@@ -584,6 +584,7 @@ protected:
 	//Data collected by the lidar
 	std::vector<float> distances_;
 	std::vector<float> intensities_;
+	std::vector<float> point_times_;
 	std::vector<glm::vec3> normals_;
 	std::vector<glm::vec3> points_;
 	std::vector<int> ring_;

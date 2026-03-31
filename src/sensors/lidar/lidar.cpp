@@ -204,7 +204,7 @@ void Lidar::SetScanSize(float hfov_low, float hfov_high, int num_h_steps,
 	horizontal_res_ = hres;
 
 	rendered_image_.assign(pc_width_, pc_height_, 1, 3, 0.0);
-
+	float dt_nsec = 1.0E8 / num_h_steps; // assumes a rotation rate of 10 Hz
 	int n = 0;
 	if (vertical_readout_) {
 		// assumes look_to = x, look_up = z. 
@@ -222,6 +222,7 @@ void Lidar::SetScanSize(float hfov_low, float hfov_high, int num_h_steps,
 				scan_rotations_[n][2][1] = -sin(alpha)*sin(omega);
 				scan_rotations_[n][2][2] = cos(omega);
 				ring_[n] = j;
+				point_times_[n] = (i * dt_nsec);
 				beam_properties_[n].azimuth = alpha;
 				beam_properties_[n].zenith = omega;
 				beam_properties_[n].blanked = false;
@@ -258,6 +259,7 @@ void Lidar::SetScanSize(float hfov_low, float hfov_high, int num_h_steps,
 	points_.resize(npoints);
 	normals_.resize(npoints);
 	ring_.resize(npoints);
+	point_times_.resize(npoints);
 	point_colors_.resize(npoints);
 	segment_points_.resize(npoints);
 	point_labels_.resize(npoints);
@@ -397,6 +399,7 @@ void Lidar::ZeroData() {
 	std::fill(distances_.begin(), distances_.end(), 0.0f);
 	std::fill(points_.begin(), points_.end(), zero);
 	std::fill(ring_.begin(), ring_.end(), 0);
+	std::fill(point_times_.begin(), point_times_.end(), 0.0f);
 	std::fill(normals_.begin(), normals_.end(), zero);
 	std::fill(point_colors_.begin(), point_colors_.end(), zero);
 	std::fill(segment_points_.begin(), segment_points_.end(), 0);
@@ -1668,7 +1671,7 @@ PointCloud2FullyAttributed Lidar::GetPointCloud2FullyAttributed() {
 		pt.y = points_[i].y;
 		pt.z = points_[i].z;
 		pt.intensity = intensities_[i];
-		pt.t = 0;  //ts[i];
+		pt.t = static_cast<uint32_t> (point_times_[i]);  //ts[i];
 		pt.reflectivity = static_cast<float_t> (intensities_[i] * distances_[i] * distances_[i]);    //reflectivities[i];
 		pt.ring = ring_[i];
 		pt.ambient = 0; // ambients[i];

@@ -17,6 +17,7 @@ import os
 import math
 import shutil
 import numpy as np
+from datetime import datetime
 
 try:
     import pygame
@@ -250,6 +251,131 @@ def save_obj(out_path, raw_lines, original_vertices, transform_matrix):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# High-quality offscreen renderer
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Render resolution multiplier relative to the window.
+# 4 = render at 4800×3200 then downsample to 1200×800 — smooth SSAA.
+RENDER_SUPERSAMPLE = 4
+
+# Final output resolution (after downsampling).
+RENDER_OUT_W = 3840
+RENDER_OUT_H = 2560
+
+
+def _render_scene_to_fbo(viewer, fbo_w, fbo_h):
+    """
+    Render the mesh (no HUD, no overlays) into an offscreen FBO and
+    return the raw RGBA bytes.  Caller is responsible for restoring
+    viewport / matrices.
+    """
+    # ── Create FBO + colour renderbuffer + depth renderbuffer ─────────────
+    fbo = glGenFramebuffers(1)
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo)
+
+    color_rb = glGenRenderbuffers(1)
+    glBindRenderbuffer(GL_RENDERBUFFER, color_rb)
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, fbo_w, fbo_h)
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                              GL_RENDERBUFFER, color_rb)
+
+    depth_rb = glGenRenderbuffers(1)
+    glBindRenderbuffer(GL_RENDERBUFFER, depth_rb)
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, fbo_w, fbo_h)
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                              GL_RENDERBUFFER, depth_rb)
+
+    status = glCheckFramebufferStatus(GL_FRAMEBUFFER)
+    if status != GL_FRAMEBUFFER_COMPLETE:
+        glBindFramebuffer(GL_FRAMEBUFFER, 0)
+        glDeleteFramebuffers(1, [fbo])
+        glDeleteRenderbuffers(1, [color_rb])
+        glDeleteRenderbuffers(1, [depth_rb])
+        raise RuntimeError(f"FBO incomplete (status={status:#x})")
+
+    # ── Render ────────────────────────────────────────────────────────────
+    glViewport(0, 0, fbo_w, fbo_h)
+    glClearColor(0.15, 0.15, 0.18, 1.0)
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
+    # Projection — same FOV, adjusted aspect
+    glMatrixMode(GL_PROJECTION)
+    glLoadIdentity()
+    gluPerspective(40.0, fbo_w / fbo_h,
+                   viewer._cam_dist * 0.001, viewer._cam_dist * 100)
+
+    glMatrixMode(GL_MODELVIEW)
+    glLoadIdentity()
+    glLightfv(GL_LIGHT0, GL_POSITION, [0.6, -1.0, 1.5, 0.0])
+    lx, ly, lz = viewer._cam_look_at
+    gluLookAt(lx, ly + viewer._cam_dist, lz,
+              lx, ly,                   lz,
+              0,  0,                    1)
+
+    glPushMatrix()
+    viewer.transform.apply_to_gl()
+    glCallList(viewer._dl)
+    glPopMatrix()
+
+    # ── Read pixels ───────────────────────────────────────────────────────
+    glReadBuffer(GL_COLOR_ATTACHMENT0)
+    raw = glReadPixels(0, 0, fbo_w, fbo_h, GL_RGBA, GL_UNSIGNED_BYTE)
+
+    # ── Clean up ──────────────────────────────────────────────────────────
+    glBindFramebuffer(GL_FRAMEBUFFER, 0)
+    glDeleteFramebuffers(1, [fbo])
+    glDeleteRenderbuffers(1, [color_rb])
+    glDeleteRenderbuffers(1, [depth_rb])
+
+    return raw, fbo_w, fbo_h
+
+
+def save_render(viewer, out_path):
+    """
+    Render the current view at RENDER_SUPERSAMPLE × window size, downsample
+    to RENDER_OUT_W × RENDER_OUT_H with Lanczos filtering, and save as PNG.
+
+    The FBO path requires GL_EXT_framebuffer_object (universally available on
+    any GPU that can run OpenGL 2+).  Falls back gracefully with an error
+    message if it somehow fails.
+    """
+    ss   = RENDER_SUPERSAMPLE
+    hi_w = RENDER_OUT_W  * ss
+    hi_h = RENDER_OUT_H  * ss
+
+    print(f"\nRendering {hi_w}×{hi_h} → downsample to "
+          f"{RENDER_OUT_W}×{RENDER_OUT_H} …")
+
+    # Save viewport so we can restore it
+    prev_viewport = glGetIntegerv(GL_VIEWPORT)
+
+    try:
+        raw, fbo_w, fbo_h = _render_scene_to_fbo(viewer, hi_w, hi_h)
+    except Exception as e:
+        # Restore and bail
+        glViewport(*prev_viewport)
+        viewer._setup_camera()
+        print(f"  Render failed: {e}")
+        viewer._status = f"Render FAILED: {e}"
+        return
+
+    # Restore the live viewport / matrices so the viewer keeps working
+    glViewport(*prev_viewport)
+    viewer._setup_camera()
+
+    # ── Convert raw bytes → PIL image ─────────────────────────────────────
+    img = Image.frombytes("RGBA", (fbo_w, fbo_h), raw)
+    img = img.transpose(Image.FLIP_TOP_BOTTOM)          # OpenGL Y-flip
+    img = img.resize((RENDER_OUT_W, RENDER_OUT_H),
+                     Image.LANCZOS)                     # high-quality downsample
+
+    # ── Save ──────────────────────────────────────────────────────────────
+    img.save(out_path, "PNG", optimize=False, compress_level=6)
+    print(f"  Saved render → {out_path}  ({RENDER_OUT_W}×{RENDER_OUT_H} px)")
+    viewer._status = f"Render saved → {os.path.basename(out_path)}"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Bitmap text renderer  (pygame surface → OpenGL quad)
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -360,6 +486,7 @@ HELP = [
     "Click – measure   (click 2 points; measures on the X/Z plane at Y=0)",
     "M – clear measurement",
     "Ctrl+S – save transformed OBJ",
+    "F12   – save high-quality render (PNG)",
     "Q / Esc – quit",
 ]
 
@@ -700,7 +827,7 @@ class OBJViewer:
             tr.draw(f"  ▶  {self._input.prompt}  {self._input.buffer}_",
                     0, bar_y, color=(255, 255, 60))
 
-    # ── Save ─────────────────────────────────────────────────────────────────
+    # ── Save OBJ ──────────────────────────────────────────────────────────────
 
     def _save(self):
         base, ext = os.path.splitext(self.obj_path)
@@ -713,6 +840,18 @@ class OBJViewer:
             if os.path.isfile(src) and src != dst:
                 shutil.copy2(src, dst)
         self._status = f"Saved → {os.path.basename(out_path)}"
+
+    # ── Save render ───────────────────────────────────────────────────────────
+
+    def _save_render(self):
+        """Trigger a high-quality offscreen render and save to PNG."""
+        base   = os.path.splitext(self.obj_path)[0]
+        stamp  = datetime.now().strftime("%Y%m%d_%H%M%S")
+        out_path = f"{base}_render_{stamp}.png"
+        self._status = "Rendering … (may take a moment)"
+        # Force one frame to show the status before blocking
+        self._render()
+        save_render(self, out_path)
 
     # ── Input callbacks ───────────────────────────────────────────────────────
 
@@ -818,6 +957,8 @@ class OBJViewer:
                 return False
             elif k == K_s and (mods & KMOD_CTRL):
                 self._save()
+            elif k == K_F12:                    # ← NEW: high-quality render
+                self._save_render()
             elif k == K_t:
                 self._start_translate()
             elif k == K_r:

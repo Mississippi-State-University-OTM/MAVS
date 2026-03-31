@@ -1547,7 +1547,7 @@ PointCloud2 Lidar::GetPointCloud2Registered() {
 // --- Packed point struct matching your exact memory layout ---
 // Total: 36 bytes per point
 #pragma pack(push, 1)
-static struct FullyAttributedLidarPoint {
+struct FullyAttributedLidarPoint {
 	float    x;            // offset  0, FLOAT32
 	float    y;            // offset  4, FLOAT32
 	float    z;            // offset  8, FLOAT32

@@ -4568,3 +4568,41 @@ class MavsSimulation(object):
             },
             sort_keys=False,indent=2*' ') )
         f.close()
+        
+class PidController:
+    def __init__(self, kp, ki, kd, setpoint=0, output_limits=(0, 1)):
+        self.kp = kp
+        self.ki = ki
+        self.kd = kd
+        self.setpoint = setpoint
+        self.integral = 0.0
+        self.last_error = 0.0
+        self.last_time = time.time()
+        self.output_min, self.output_max = output_limits
+
+    def Update(self, measured_value):
+        current_time = time.time()
+        dt = current_time - self.last_time
+        if dt <= 0.0:
+            dt = 1e-16
+
+        error = self.setpoint - measured_value
+        derivative = (error - self.last_error) / dt
+
+        # Provisional integral update
+        new_integral = self.integral + error * dt
+
+        # Compute raw output
+        output = (self.kp * error + self.ki * new_integral + self.kd * derivative)
+
+        # Clamp output
+        clamped_output = max(self.output_min, min(self.output_max, output))
+
+        # Anti-windup: only update integral if output is not saturated
+        if clamped_output == output:
+            self.integral = new_integral
+
+        self.last_error = error
+        self.last_time = current_time
+
+        return clamped_output

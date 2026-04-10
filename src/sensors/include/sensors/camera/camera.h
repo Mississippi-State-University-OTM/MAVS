@@ -208,6 +208,9 @@ public:
 		*/
 	Image GetDisparityImage(environment::Environment *env, float baseline);
 
+	/// Get a "range image" in units of meters
+	std::vector<std::vector<float> > GetRangeImage();
+
 #ifdef USE_MPI  
 	/// Inherited class that publishes the image buffer
 	void PublishData(int root, MPI_Comm broadcast_to);

@@ -758,6 +758,19 @@ void Camera::SaveNormalsToText() {
 	fout.close();
 }
 
+std::vector<std::vector<float> > Camera::GetRangeImage() {
+	int nx = GetWidth();
+	int ny = GetHeight();
+	std::vector<std::vector<float> > rng_img = mavs::utils::Allocate2DVector(nx, ny, 0.0f);
+	int n = 0;
+	for (int i = 0; i < ny; i++) {
+		for (int j = 0; j < nx; j++) {
+			rng_img[i][j] = range_buffer_[n];
+			n++;
+		}
+	}
+	return rng_img;
+}
 
 Image Camera::GetDisparityImage(environment::Environment *env, float baseline) {
 	glm::vec3 look_to_f = focal_length_ * glm::vec3(1.0f, 0.0f, 0.0f);				// * look_to_;

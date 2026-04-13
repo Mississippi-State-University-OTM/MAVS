@@ -208,6 +208,9 @@ public:
 		*/
 	Image GetDisparityImage(environment::Environment *env, float baseline);
 
+	/// Get a false color range image, with red farther and blue closer
+	Image GetFalseColorRangeImage();
+
 	/// Get a "range image" in units of meters
 	std::vector<std::vector<float> > GetRangeImage();
 
@@ -270,6 +273,9 @@ public:
 
 	/// Display the current segmented image
 	void DisplaySegmentedImage();
+
+	/// Display the current range image
+	void DisplayRangeImage();
 
 	/**
 	* Set the type of anti-aliasing to use in
@@ -459,9 +465,12 @@ protected:
 	std::vector<std::string> label_buffer_;
 	cimg_library::CImg<float> image_;
 	cimg_library::CImg<float> segmented_image_;
+	cimg_library::CImg<float> range_image_;
 	cimg_library::CImgDisplay disp_;
 	cimg_library::CImgDisplay seg_display_;
+	cimg_library::CImgDisplay range_display_;
 	bool first_seg_display_;
+	bool first_range_display_;
 
 	bool render_shadows_;
 	bool blur_on_;

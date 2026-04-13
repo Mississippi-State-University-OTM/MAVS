@@ -70,7 +70,7 @@ int main (int argc, char *argv[]){
   mavs::environment::Environment env;
   
 #ifdef USE_EMBREE
-  if (argc<4){
+  if (argc<2){
     std::cerr<<"Usage: ./camera_example scenefile.json envfile.json"<<
       " camera_file.json \n";
 #ifdef USE_MPI
@@ -79,13 +79,15 @@ int main (int argc, char *argv[]){
     return 1;
   }
   std::string scene_file(argv[1]);
-  std::string env_file(argv[2]);
-  std::string cam_file(argv[3]);
+  //std::string env_file(argv[2]);
+  //std::string cam_file(argv[3]);
   mavs::raytracer::embree::EmbreeTracer scene;
   if (myid==0)std::cout<<"Loading "<<scene_file<<std::endl;
   scene.Load(scene_file);
-  env.Load(env_file);
-  camera.Load(cam_file);
+  camera.Initialize(512, 512, 0.0035f, 0.0035f, 0.0035f);
+  //camera.Initialize(50, 50, 0.0035f, 0.0035f, 0.0035f);
+  //env.Load(env_file);
+  //camera.Load(cam_file);
   scene.TurnOffLabeling();
   scene.TurnOffSpectral();
   scene.TurnOnSurfaceTextures();
@@ -127,14 +129,19 @@ int main (int argc, char *argv[]){
   if (myid==0)std::cout<<"Done loading "<<scene.GetNumberTrianglesLoaded()<<
 		" triangles, rendering"<<std::endl;
 	int nsteps = 25;
-  for (int i=0;i<nsteps;i++){
+	camera.FreePose();
+	camera.SetPose(position, orientation);
+	camera.Update(&env, 0.1);
+	camera.Display();
+	while (camera.DisplayOpen()){
+  //for (int i=0;i<nsteps;i++){
 #ifdef USE_MPI    
     double t1 = MPI_Wtime();
 #endif    
 #ifdef USE_OMP
 		double t1 = omp_get_wtime();
 #endif
-    camera.SetPose(position, orientation);
+    //camera.SetPose(position, orientation);
     camera.Update(&env,0.1);
     if(myid==0){
 #ifdef USE_MPI
@@ -144,8 +151,9 @@ int main (int argc, char *argv[]){
 			std::cout << "FPS = " << 1.0 / (omp_get_wtime() - t1) << std::endl;
 #endif
       camera.Display(); 
+	  camera.DisplayRangeImage();
     }
-    position.x += 1.0;
+    //position.x += 1.0;
   }
   /*
   if (myid ==0) {

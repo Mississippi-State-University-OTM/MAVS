@@ -74,6 +74,7 @@ Camera::Camera() {
 	type_ = "camera";
 	first_display_ = true;
 	first_seg_display_ = true;
+	first_range_display_ = true;
 	ncalled_ = 0;
 	pixel_sample_factor_ = 1;
 	prefix_ = "";
@@ -279,6 +280,7 @@ void Camera::Initialize(int num_horizontal_pix, int num_vertical_pix,
 	vertical_pixdim_ = focal_array_height / (1.0f*num_vertical_pix);
 	image_.assign(num_horizontal_pix_, num_vertical_pix_, 1, 3, 0.);
 	segmented_image_.assign(num_horizontal_pix_, num_vertical_pix_, 1, 3, 0.);
+	range_image_.assign(num_horizontal_pix_, num_vertical_pix_, 1, 3, 0.0);
 	half_horizontal_dim_ = 0.5f*num_horizontal_pix_;
 	half_vertical_dim_ = 0.5f*num_vertical_pix_;
 	horizontal_mag_scale_ = horizontal_pixdim_ / focal_length_;
@@ -703,6 +705,22 @@ void Camera::DisplaySegmentedImage() {
 	}
 }
 
+void Camera::DisplayRangeImage() {
+	Image tmp_img = GetFalseColorRangeImage();
+	if (first_range_display_) {
+		range_display_.assign(range_image_);
+		first_range_display_ = false;
+		range_display_._normalization = 0;
+		range_display_ = range_image_;
+		range_display_._normalization = 0;
+	}
+	else {
+		range_display_._normalization = 0;
+		range_display_ = range_image_;
+		range_display_._normalization = 0;
+	}
+}
+
 void Camera::Display() {
 	if (comm_rank_ == 0) {
 		if (first_display_) {
@@ -763,13 +781,67 @@ std::vector<std::vector<float> > Camera::GetRangeImage() {
 	int ny = GetHeight();
 	std::vector<std::vector<float> > rng_img = mavs::utils::Allocate2DVector(nx, ny, 0.0f);
 	int n = 0;
-	for (int i = 0; i < ny; i++) {
-		for (int j = 0; j < nx; j++) {
-			rng_img[i][j] = range_buffer_[n];
+	float cx = 0.5f * nx;
+	float cy = 0.5f * ny;
+	float fx = focal_length_ / horizontal_pixdim_;
+	float fy = focal_length_ / vertical_pixdim_;
+	float halfmax = 0.5f * std::numeric_limits<float>::max();
+	for (int i = 0; i < nx; i++) {
+		for (int j = 0; j < ny; j++) {
+			if (range_buffer_[n] < halfmax) {
+				float tan_x = (i - cx) / fx;
+				float tan_y = (i - cy) / fy;
+				float ctheta = 1.0f / sqrtf(1.0f + tan_x * tan_x + tan_y * tan_y);
+				float z = ctheta * range_buffer_[n];
+				rng_img[i][j] = z; 
+			}
+			else {
+				rng_img[i][j] = -1.0f;
+			}
 			n++;
 		}
 	}
 	return rng_img;
+}
+
+Image Camera::GetFalseColorRangeImage() {
+	Image image;
+	int ny = GetHeight();
+	int nx = GetWidth();
+	image.height = GetHeight();
+	image.width = GetWidth();
+	image.is_bigendian = false;
+	image.encoding = "rgb8";
+	image.data.resize(3 * image.height * image.width);
+	
+	std::vector<std::vector<float> > linear_range_buff = GetRangeImage();
+	float range_min = std::numeric_limits<float>::max();
+	float range_max = std::numeric_limits<float>::min();
+	float max_returned_range = 50.0f; //meters
+	for (int j = 0; j < ny; j++) {
+		for (int i = 0; i < nx; i++) {
+			if (linear_range_buff[i][j] < 0.0f)linear_range_buff[i][j] = max_returned_range;
+			if (linear_range_buff[i][j] > max_returned_range) linear_range_buff[i][j] = max_returned_range;
+			if (linear_range_buff[i][j] > range_max)range_max = linear_range_buff[i][j];
+			if (linear_range_buff[i][j] < range_min)range_min = linear_range_buff[i][j];
+		}
+	}
+
+	mavs::utils::Mplot plotter;
+	int nc = 0;
+	for (int j = 0; j < ny; j++) {
+		for (int i = 0; i < nx; i++) {
+			mavs::utils::Color color = plotter.MorelandColormap(linear_range_buff[i][j], range_min, range_max);
+			float c[3]; c[0] = color.r; c[1] = color.g; c[2] = color.b;
+			range_image_.draw_point(num_horizontal_pix_ - i - 1, num_vertical_pix_ - j - 1, (float*)&c);
+			for (int k = 0; k < 3; k++) {
+				image.data[nc] = (uint8_t)c[k];
+				nc++;
+			}
+		}
+	}
+	image.step = (uint32_t)(sizeof(uint8_t) * image.data.size() / image.height);
+	return image;
 }
 
 Image Camera::GetDisparityImage(environment::Environment *env, float baseline) {

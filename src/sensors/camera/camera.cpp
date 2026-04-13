@@ -830,7 +830,7 @@ Image Camera::GetFalseColorRangeImage() {
 	mavs::utils::Mplot plotter;
 	int nc = 0;
 	for (int j = 0; j < ny; j++) {
-		for (int i = 0; i < nx; i++) {
+		for (int i = nx-1; i >= 0; i++) {
 			mavs::utils::Color color = plotter.MorelandColormap(linear_range_buff[i][j], range_min, range_max);
 			float c[3]; c[0] = color.r; c[1] = color.g; c[2] = color.b;
 			range_image_.draw_point(num_horizontal_pix_ - i - 1, num_vertical_pix_ - j - 1, (float*)&c);

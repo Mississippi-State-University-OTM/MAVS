@@ -84,7 +84,7 @@ int main (int argc, char *argv[]){
   mavs::raytracer::embree::EmbreeTracer scene;
   if (myid==0)std::cout<<"Loading "<<scene_file<<std::endl;
   scene.Load(scene_file);
-  camera.Initialize(512, 512, 0.0035f, 0.0035f, 0.0035f);
+  camera.Initialize(512, 384, 0.0035f, (512.0/384.0)*0.0035f, 0.0035f);
   //camera.Initialize(50, 50, 0.0035f, 0.0035f, 0.0035f);
   //env.Load(env_file);
   //camera.Load(cam_file);

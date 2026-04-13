@@ -1,0 +1,87 @@
+{
+  "Skid Steered": true,
+
+  "Chassis": {
+    "Sprung Mass": 150.0,
+    "CG Offset": 0.21,
+    "Dimensions": [1.192, 1.688, 2.049]
+  },
+
+  "Powertrain": {
+    "Final Drive Ratio": 3.0,
+    "Max Engine Torque": 20.0,
+    "Max Engine Rpm": 300.0,
+    "Max Braking Torque": 300.0,
+    "Idle Rpm": 40.0
+  },
+
+  "Axles": [
+    {
+      "Longitudinal Offset": 0.4,
+      "Track Width": 1.22,
+      "Spring Constant": 37044.0,
+      "Damping Constant": 1058.4,
+      "Spring Length": 0.08,
+
+      "Steered": false,
+      "Powered": true,
+      "Max Steer Angle": 0.0,
+
+      "Unsprung Mass": 20.0,
+      "Tire": {
+        "Spring Constant": 20000.0,
+        "Damping Constant": 20000.0,
+        "Radius": 0.25,
+        "Width": 0.1,
+        "Section Height": 0.06,
+        "High Slip Crossover Angle": 3.0,
+        "Viscous Friction Coefficient": 0.08
+      }
+    },
+    {
+      "Longitudinal Offset": -0.4,
+      "Track Width": 1.22,
+      "Spring Constant": 37044.0,
+      "Damping Constant": 1058.4,
+      "Spring Length": 0.08,
+
+      "Steered": false,
+      "Powered": true,
+      "Max Steer Angle": 0.0,
+
+      "Unsprung Mass": 20.0,
+      "Tire": {
+        "Spring Constant": 20000.0,
+        "Damping Constant": 20000.0,
+        "Radius": 0.25,
+        "Width": 0.1,
+        "Section Height": 0.06,
+        "High Slip Crossover Angle": 3.0,
+        "Viscous Friction Coefficient": 0.08
+      }
+    }
+  ],
+
+  "Mesh": {
+    "File": "vehicles/amiga/reduction51105-chassis_colored.obj",
+    "Rotate Y to Z": false,
+    "Rotate X to Y": false,
+    "Rotate Y to X": false,
+    "Offset": [0.0, 0.0, 0.747],
+    "Scale": [0.001, 0.001, 0.001]
+  },
+
+  "Tire Mesh": {
+    "File": "vehicles/amiga/amiga_tire.obj",
+    "Rotate Y to Z": false,
+    "Rotate X to Y": false,
+    "Rotate Y to X": false,
+    "Offset": [0.0, 0.0, 0.0],
+    "Scale": [1.0, 1.0, 1.0]
+  },
+
+  "Initial Pose": {
+    "Position": [0.0, 0.0, 0.0],
+    "Orientation": [1.0, 0.0, 0.0, 0.0]
+  }
+}

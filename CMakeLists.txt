@@ -15,6 +15,10 @@ VERSION 0.1.0
 )
 cmake_policy(VERSION 3.10)
 
+if(MSVC)
+  add_compile_options(/FI chrono)
+endif()
+
 include(GNUInstallDirs)
 
 set(CMAKE_CXX_STANDARD 17)

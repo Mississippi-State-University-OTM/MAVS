@@ -2699,6 +2699,8 @@ class MavsRadar(MavsSensor):
         for i in range(0,num_targ):
             n=i*10
             target = MavsRadarTarget()
+            if (math.isnan(target_data[n])):
+                continue
             target.id = int(target_data[n])
             target.status = int(target_data[n+1])
             target.range = float(target_data[n+2])

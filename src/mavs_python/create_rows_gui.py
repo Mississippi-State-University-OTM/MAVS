@@ -18,8 +18,8 @@ mavs_data_path = mavs_python_paths.mavs_data_path
 # Default values mirrored from create_rows.py
 # ─────────────────────────────────────────────────────────────────────────────
 DEFAULTS = {
-    "SCENE_FILE":           mavs_data_path+"/scenes/empty_field.json",  #"/home/kodai/mavs_latest/data/scenes/aai_field.json",
-    "MESH_DIR":             mavs_data_path+"/scenes/meshes/vegetation/lemon_tree/", #"/home/kodai/mavs_latest/data/scenes/meshes/cotton/objective1_related/colmapOpenMVS",
+    "SCENE_FILE":           mavs_data_path+"/scenes/empty_field.json",  
+    "MESH_DIR":             mavs_data_path+"/scenes/meshes/vegetation/lemon_tree/", 
     "MESHES_ROOT":          mavs_data_path+"/scenes/meshes",
     "OUTPUT_FILE":          mavs_data_path+"/scenes/row_scene.json",
     "FIRST_ROW_START_X":    -43.457,
@@ -46,15 +46,15 @@ C = {
     "bg":          "#1A1D23",
     "panel":       "#22262E",
     "border":      "#2E3440",
-    "accent":      "#C1C6C8",      # MSU light gray
+    "accent":      "#C1C6C8", # MSU light gray
     "accent_dk":   "#3A8F68",
     "warn":        "#E07B54",
     "text":        "#E8EAF0",
     "text_dim":    "#7A8399",
     "entry_bg":    "#2A2F3A",
     "entry_fg":    "#E8EAF0",
-    "btn_run_bg":  "#5D1725", #"#4CAF82",
-    "btn_run_fg":  "#C1C6C8", #"#0F1115",
+    "btn_run_bg":  "#5D1725", # MSU Maroon
+    "btn_run_fg":  "#C1C6C8", 
     "header_bg":   "#181B20",
 }
 

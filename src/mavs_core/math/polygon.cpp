@@ -215,7 +215,8 @@ std::vector<glm::vec2> Polygon::GetRandomInsideSpacing(int count, float min_dist
 	cdf.back() = 1.0f; // Guard against floating-point drift
 
 	// 3. Place points with rejection on the distance constraint 
-	std::mt19937 rng(std::random_device{}());
+	//std::mt19937 rng(std::random_device{}());
+	std::mt19937 rng;
 	std::uniform_real_distribution<float> U01(0.0f, 1.0f);
 
 	std::vector<glm::vec2> result;

@@ -929,6 +929,10 @@ bool EmbreeTracer::Load(std::string input_file) {
 
   mavs::MavsDataPath mavs_data_path;
   
+  if (d.HasMember("VegOverrideFile")) {
+	  veg_override_json_file_ = d["VegOverrideFile"].GetString();
+  }
+
   if (d.HasMember("PathToMeshes")){
     file_path_ = d["PathToMeshes"].GetString();
   }

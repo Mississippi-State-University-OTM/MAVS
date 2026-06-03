@@ -321,6 +321,8 @@ class Raytracer {
 
 	virtual void SetActorVelocity(int actor_id, glm::vec3 velocity) { return; }
 
+	std::string GetVegetationOverrideJson() { return veg_override_json_file_; }
+
  protected:
   glm::vec3 lower_left_corner_;
   glm::vec3 upper_right_corner_;
@@ -329,6 +331,7 @@ class Raytracer {
   bool use_surface_textures_;
   std::vector<BoundingBox> bounding_boxes_;
   std::vector<glm::quat> orientations_;
+  std::string veg_override_json_file_;
 
 };
 

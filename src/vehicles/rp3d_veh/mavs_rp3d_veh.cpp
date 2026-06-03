@@ -27,6 +27,7 @@ SOFTWARE.
 #include <mavs_core/math/utils.h>
 #include <numeric>
 #include <glm/gtc/quaternion.hpp>
+#include <mavs_core/data_path.h>
 
 namespace mavs {
 namespace vehicle {
@@ -63,6 +64,7 @@ Rp3dVehicle::Rp3dVehicle() {
 	max_governed_speed_ = 100000.0f; //m/s
 
 	calculate_drag_forces_ = true;
+	using_veg_grid_ = false;
 
 	animate_tires_ = false;
 	load_visualization_ = true;
@@ -71,6 +73,7 @@ Rp3dVehicle::Rp3dVehicle() {
 	dtheta_slice_ = 5.0f * 3.14159f / 180.0f;
 	num_tire_slices_ = 3;
 	do_chassis_collisions_ = false;
+	veg_forces_initialized_ = false;
 }
 
 Rp3dVehicle::~Rp3dVehicle() {
@@ -160,6 +163,10 @@ void Rp3dVehicle::Load(std::string input_file) {
 		if (d["Chassis"].HasMember("Collisions")) {
 			do_chassis_collisions_ = d["Chassis"]["Collisions"].GetBool();
 		}
+	}
+
+	if (d.HasMember("Using Veg Forces")) {
+		using_veg_grid_ = d["Using Veg Forces"].GetBool();
 	}
 
 	if (d.HasMember("Powertrain")) {
@@ -676,11 +683,51 @@ void Rp3dVehicle::ApplyCollisionForces(environment::Environment* env) {
 	}
 }
 
+static char veg_read_buffer[65536];
+void Rp3dVehicle::InitializeVegForces(environment::Environment* env) {
+	mavs::raytracer::Raytracer* scene = env->GetScene();
+	std::string vegfile = scene->GetVegetationOverrideJson();
+	
+	mavs::MavsDataPath mavs_data_path;
+	std::string mdp = mavs_data_path.GetPath();
+	vegfile = mdp + "/" + vegfile;
+
+	if (!mavs::utils::file_exists(vegfile)) {
+		std::cerr << "ERROR: Requested vegetation input file, " << vegfile << ", which does not exist. EXITING!" << std::endl;
+		exit(97);
+	}
+
+	FILE* fp = fopen(vegfile.c_str(), "rb");
+	rapidjson::FileReadStream is(fp, veg_read_buffer, sizeof(veg_read_buffer));
+	rapidjson::Document d;
+	d.ParseStream(is);
+	fclose(fp);
+	if (!d.HasMember("veg_models")) {
+		std::cout << "WARNING: NO veg_models entry in file " << vegfile << ", not doing veg override calculation" << std::endl;
+		return;
+	}
+	std::cout << "Initializing vegetgation forces " << std::endl;
+	for (int i = 0; i < d["veg_models"].Capacity(); i++) {
+		VegData vd;
+		vd.height = d["veg_models"][i]["height"].GetFloat();
+		vd.diameter = d["veg_models"][i]["diameter"].GetFloat();
+		std::string vegmesh = d["veg_models"][i]["mesh"].GetString();
+		plant_info_[vegmesh] = vd;
+		std::cout << vegmesh << " " << vd.height << " " << vd.diameter << std::endl;
+	}
+}
+
 void Rp3dVehicle::Update(environment::Environment *env, float throttle, float steer, float brake, float dt) {
 	//Initialize the vehicle on the first time step
 	if (local_sim_time_ <= 0.0) {
 		Init(env);
 	}
+	// if using veg forces, initialize grid on the first step
+	if (using_veg_grid_ && !veg_forces_initialized_) {
+		InitializeVegForces(env);
+		veg_forces_initialized_ = true;
+	}
+
 	float dt_in = dt;
 	int nsteps = 1;
 	if (dt > max_dt_) {

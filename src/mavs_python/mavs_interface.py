@@ -225,6 +225,8 @@ mavs_lib.SetMavsRp3dVehicleReloadVis.argtypes = [ctypes.c_void_p, ctypes.c_bool]
 mavs_lib.GetRp3dVehicleTireDeflection.restype = ctypes.c_float
 mavs_lib.GetRp3dTireNormalForce.argtypes = [ctypes.c_void_p, ctypes.c_int]
 mavs_lib.GetRp3dTireNormalForce.restype = ctypes.c_float
+mavs_lib.GetRp3dVehicleVegResistance.argtypes = [ctypes.c_void_p]
+mavs_lib.GetRp3dVehicleVegResistance.restype = ctypes.c_float
 mavs_lib.GetRp3dTireSlip.argtypes = [ctypes.c_void_p, ctypes.c_int]
 mavs_lib.GetRp3dTireSlip.restype = ctypes.c_float
 mavs_lib.GetRp3dTireSteeringAngle.argtypes = [ctypes.c_void_p, ctypes.c_int]
@@ -3758,7 +3760,14 @@ class MavsRp3d(MavsVehicle):
         """
         nf = mavs_lib.GetRp3dTireNormalForce(self.vehicle,ctypes.c_int(tire_id))
         return nf
+    def GetVegetationResistance(self):
+        """ Get the current resistive force on the vehicle from vegetation, Newtons
 
+        Returns:
+        vr (float): Vegetation resistance force in newtons.
+        """
+        vr = mavs_lib.GetRp3dVehicleVegResistance(self.vehicle)
+        return vr
     def GetTireForces(self, tire_id):
         """ Get the x-y-z force acting on the tire, in world coordinates
 

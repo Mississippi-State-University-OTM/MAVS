@@ -40,6 +40,7 @@ Copyright 2018 (C) Mississippi State University
 #include <vehicles/rp3d_veh/mavs_rp3d_chassis.h>
 #include <vehicles/rp3d_veh/mavs_rp3d_suspension.h>
 #include <vehicles/rp3d_veh/mavs_powertrain.h>
+#include <vehicles/rp3d_veh/veg_force_grid.h>
 #include <reactphysics3d/reactphysics3d.h>
 #include <vehicles/vehicle.h>
 
@@ -89,8 +90,8 @@ struct rp3d_anim {
 };
 
 struct VegData {
-	float height;
-	float diameter;
+	float height = 0.0f;
+	float diameter = 0.0f;
 };
 
 class Rp3dVehicle : public Vehicle {
@@ -128,6 +129,7 @@ public:
 		vehicle_id_num_ = veh.vehicle_id_num_;
 		using_veg_grid_ = veh.using_veg_grid_;
 		veg_forces_initialized_ = veh.veg_forces_initialized_;
+		veg_force_grid_ = veh.veg_force_grid_;
 	}
 
 	/**
@@ -361,6 +363,8 @@ public:
 
 	int GetVehicleIdNum() const { return vehicle_id_num_; }
 
+	float GetCurrentVegResistance() const { return current_veg_resistance_; }
+
 	void SetChassisCollisions(bool cc) { do_chassis_collisions_ = cc; }
 
 private:
@@ -391,6 +395,7 @@ private:
 	void ApplySuspensionForces();
 	void ApplyGroundForces(environment::Environment *env, float dt, float throttle, float brake, float steering);
 	void ApplyCollisionForces(environment::Environment* env);
+	void ApplyVegForces();
 	void ApplyDragForces(float velocity);
 	bool IsSceneMeshId(int id);
 
@@ -405,7 +410,7 @@ private:
 	bool do_chassis_collisions_;
 	bool using_veg_grid_;
 	bool veg_forces_initialized_;
-
+	float current_veg_resistance_;
 	// Loaded params
 	std::vector<rp3d_axle> axles_;
 	rp3d_anim anim_;
@@ -415,7 +420,8 @@ private:
 	std::vector<int> veh_tire_mesh_ids_;
 	std::vector<int> tire_id_nums_;
 	bool load_visualization_;
-
+	VegForceGrid veg_force_grid_;
+	std::vector<PlantObstacle> plant_obstacles_;
 	float GetLongVelSlope();
 	std::vector<float> time_trace_;
 	std::vector<float> long_vel_trace_;

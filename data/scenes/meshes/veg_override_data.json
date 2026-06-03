@@ -6,6 +6,11 @@
       "diameter": 0.01
     },
     {
+      "mesh": "vegetation/oat_grass/oat_grass_5.obj",
+      "height": 0.969,
+      "diameter": 0.025
+    },
+    {
       "mesh": "vegetation/bamboo/bamboo.obj",
       "height": 4.29841,
       "diameter": 0.05

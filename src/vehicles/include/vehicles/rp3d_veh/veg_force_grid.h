@@ -19,8 +19,8 @@ public:
 	void InitGrid(glm::vec2 llc_in, float res_in, glm::vec2 dimensions) {
 		llc_ = llc_in;
 		res_ = res_in;
-		nx_ = ceil(dimensions.x / res_);
-		ny_ = ceil(dimensions.y / res_);
+		nx_ = (int)ceil(dimensions.x / res_);
+		ny_ = (int)ceil(dimensions.y / res_);
 		data_ = mavs::utils::Allocate2DVector(nx_, ny_, 0.0f);
 	}
 
@@ -39,7 +39,7 @@ public:
 		}
 	}
 
-	float GetForceAtPoint(float x, float y) {
+	/*float GetForceAtPoint(float x, float y) {
 		glm::ivec2 c = PointToGrid(x, y);
 		int i = c.x; int j = c.y;
 		if (i >= 0 && i < nx_ && j >= 0 && j < ny_) {
@@ -48,6 +48,42 @@ public:
 		else {
 			return 0.0f;
 		}
+	}*/
+
+	float GetForceAtPoint(float x, float y) {
+		glm::ivec2 c = PointToGrid(x, y);
+		int i = c.x; int j = c.y;
+		if (!(i >= 0 && i < nx_ && j >= 0 && j < ny_)) {
+			return 0.0f;
+		}
+		// Compute continuous grid coordinates relative to cell centers
+		float gx = (x - llc_.x) / res_ - 0.5f;
+		float gy = (y - llc_.y) / res_ - 0.5f;
+
+		int i0 = (int)floor(gx);
+		int j0 = (int)floor(gy);
+		int i1 = i0 + 1;
+		int j1 = j0 + 1;
+
+		// Fractional parts
+		float tx = gx - i0;
+		float ty = gy - j0;
+
+		// Clamp indices to valid grid range
+		i0 = std::clamp(i0, 0, nx_ - 1);
+		i1 = std::clamp(i1, 0, nx_ - 1);
+		j0 = std::clamp(j0, 0, ny_ - 1);
+		j1 = std::clamp(j1, 0, ny_ - 1);
+
+		// Bilinear interpolation across the four neighboring cells
+		float v00 = data_[i0][j0];
+		float v10 = data_[i1][j0];
+		float v01 = data_[i0][j1];
+		float v11 = data_[i1][j1];
+
+		float v0 = v00 + tx * (v10 - v00);  // interpolate along x, bottom
+		float v1 = v01 + tx * (v11 - v01);  // interpolate along x, top
+		return v0 + ty * (v1 - v0);          // interpolate along y
 	}
 
 private:
@@ -64,6 +100,8 @@ public:
 		radius_ = 0.001f;
 		r2_ = 0.00001f;
 		force_ = 0.0f;
+		k_ = 0.0f;
+		intersection_depth_ = 0.0f;
 		position_ = glm::vec2(0.0f, 0.0f);
 	}
 	

@@ -1,0 +1,81 @@
+{
+  "veg_models": [
+    {
+      "mesh": "vegetation/oat_grass/oat_grass_single.obj",
+      "height": 0.968388,
+      "diameter": 0.01
+    },
+    {
+      "mesh": "vegetation/bamboo/bamboo.obj",
+      "height": 4.29841,
+      "diameter": 0.05
+    },
+    {
+      "mesh": "vegetation/honey_locust/honey_locust_1.obj",
+      "height": 11.2122,
+      "diameter": 0.35
+    },
+    {
+      "mesh": "vegetation/pine_tree/pine_tree.obj",
+      "height": 16.31,
+      "diameter": 0.637
+    },
+    {
+      "mesh": "vegetation/weeping_cherry/weeping_cherry_tree.obj",
+      "height": 6.02,
+      "diameter": 0.315
+    },
+    {
+      "mesh": "vegetation/oak/oak.obj",
+      "height": 17.5,
+      "diameter": 0.791
+    },
+    {
+      "mesh": "vegetation/oak/oak_autumn.obj",
+      "height": 17.5,
+      "diameter": 0.791
+    },
+    {
+      "mesh": "vegetation/narrow_leaved_paperbark/narrow_leaved_paperbark_1.obj",
+      "height": 6.9,
+      "diameter": 0.11
+    },
+    {
+      "mesh": "vegetation/lemon_tree/Lemon_Fruit_Scaled.obj",
+      "height": 4.6,
+      "diameter": 0.42
+    },
+    {
+      "mesh": "vegetation/greater_celandine/greater_celandine_1.obj",
+      "height": 0.39,
+      "diameter": 0.002
+    },
+
+    {
+      "mesh": "vegetation/fern/fern_1.obj",
+      "height": 0.35,
+      "diameter": 0.1
+    },
+    {
+      "mesh": "vegetation/fern/fern_2.obj",
+      "height": 0.39,
+      "diameter": 0.1
+    },
+    {
+      "mesh": "vegetation/fern/fern_3.obj",
+      "height": 0.41,
+      "diameter": 0.1
+    },
+    {
+      "mesh": "vegetation/grass/grass_clump_1.obj",
+      "height": 0.29,
+      "diameter": 0.025
+    },
+    {
+      "mesh": "vegetation/grass/grass_clump_2.obj",
+      "height": 0.9,
+      "diameter": 0.025
+    }
+  ]
+
+}

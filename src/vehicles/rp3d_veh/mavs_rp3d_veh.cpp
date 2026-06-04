@@ -729,8 +729,10 @@ void Rp3dVehicle::InitializeVegForces(environment::Environment* env) {
 	vegfile = mdp + "/" + vegfile;
 
 	if (!mavs::utils::file_exists(vegfile)) {
-		std::cerr << "ERROR: Requested vegetation input file, " << vegfile << ", which does not exist. EXITING!" << std::endl;
-		exit(97);
+		std::cout << "WARNING: Requested vegetation input file, " << vegfile << ", which does not exist. Veg override forces will not be calculated." << std::endl;
+		using_veg_grid_ = false;
+		return;
+		//exit(97);
 	}
 
 	FILE* fp = fopen(vegfile.c_str(), "rb");

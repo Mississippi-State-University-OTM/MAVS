@@ -750,7 +750,7 @@ void Rp3dVehicle::InitializeVegForces(environment::Environment* env) {
 	}
 	float h = running_gear_[0].GetTire()->GetRadius() + cg_offset_;
 	float crit_diam = powf(gvw / (108.6f - 0.534f * h), 1.0f / 3.0f);
-	crit_diam *= 0.01f;
+	crit_diam *= 0.1f; // everything 1/10 of critical diameter and larger considered as single stem
 	int num_obj = env->GetNumberObjects();
 
 	// on the first loop, establish the extent of the grid

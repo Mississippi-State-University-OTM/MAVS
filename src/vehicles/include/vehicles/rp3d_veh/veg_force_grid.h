@@ -100,27 +100,29 @@ public:
 		radius_ = 0.001f;
 		r2_ = 0.00001f;
 		force_ = 0.0f;
-		k_ = 0.0f;
-		intersection_depth_ = 0.0f;
+		//k_ = 0.0f;
+		//intersection_depth_ = 0.0f;
 		position_ = glm::vec2(0.0f, 0.0f);
 	}
 	
 	void SetRadius(float r) {
 		radius_ = r;
 		r2_ = r * r;
-		k_ = 2.0f * force_ / radius_;
+		//k_ = 2.0f * force_ / radius_;
 	}
 
 	void SetForce(float f) {
 		force_ = f;
-		k_ = 2.0f * force_ / radius_;
+		//k_ = 2.0f * force_ / radius_;
 	}
 
 	void SetPosition(float x, float y) {
 		position_ = glm::vec2(x, y);
 	}
 
-	float GetForce() { return k_*intersection_depth_; }
+	float GetForce() {
+		return force_; 
+	}
 
 	bool GetVehicleIntersection(glm::mat2 veh_R, glm::vec2 veh_pos, float veh_len, float veh_width) {
 		// first rotate the circle into the rectangle frame
@@ -149,19 +151,20 @@ private:
 
 		// Check if the distance is less than or equal to the circle's radius squared
 		bool intersected = false;
-		intersection_depth_ = 0.0f;
+		//float old_intersection_depth = intersection_depth_;
+		//intersection_depth_ = 0.0f;
 		if (distance_squared <= r2_) {
 			intersected = true;
-			intersection_depth_ = radius_ - sqrtf(distance_squared);
+			//intersection_depth_ = radius_ - sqrtf(distance_squared);
 		}
 		return intersected;
 	}
 
-	float intersection_depth_;
+	//float intersection_depth_;
 	float radius_;
 	float r2_;
 	float force_;
-	float k_;
+	//float k_;
 	glm::vec2 position_;
 };
 

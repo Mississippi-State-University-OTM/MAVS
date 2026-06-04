@@ -395,12 +395,13 @@ private:
 	void ApplySuspensionForces();
 	void ApplyGroundForces(environment::Environment *env, float dt, float throttle, float brake, float steering);
 	void ApplyCollisionForces(environment::Environment* env);
-	void ApplyVegForces();
+	void ApplyVegForces(float dt);
 	void ApplyDragForces(float velocity);
 	bool IsSceneMeshId(int id);
 
 	//chassis parameters
 	float sprung_mass_;
+	float gvw_; // Newtons
 	float cg_offset_;
 	float cg_lateral_offset_;
 	float cg_long_offset_;

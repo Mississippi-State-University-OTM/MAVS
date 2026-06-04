@@ -75,6 +75,7 @@ Rp3dVehicle::Rp3dVehicle() {
 	do_chassis_collisions_ = false;
 	veg_forces_initialized_ = false;
 	current_veg_resistance_ = 0.0f;
+	gvw_ = 0.0f;
 }
 
 Rp3dVehicle::~Rp3dVehicle() {
@@ -417,7 +418,11 @@ void Rp3dVehicle::Load(std::string input_file) {
 		tire_anim_.offset = rp3d::Vector3(0.0f, 0.0f, 0.0f);
 		tire_anim_.scale = rp3d::Vector3(0.00001f, 0.00001f, 0.00001f);
 	}
-
+	gvw_ = sprung_mass_;
+	for (int i = 0; i < running_gear_.size(); i++) {
+		gvw_ += running_gear_[i].GetBody()->getMass() + running_gear_[i].GetTire()->GetMass();
+	}
+	gvw_ = 9.806f * gvw_; // convert from kg to Newtons
 }
 
 void Rp3dVehicle::AddAxle(rp3d_axle axle) {
@@ -684,7 +689,7 @@ void Rp3dVehicle::ApplyCollisionForces(environment::Environment* env) {
 	}
 }
 
-void Rp3dVehicle::ApplyVegForces() {
+void Rp3dVehicle::ApplyVegForces(float dt) {
 	glm::vec3 look_to = GetLookTo();
 	float heading = atan2f(look_to.y, look_to.x);
 	glm::mat2 veh_r; 
@@ -694,7 +699,7 @@ void Rp3dVehicle::ApplyVegForces() {
 	float py = chassis_.GetPosition().y;
 	float x = px + 0.5f*chassis_dimensions_.x;
 	float y = py + 0.5f * chassis_dimensions_.y;
-	float f_res = veg_force_grid_.GetForceAtPoint(x, y);
+	float f_res = -veg_force_grid_.GetForceAtPoint(x, y);
 	float f_obs = 0.0f;
 	for (int i = 0; i < (int)plant_obstacles_.size(); i++) {
 		glm::vec2 pos(px, py);
@@ -744,13 +749,9 @@ void Rp3dVehicle::InitializeVegForces(environment::Environment* env) {
 		std::string vegmesh = d["veg_models"][i]["mesh"].GetString();
 		plant_info_[vegmesh] = vd;
 	}
-	float gvw = sprung_mass_;
-	for (int i = 0; i < running_gear_.size(); i++) {
-		gvw += running_gear_[i].GetBody()->getMass() + running_gear_[i].GetTire()->GetMass();
-	}
-	float h = running_gear_[0].GetTire()->GetRadius() + cg_offset_;
-	float crit_diam = powf(gvw / (108.6f - 0.534f * h), 1.0f / 3.0f);
-	crit_diam *= 0.1f; // everything 1/10 of critical diameter and larger considered as single stem
+	
+	float h = 100.0f*(running_gear_[0].GetTire()->GetRadius() + cg_offset_); // in cm, gvw_ is in Newtons
+	float crit_diam = 0.01f*powf(gvw_ / (108.6f - 0.534f * h), 1.0f / 3.0f); // default formula returns cm - convert it to meters
 	int num_obj = env->GetNumberObjects();
 
 	// on the first loop, establish the extent of the grid
@@ -833,7 +834,7 @@ void Rp3dVehicle::Update(environment::Environment *env, float throttle, float st
 		ApplySuspensionForces();
 		if (calculate_drag_forces_) ApplyDragForces(longitudinal_velocity);
 		if (do_chassis_collisions_) ApplyCollisionForces(env);
-		if (using_veg_grid_) ApplyVegForces();
+		if (using_veg_grid_) ApplyVegForces(dt);
 		chassis_.GetBody()->applyForceToCenterOfMass(external_force_);
 		chassis_.GetBody()->applyForceAtWorldPosition(extern_force_at_point_, extern_force_application_point_);
 	}

@@ -1,0 +1,411 @@
+{
+  "Object Labels": "labels.json",
+  "Surface Mesh": [
+    {
+      "Mesh": "surfaces/scene_builder_plane.obj",
+      "Rotate Y to Z": false,
+      "YawPitchRoll": [
+        0,
+        0,
+        0
+      ],
+      "Position": [
+        0,
+        0,
+        0
+      ],
+      "Scale": [
+        1,
+        1,
+        1
+      ],
+      "Material": "dry"
+    }
+  ],
+  "Objects": [
+    {
+      "Mesh": "surfaces/scene_builder_plane.obj",
+      "Rotate Y to Z": false,
+      "Smooth Normals": false,
+      "Instances": [
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            0,
+            0,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "Mesh": "vegetation/pine_tree/pine_tree.obj",
+      "Rotate Y to Z": false,
+      "Instances": [
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -21.41,
+            11.37,
+            6.658539998483093e-06
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -23.084583577576367,
+            1.1241301147570937,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -23.084583577576367,
+            -13.774248961196307,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -23.084583577576367,
+            -27.231167375870122,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            19.25786341926993,
+            9.29647047053789,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            19.25786341926993,
+            -3.6446244669440873,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            18.555872575333147,
+            -18.83304273847314,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            18.555872575333147,
+            -32.289961153146955,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            11.757605897662064,
+            6.7422949755569235,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            11.716542834352417,
+            -13.774248961196307,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            11.716542834352417,
+            -27.231167375870122,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            27.246755714428566,
+            18.180873369350856,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            15.299986267089844,
+            0,
+            0
+          ],
+          "Position": [
+            18.872867184913297,
+            26.776895045136943,
+            0
+          ],
+          "Scale": [
+            1,
+            0.8973159241270908,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            3.639945502985519,
+            -32.289961153146955,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "Mesh": "vegetation/bamboo/bamboo.obj",
+      "Rotate Y to Z": false,
+      "Instances": [
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -1.656434847983296,
+            -5.033411643245195,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            4.377414345054468,
+            -5.033411643245195,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "Mesh": "vegetation/grass/grass_clump_1.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [
+          0,
+          0,
+          0
+        ],
+        "Number": 308,
+        "Polygon": [
+          [
+            -15.992503306748471,
+            -33.12307744570292
+          ],
+          [
+            8.166778477502803,
+            -33.12307744570292
+          ],
+          [
+            8.166778477502803,
+            17.81986387705704
+          ],
+          [
+            -15.992503306748471,
+            17.81986387705704
+          ]
+        ],
+        "Scale": [
+          0.85,
+          1.15
+        ]
+      },
+      "_Scene Builder Zone": {
+        "Placement": "density",
+        "Density": 0.25
+      }
+    },
+    {
+      "Mesh": "vegetation/grass/grass_clump_1.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [
+          0,
+          0,
+          0
+        ],
+        "Number": 1793,
+        "Polygon": [
+          [
+            -46.23,
+            -30.49
+          ],
+          [
+            -23.61,
+            -30.49
+          ],
+          [
+            -23.61,
+            22.36
+          ],
+          [
+            -46.23,
+            22.36
+          ]
+        ],
+        "Scale": [
+          0.85,
+          1.15
+        ]
+      },
+      "_Scene Builder Zone": {
+        "Placement": "density",
+        "Density": 1.5
+      }
+    }
+  ]
+}

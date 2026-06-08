@@ -493,11 +493,7 @@
       "Mesh": "urban/road_signs/stop_sign.obj",
       "Rotate Y to Z": true,
       "Instances": [
-        {
-          "YawPitchRoll": [ 0, 1.570796, 0 ],
-          "Position": [ 2.75, 2.75, 0.0 ],
-          "Scale": [ 0.025, 0.025, 0.025 ]
-        },
+
         {
           "YawPitchRoll": [ 0, 3.14159, 0 ],
           "Position": [ 2.75, 12.25, 0.0 ],
@@ -519,6 +515,11 @@
       "Mesh": "urban/road_signs/yield_sign.obj",
       "Rotate Y to Z": true,
       "Instances": [
+        {
+          "YawPitchRoll": [ 0, 1.570796, 0 ],
+          "Position": [ 2.75, 2.75, 0.0 ],
+          "Scale": [ 0.025, 0.025, 0.025 ]
+        },
         {
           "YawPitchRoll": [ 0, 1.570796, 0 ],
           "Position": [ 62.75, 2.75, 0.0 ],

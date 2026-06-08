@@ -1,0 +1,1050 @@
+{
+  "Object Labels": "labels.json",
+  "Layered Surface": {
+    "Mesh": "surfaces/surface.obj",
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "Trail": {
+      "Trail Width": 2.0,
+      "Track Width": 0.6,
+      "Wheelbase": 1.25,
+      "Path": "waypoints/vehicle2_pos_1.vprp"
+    },
+    "Layers": "surface_textures/road_surfaces.json"
+  },
+  "Surface Mesh": [
+    {
+      "Mesh": "surfaces/surface.obj",
+      "Rotate Y to Z": false,
+      "YawPitchRoll": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  ],
+  "Objects": [
+    {
+      "Mesh": "vegetation/pine_tree/pine_tree.obj",
+      "Rotate Y to Z": false,
+      "Scale": [
+        3.0,
+        3.0,
+        3.0
+      ],
+      "Instances": [
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -70.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -70.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -67.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -67.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -64.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -64.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -61.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -61.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -58.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -58.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -55.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -55.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -52.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -52.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -49.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -49.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -46.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -46.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -43.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -43.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -40.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -40.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -37.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -37.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -34.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -34.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -31.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -31.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -28.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -28.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -25.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -25.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -22.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -22.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -19.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -19.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -16.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -16.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -13.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -13.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -10.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -10.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -7.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -7.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -4.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -4.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -1.0,
+            -20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -1.0,
+            20.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -70.0,
+            0.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -67.0,
+            0.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -64.0,
+            0.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -61.0,
+            0.0,
+            0.0
+          ],
+          "Scale": [
+            3.0,
+            3.0,
+            3.0
+          ]
+        }
+      ]
+    },
+    {
+      "_comment": "Grass right - sparse (start X=-70) | REBALANCED",
+      "Mesh": "vegetation/grass/grass_clump_1.obj",
+      "Random": {
+        "Offset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Number": 50,
+        "Polygon": [
+          [
+            -70.0,
+            4.0
+          ],
+          [
+            -47.0,
+            4.0
+          ],
+          [
+            -47.0,
+            20.0
+          ],
+          [
+            -70.0,
+            20.0
+          ]
+        ],
+        "Scale": [
+          0.8,
+          2.0
+        ],
+        "Scale Multiplier": [
+          0.8,
+          1.5
+        ]
+      }
+    },
+    {
+      "_comment": "Grass right - medium (middle) | REBALANCED",
+      "Mesh": "vegetation/grass/grass_clump_1.obj",
+      "Random": {
+        "Offset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Number": 110,
+        "Polygon": [
+          [
+            -46.0,
+            4.0
+          ],
+          [
+            -23.0,
+            4.0
+          ],
+          [
+            -23.0,
+            20.0
+          ],
+          [
+            -46.0,
+            20.0
+          ]
+        ],
+        "Scale": [
+          1.0,
+          2.5
+        ],
+        "Scale Multiplier": [
+          0.8,
+          1.5
+        ]
+      }
+    },
+    {
+      "_comment": "Grass right - dense (closest to goal) | REBALANCED",
+      "Mesh": "vegetation/grass/grass_clump_1.obj",
+      "Random": {
+        "Offset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Number": 200,
+        "Polygon": [
+          [
+            -22.0,
+            4.0
+          ],
+          [
+            0.0,
+            4.0
+          ],
+          [
+            0.0,
+            20.0
+          ],
+          [
+            -22.0,
+            20.0
+          ]
+        ],
+        "Scale": [
+          1.2,
+          2.5
+        ],
+        "Scale Multiplier": [
+          0.8,
+          1.5
+        ]
+      }
+    }
+  ]
+}

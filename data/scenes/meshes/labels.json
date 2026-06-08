@@ -132,7 +132,8 @@
     [ "surfaces/lunar_surfaces/pgda_site1.obj", "rough trail" ],
     [ "surfaces/lunar_surfaces/pgda_site4.obj", "rough trail" ],
     [ "surfaces/pg_sw_corner/cavs_pg_textured_rotated_smoothed.obj", "rough trail" ],
-	[ "surfaces/pg_sw_corner/cavs_pg_reduced.obj", "rough trail" ],
+    [ "surfaces/pg_sw_corner/cavs_pg_reduced.obj", "rough trail" ],
+    [ "surfaces/scene_builder_plane.obj", "rough trail" ],
     [ "surfaces/valley/fixed_valley.obj", "rough trail" ],
     [ "surfaces/test_track/test_track_mesh_textured_smoothed_simplified.obj", "rough trail" ],
     [ "surfaces/utah_desert/utah_desert_scaled_translated.obj", "rough trail" ],
@@ -342,6 +343,7 @@
     [ "urban/road_signs/stop_sign_rotated.obj", "stop_sign" ],
 
     [ "urban/road_signs/STLamp.obj", "obstacle" ],
+    [ "urban/light_pole/light_pole.obj", "obstacle" ],
 
     [ "surfaces/surface.obj", "rough trail" ],
 

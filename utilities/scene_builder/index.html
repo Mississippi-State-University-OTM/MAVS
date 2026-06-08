@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MAVS Scene Builder</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>MAVS Scene Builder</h1>
+      <span id="assetCount">Loading assets</span>
+    </div>
+    <div class="scene-tools">
+      <span>Scene Tools</span>
+      <button id="addRandomZone">Add Random Zone</button>
+      <button id="addPath">Add Path</button>
+      <div id="pathList" class="path-list"></div>
+    </div>
+    <details class="vehicle-def-panel">
+      <summary>Vehicle Presets</summary>
+      <div id="vehicleDefList" class="vehicle-def-list"></div>
+    </details>
+    <input id="assetSearch" class="search" type="search" placeholder="Search /data assets">
+    <div id="assetList" class="asset-list"></div>
+  </aside>
+
+  <main class="workspace">
+    <nav class="menubar">
+      <span class="menubar-brand">MAVS Scene Builder</span>
+      <div class="menubar-sep"></div>
+      <button id="newScene">New Scene</button>
+      <div class="menubar-sep"></div>
+      <select id="scenePicker" aria-label="Saved scenes"></select>
+      <button id="loadScene">Load</button>
+      <div class="menubar-sep"></div>
+      <input id="sceneName" value="scene_builder_scene.json" aria-label="Scene filename">
+      <button id="saveScene">Save Scene</button>
+      <button id="exportSimulation">Export Sim</button>
+    </nav>
+    <canvas id="viewport"></canvas>
+    <div id="selectionMarquee" hidden></div>
+    <div id="lidarProgress" hidden></div>
+    <div class="statusbar">
+      <button id="previewScene">Preview</button>
+      <button id="runSimulation">Run Sim</button>
+      <div class="plane-control">
+        <span>Plane</span>
+        <input id="planeSize" type="number" value="100" min="10" step="10" aria-label="Ground plane size (meters)">
+        <span>m</span>
+      </div>
+      <div class="statusbar-sep"></div>
+      <span id="status"></span>
+      <div id="vizToggleBar" hidden>
+        <button id="toggleLidarViz">Lidar</button>
+        <button id="toggleCameraViz">Camera</button>
+      </div>
+    </div>
+  </main>
+
+  <aside class="inspector">
+    <h2 id="inspectorTitle">Selection</h2>
+    <div id="emptySelection" class="muted" hidden></div>
+    <div id="selectionPanel" hidden>
+      <label>Name<input id="selectedAsset" disabled></label>
+      <div class="gizmo-mode" aria-label="Gizmo mode">
+        <button id="modeTranslate" data-mode="translate" class="active" title="Translate (W)">Move</button>
+        <button id="modeRotate" data-mode="rotate" title="Rotate (E)">Rotate</button>
+        <button id="modeScale" data-mode="scale" title="Scale (R)">Scale</button>
+      </div>
+      <div class="row">
+        <label>X<input id="posX" type="number" step="0.1"></label>
+        <label>Y<input id="posY" type="number" step="0.1"></label>
+        <label>Z<input id="posZ" type="number" step="0.1"></label>
+      </div>
+      <div class="row">
+        <label>Yaw<input id="rotZ" type="number" step="1"></label>
+        <label>Pitch<input id="rotY" type="number" step="1"></label>
+        <label>Roll<input id="rotX" type="number" step="1"></label>
+      </div>
+      <div class="row">
+        <label>SX<input id="scaleX" type="number" step="0.1"></label>
+        <label>SY<input id="scaleY" type="number" step="0.1"></label>
+        <label>SZ<input id="scaleZ" type="number" step="0.1"></label>
+      </div>
+      <button id="snapToGround">Snap to Ground</button>
+      <div id="sensorListPanel" hidden>
+        <div class="path-vehicles-label">Sensors</div>
+        <div id="sensorItems"></div>
+        <button id="addSensorBtn">+ Add Sensor</button>
+      </div>
+      <div id="vehicleControllerPanel" hidden>
+        <div class="path-vehicles-label">Vehicle Controller</div>
+        <label>Controller
+          <select id="vehicleControllerMode">
+            <option value="none">No Controller</option>
+            <option value="human">Human Controller</option>
+            <option value="path">Path Following</option>
+          </select>
+        </label>
+        <div id="followPathRow" hidden>
+          <label>Path
+            <select id="followPath">
+              <option value="">None</option>
+            </select>
+          </label>
+        </div>
+        <div id="vehicleParams" hidden>
+          <div class="path-vehicles-label">Path Following Parameters</div>
+          <div class="row two">
+            <label>Speed (m/s)<input id="vehicleSpeed" type="number" min="0.1" step="0.1"></label>
+            <label>Point Spacing (m)<input id="vehiclePathSpacing" type="number" min="0.1" step="0.1"></label>
+          </div>
+          <div class="row two">
+            <label>Steering Scale<input id="vehicleSteeringScale" type="number" min="0.1" step="0.1"></label>
+            <label>Max Steer (rad)<input id="vehicleMaxSteerAngle" type="number" min="0.01" step="0.01"></label>
+          </div>
+          <div class="row two">
+            <label>Min Lookahead (m)<input id="vehicleMinLookAhead" type="number" min="0.1" step="0.1"></label>
+            <label>Max Lookahead (m)<input id="vehicleMaxLookAhead" type="number" min="0.1" step="0.1"></label>
+          </div>
+        </div>
+      </div>
+      <div id="groupInfoRow" hidden style="display:contents">
+        <button id="ungroupObjects">Ungroup</button>
+      </div>
+      <div id="createGroupRow" hidden style="display:contents">
+        <div class="row two">
+          <input id="newGroupNameInput" type="text" placeholder="Group name…">
+          <button id="groupObjects">Group Selected</button>
+        </div>
+      </div>
+      <button id="deleteObject" class="danger">Delete</button>
+    </div>
+    <div id="pathPanel" hidden>
+      <label>Name<input id="pathName" placeholder="waypoints.json"></label>
+      <div class="path-color-bar" id="pathColorBar"></div>
+      <div id="pathWaypointCount" class="muted">0 waypoints</div>
+      <button id="togglePathPlacement">Place Waypoints</button>
+      <button id="clearLastWaypoint">Remove Last</button>
+      <button id="saveWaypoints">Save Waypoints</button>
+      <div class="path-vehicles-label">Assigned Vehicles</div>
+      <div id="pathVehicleList" class="path-vehicle-list"></div>
+      <div class="path-add-vehicle-row">
+        <select id="pathAddVehicle"></select>
+        <button id="pathAddVehicleBtn" title="Assign vehicle to path">+</button>
+      </div>
+      <button id="deletePath" class="danger">Delete Path</button>
+    </div>
+    <div id="zonePanel" hidden>
+      <label>Zone Mesh<input id="zoneMesh" list="assetPaths" placeholder="scenes/meshes/vegetation/..."></label>
+      <label>Placement
+        <select id="zonePlacement">
+          <option value="density">Density (plants / m^2)</option>
+          <option value="count">Fixed number</option>
+        </select>
+      </label>
+      <div class="row two">
+        <label>Density<input id="zoneDensity" type="number" min="0" step="0.01"></label>
+        <label>Number<input id="zoneNumber" type="number" min="0" step="1"></label>
+      </div>
+      <div class="row two">
+        <label>Minimum Spacing<input id="zoneSpacing" type="number" min="0" step="0.1"></label>
+        <label>Z Offset<input id="zoneOffsetZ" type="number" step="0.1"></label>
+      </div>
+      <div class="row two">
+        <label>Minimum Scale<input id="zoneScaleMin" type="number" min="0.01" step="0.1"></label>
+        <label>Maximum Scale<input id="zoneScaleMax" type="number" min="0.01" step="0.1"></label>
+      </div>
+      <div class="row two">
+        <label>Minimum X<input id="zoneMinX" type="number" step="0.1"></label>
+        <label>Maximum X<input id="zoneMaxX" type="number" step="0.1"></label>
+      </div>
+      <div class="row two">
+        <label>Minimum Y<input id="zoneMinY" type="number" step="0.1"></label>
+        <label>Maximum Y<input id="zoneMaxY" type="number" step="0.1"></label>
+      </div>
+      <div id="zoneSummary" class="muted"></div>
+      <button id="deleteZone" class="danger">Delete Zone</button>
+    </div>
+  </aside>
+
+  <datalist id="assetPaths"></datalist>
+  <script src="core/utils.js"></script>
+  <script src="app.js" type="module"></script>
+</body>
+</html>

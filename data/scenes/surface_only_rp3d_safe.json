@@ -1,0 +1,14 @@
+{
+  "Object Labels": "labels.json",
+  "VegOverrideFile": "scenes/meshes/veg_override_data.json",
+
+  "Surface Mesh": [
+    {
+      "Mesh": "surfaces/surface.obj",
+      "Rotate Y to Z": false,
+      "YawPitchRoll": [0.0, 0.0, 0.0],
+      "Position": [0.0, 0.0, 0.0],
+      "Scale": [1.0, 1.0, 1.0]
+    }
+  ]
+}

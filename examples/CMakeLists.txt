@@ -11,7 +11,7 @@ set(EXAMPLES
     actor_example
     add_rain_to_existing
     camera_example
-	curve_fitter_example
+    curve_fitter_example
     create_random_surface
 
     forester_example_simple
@@ -19,38 +19,43 @@ set(EXAMPLES
     free_camera_example
     hmf_read_write_example
     lidar_example
-    
+
     multi_vehicle_example
-    
+
     pts_read_write_example
     radar_example
-    
+
     simulation_example
     sky_example
     slam_example
     surface_roughness_stats2D
-	
-	date_time_example
-	mavs_data_path_example
-    
+
+    date_time_example
+    mavs_data_path_example
 )
+
 if(MAVS_USE_EMBREE)
     set(EXAMPLES ${EXAMPLES}
         pathtrace_example
-		oakd_camera_example
+        oakd_camera_example
         lidar_roughness_analyzer
         rp3d_driving_example
         dynamic_surface_example
         uav_example
-		gps_example
-		helicopter_example
-		chamfer_distance_example
+        gps_example
+        helicopter_example
+        chamfer_distance_example
         drop_test_example
         imu_example
-		terrain_creator_example
+        terrain_creator_example
+	render_actor_fall_test
+        render_falling_actor_straight_line
     )
+
     if(MAVS_USE_CHRONO)
-        set(EXAMPLES ${EXAMPLES} chrono_driving_example)
+        set(EXAMPLES ${EXAMPLES}
+            chrono_driving_example
+        )
     endif()
 endif()
 
@@ -62,12 +67,7 @@ unset(EXAMPLES)
 # additional links
 target_link_libraries(create_random_surface PRIVATE TinyFileDialogs::TinyFileDialogs)
 
-
 # TODO: Figure out if this is still necessary
 if(WIN32)
-	set_target_properties(simulation_example PROPERTIES COMPILE_DEFINITIONS BUILDER_STATIC_DEFINE)					  
+    set_target_properties(simulation_example PROPERTIES COMPILE_DEFINITIONS BUILDER_STATIC_DEFINE)
 endif()
-
-
-  
-

@@ -1,0 +1,32 @@
+# Cleaned MAVS material file for light_pole.obj
+# Removed missing external texture references.
+
+newmtl Material.006
+Ns 200.0
+Ka 0.8 0.8 0.8
+Kd 0.55 0.55 0.55
+Ks 0.25 0.25 0.25
+Ke 0.0 0.0 0.0
+Ni 1.0
+d 1.0
+illum 2
+
+newmtl copper
+Ns 225.0
+Ka 0.8 0.55 0.35
+Kd 0.55 0.32 0.18
+Ks 0.35 0.25 0.18
+Ke 0.0 0.0 0.0
+Ni 1.45
+d 1.0
+illum 2
+
+newmtl metal
+Ns 225.0
+Ka 0.7 0.7 0.7
+Kd 0.45 0.45 0.45
+Ks 0.45 0.45 0.45
+Ke 0.0 0.0 0.0
+Ni 1.45
+d 1.0
+illum 2

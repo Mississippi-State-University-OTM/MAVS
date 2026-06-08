@@ -1,0 +1,220 @@
+{
+  "Object Labels": "labels.json",
+  "VegOverrideFile": "scenes/meshes/veg_override_data.json",
+  "Layered Surface": {
+    "Mesh": "surfaces/surface.obj",
+    "Trail": {
+      "Trail Width": 2.0,
+      "Track Width": 0.6,
+      "Wheelbase": 1.25,
+      "Path": "waypoints/x_axis_points.vprp"
+    },
+    "Layers": "surface_textures/road_surfaces.json"
+  },
+  "Surface Mesh": [
+    {
+      "Mesh": "surfaces/surface.obj",
+      "Rotate Y to Z": false,
+      "YawPitchRoll": [0.0, 0.0, 0.0],
+      "Position": [0.0, 0.0, 0.0],
+      "Scale": [1.0, 1.0, 1.0]
+    }
+  ],
+  "Objects": [
+    {
+      "Mesh": "vegetation/pine_tree/pine_tree.obj",
+      "Rotate Y to Z": false,
+      "Instances":  [
+        { "YawPitchRoll": [0, 0, 0], "Position": [-55.2, -5.6, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-52.7, -4.7, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-51.3, -5.9, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-48.8, -4.8, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-47.4, -5.4, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-45.1, -4.6, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-42.9, -5.7, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-40.8, -4.9, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-39.2, -5.5, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-36.8, -4.4, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-35.3, -5.8, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-32.6, -4.7, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-31.4, -5.3, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-29.1, -4.5, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-27.2, -5.9, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-24.8, -4.8, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-23.5, -5.6, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-20.9, -4.6, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-19.2, -5.5, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-16.7, -4.7, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-15.4, -5.8, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-12.9, -4.5, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-11.2, -5.4, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-8.8, -4.6, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-7.1, -5.7, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-5.3, -4.9, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-2.7, -5.3, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-1.4, -4.4, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [1.3, -5.8, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [2.8, -4.7, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [5.1, -5.5, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [7.2, -4.5, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [8.9, -5.9, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [11.1, -4.8, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [13.4, -5.4, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [14.8, -4.6, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [17.3, -5.7, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [19.1, -4.9, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [20.8, -5.5, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [23.2, -4.4, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [24.7, -5.6, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [27.3, -4.8, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [28.8, -5.3, 0.0], "Scale": [1.0, 1.0, 3.0] },
+
+        { "YawPitchRoll": [0, 0, 0], "Position": [-55.1, 5.4, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-53.0, 4.6, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-50.7, 5.8, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-49.3, 4.7, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-47.1, 5.5, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-44.7, 4.5, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-42.8, 5.9, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-41.2, 4.8, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-38.9, 5.3, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-37.3, 4.4, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-35.0, 5.6, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-33.4, 4.7, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-30.8, 5.4, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-29.2, 4.6, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-27.1, 5.9, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-24.6, 4.8, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-23.3, 5.5, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-21.1, 4.5, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-18.7, 5.7, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-17.4, 4.9, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-15.2, 5.4, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-13.1, 4.6, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-11.4, 5.8, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-8.9, 4.7, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-7.3, 5.3, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-4.8, 4.4, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-3.2, 5.6, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [-0.9, 4.8, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [1.2, 5.5, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [2.7, 4.6, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [5.4, 5.9, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [7.1, 4.7, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [9.3, 5.4, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [10.8, 4.5, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [13.5, 5.7, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [14.7, 4.8, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [17.1, 5.3, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [19.2, 4.6, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [21.4, 5.8, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [22.8, 4.9, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [25.2, 5.5, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [27.1, 4.7, 0.0], "Scale": [1.0, 1.0, 3.0] },
+        { "YawPitchRoll": [0, 0, 0], "Position": [28.9, 5.4, 0.0], "Scale": [1.0, 1.0, 3.0] }
+      ]
+    },
+
+    {
+      "Mesh": "vegetation/pine_tree/pine_tree.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [0.0, 0.0, 0.0],
+        "Number": 70,
+        "Polygon": [
+          [-60.0, -18.0],
+          [34.0, -18.0],
+          [34.0, -8.0],
+          [-60.0, -8.0]
+        ],
+        "Minimum Spacing": 2.5,
+        "Scale": [1.1, 1.8]
+      }
+    },
+
+    {
+      "Mesh": "vegetation/pine_tree/pine_tree.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [0.0, 0.0, 0.0],
+        "Number": 70,
+        "Polygon": [
+          [-60.0, 8.0],
+          [34.0, 8.0],
+          [34.0, 18.0],
+          [-60.0, 18.0]
+        ],
+        "Minimum Spacing": 2.5,
+        "Scale": [1.1, 1.8]
+      }
+    },
+
+    {
+      "Mesh": "vegetation/pine_tree/pine_tree.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [0.0, 0.0, 0.0],
+        "Number": 90,
+        "Polygon": [
+          [-65.0, -35.0],
+          [38.0, -35.0],
+          [38.0, -18.0],
+          [-65.0, -18.0]
+        ],
+        "Minimum Spacing": 2.8,
+        "Scale": [1.2, 2.0]
+      }
+    },
+
+    {
+      "Mesh": "vegetation/pine_tree/pine_tree.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [0.0, 0.0, 0.0],
+        "Number": 90,
+        "Polygon": [
+          [-65.0, 18.0],
+          [38.0, 18.0],
+          [38.0, 35.0],
+          [-65.0, 35.0]
+        ],
+        "Minimum Spacing": 2.8,
+        "Scale": [1.2, 2.0]
+      }
+    },
+
+    {
+      "Mesh": "vegetation/pine_tree/pine_tree.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [0.0, 0.0, 0.0],
+        "Number": 110,
+        "Polygon": [
+          [-70.0, -55.0],
+          [42.0, -55.0],
+          [42.0, -35.0],
+          [-70.0, -35.0]
+        ],
+        "Minimum Spacing": 3.2,
+        "Scale": [1.4, 2.3]
+      }
+    },
+
+    {
+      "Mesh": "vegetation/pine_tree/pine_tree.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [0.0, 0.0, 0.0],
+        "Number": 110,
+        "Polygon": [
+          [-70.0, 35.0],
+          [42.0, 35.0],
+          [42.0, 55.0],
+          [-70.0, 55.0]
+        ],
+        "Minimum Spacing": 3.2,
+        "Scale": [1.0, 1.0]
+      }
+    }
+  ]
+}

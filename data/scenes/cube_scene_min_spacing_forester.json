@@ -1,18 +1,16 @@
 {
   "Object Labels": "labels.json",
-
   "Layered Surface": {
     "Mesh": "surfaces/surface.obj",
     "Scale": [1.0, 1.0, 1.0],
     "Trail": {
-      "Trail Width": 2.0,
-      "Track Width": 0.6,
-      "Wheelbase": 1.25,
+      "Trail Width": 2.31,
+      "Track Width": 0.69,
+      "Wheelbase": 1.44,
       "Path": "waypoints/vehicle2_pos_1.vprp"
     },
     "Layers": "surface_textures/road_surfaces.json"
   },
-
   "Surface Mesh": [
     {
       "Mesh": "surfaces/surface.obj",
@@ -22,7 +20,6 @@
       "Scale": [1.0, 1.0, 1.0]
     }
   ],
-
   "Objects": [
     {
       "Mesh": "misc/cylinder.obj",
@@ -30,13 +27,13 @@
         "Offset": [0.0, 0.0, -0.1],
         "Number": 15,
         "Polygon": [
-          [-100, -20],
-          [-100, 20],
-          [20, 20],
-          [20, -20]
+          [-100, -23],
+          [-100,  23],
+          [ 20,  23],
+          [ 20, -23]
         ],
-        "Minimum Spacing": 5.0,
-        "Scale": [2.0, 6.0],
+        "Minimum Spacing": 5.75,
+        "Scale": [2.3, 6.9],
         "Scale Multiplier": [0.8, 1.8]
       }
     }

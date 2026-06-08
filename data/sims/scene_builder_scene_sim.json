@@ -1,0 +1,126 @@
+{
+    "Environment": {
+        "Month": 6,
+        "Year": 2025,
+        "Day": 1,
+        "Hour": 12,
+        "Minute": 0,
+        "Second": 0,
+        "Turbidity": 2.0,
+        "Local Albedo": [
+            0.1,
+            0.1,
+            0.1
+        ]
+    },
+    "Driver": {
+        "Type": "A* Planner",
+        "Input File": "C:\\mavs_work\\mavs\\data\\waypoints\\path_1.json",
+        "Number Processors": 1,
+        "Update Rate": 10.0
+    },
+    "Vehicle": {
+        "Type": "Rp3d",
+        "Initial Position": [
+            -18.664332156081485,
+            42.46198460842571,
+            0.0
+        ],
+        "Initial Orientation": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        "CG Height": -0.1,
+        "Update Rate": 100.0,
+        "Input File": "C:\\mavs_work\\mavs\\data\\vehicles\\rp3d_vehicles\\_scene_builder_runtime\\mrzr4_tires_low_gear.json",
+        "Number Processors": 1
+    },
+    "Scene": {
+        "Input File": "C:\\mavs_work\\mavs\\data\\scenes\\scene_builder_scene.json",
+        "Origin": [
+            32.3526,
+            -90.8779,
+            73.152
+        ],
+        "Time Zone": -6
+    },
+    "Display Sensors": true,
+    "Save Data": false,
+    "Sensors": [
+        {
+            "Name": "lidar_1",
+            "Type": "lidar",
+            "Model": "HDL-32E",
+            "Offset": [
+                1.48,
+                0,
+                0.28
+            ],
+            "Orientation": [
+                1,
+                0,
+                0,
+                0
+            ],
+            "Repitition Rate (Hz)": 10,
+            "Number Processors": 1
+        },
+        {
+            "Name": "camera_2",
+            "Type": "camera",
+            "Model": "XCD-V60",
+            "Offset": [
+                2.22,
+                0,
+                2.59
+            ],
+            "Orientation": [
+                1,
+                0,
+                0,
+                0
+            ],
+            "Repitition Rate (Hz)": 10,
+            "Number Processors": 1
+        },
+        {
+            "Type": "gps",
+            "Name": "gps",
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Orientation": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Repitition Rate (Hz)": 10.0,
+            "Number Processors": 1
+        },
+        {
+            "Type": "compass",
+            "Name": "compass",
+            "Input File": "compass",
+            "Offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Orientation": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Repitition Rate (Hz)": 10.0,
+            "Number Processors": 1
+        }
+    ],
+    "Max Sim Time": 300.0,
+    "Time Step": 0.01
+}

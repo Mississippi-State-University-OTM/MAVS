@@ -1,0 +1,100 @@
+{
+    "Actors": [
+        {
+        "Mesh": "urban/light_pole/light_pole.obj",
+        "Rotate Y to Z": true,
+        "Rotate X to Y": false,
+        "Rotate Y to X": false,
+        "Locked to Ground": false,
+        "Instances": [
+            {
+            "Initial Position": [-20.0, 9.5, 0.0],
+            "Offset": [0.0, 0.0, 0.0],
+            "Scale": [2.0, 2.0, 2.0],
+            "Speed": 0.0,
+            "Waypoints File": "waypoints/spa_city_outer_loop.json"
+            }
+        ]
+        },
+        {
+            "Mesh": "vehicles/mrzr4/mrzr_no_wheel_rot.obj",
+            "Rotate Y to Z": false,
+            "Rotate X to Y": false,
+            "Rotate Y to X": false,
+            "Locked to Ground": false,
+            "Instances": [
+                {
+                    "Initial Position": [ -50.0, 0.0, 1.0 ],
+                    "Offset": [ 0.0, 0.0, 0.0 ],
+                    "Scale": [ 1.0, 1.0, 1.0 ],
+                    "Speed": 0.0,
+                    "Waypoints File": "waypoints/spa_city_outer_loop.json"
+                }
+            ]
+        },
+        {
+            "Mesh": "vehicles/mrzr4/mrzr_single_wheel.obj",
+            "Rotate Y to Z": true,
+            "Rotate X to Y": false,
+            "Rotate Y to X": false,
+            "Locked to Ground": false,
+            "Instances": [
+                {
+                    "Initial Position": [ -48.65, 0.651, 0.33 ],
+                    "Offset": [ 0.0, 0.0, 0.0 ],
+                    "Scale": [ 1.0, 1.0, 1.0 ],
+                    "Speed": 0.0,
+                    "Waypoints File": "waypoints/spa_city_outer_loop.json"
+                }
+            ]
+        },
+        {
+            "Mesh": "vehicles/mrzr4/mrzr_single_wheel.obj",
+            "Rotate Y to Z": true,
+            "Rotate X to Y": false,
+            "Rotate Y to X": false,
+            "Locked to Ground": false,
+            "Instances": [
+                {
+                    "Initial Position": [ -48.65, -0.651, 0.33 ],
+                    "Offset": [ 0.0, 0.0, 0.0 ],
+                    "Scale": [ 1.0, 1.0, 1.0 ],
+                    "Speed": 0.0,
+                    "Waypoints File": "waypoints/spa_city_outer_loop.json"
+                }
+            ]
+        },
+        {
+            "Mesh": "vehicles/mrzr4/mrzr_single_wheel.obj",
+            "Rotate Y to Z": true,
+            "Rotate X to Y": false,
+            "Rotate Y to X": false,
+            "Locked to Ground": false,
+            "Instances": [
+                {
+                    "Initial Position": [ -51.37, 0.6695, 0.33 ],
+                    "Offset": [ 0.0, 0.0, 0.0 ],
+                    "Scale": [ 1.0, 1.0, 1.0 ],
+                    "Speed": 0.0,
+                    "Waypoints File": "waypoints/spa_city_outer_loop.json"
+                }
+            ]
+        },
+        {
+            "Mesh": "vehicles/mrzr4/mrzr_single_wheel.obj",
+            "Rotate Y to Z": true,
+            "Rotate X to Y": false,
+            "Rotate Y to X": false,
+            "Locked to Ground": false,
+            "Instances": [
+                {
+                    "Initial Position": [ -51.37, -0.6695, 0.33 ],
+                    "Offset": [ 0.0, 0.0, 0.0 ],
+                    "Scale": [ 1.0, 1.0, 1.0 ],
+                    "Speed": 0.0,
+                    "Waypoints File": "waypoints/spa_city_outer_loop.json"
+                }
+            ]
+        }
+    ]
+}

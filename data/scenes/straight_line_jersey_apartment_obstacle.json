@@ -1,0 +1,62 @@
+{
+  "Object Labels": "labels.json",
+  "VegOverrideFile": "scenes/meshes/veg_override_data.json",
+
+  "Layered Surface": {
+    "Mesh": "surfaces/surface.obj",
+    "Scale": [1.0, 1.0, 1.0],
+    "Trail": {
+      "Trail Width": 2.0,
+      "Track Width": 0.6,
+      "Wheelbase": 1.25,
+      "Path": "waypoints/vehicle2_pos_1.vprp"
+    },
+    "Layers": "surface_textures/road_surfaces.json"
+  },
+
+  "Surface Mesh": [
+    {
+      "Mesh": "surfaces/surface.obj",
+      "Rotate Y to Z": false,
+      "YawPitchRoll": [0.0, 0.0, 0.0],
+      "Position": [0.0, 0.0, 0.0],
+      "Scale": [1.0, 1.0, 1.0]
+    }
+  ],
+
+  "Objects": [
+    {
+      "_comment": "Barricade in front of the vehicle",
+      "Mesh": "urban/roadblock/RoadBlockade_01.obj",
+      "Random": {
+        "Offset": [0.0, 0.0, 0.0],
+        "Number": 1,
+        "Polygon": [
+          [-62.5, 0.0],
+          [-62.5, 0.0],
+          [-62.5, 0.0],
+          [-62.5, 0.0]
+        ],
+        "Scale": [1.0, 10.0],
+        "Scale Multiplier": [0.5, 2.0]
+      }
+    },
+    {
+      "_comment": "Apartment buildings on same X as barrier, offset ±13.5 on Y",
+      "Mesh": "buildings/Apartment_Building_26_obj.obj",
+      "Rotate Y to Z": false,
+      "Instances": [
+        {
+          "YawPitchRoll": [0.0, 0.0, 0.0],
+          "Position": [-62.5, -103.5, 0.0],
+          "Scale": [0.1, 0.1, 0.1]
+        },
+        {
+          "YawPitchRoll": [0.0, 0.0, 0.0],
+          "Position": [-62.5, 23.5, 0.0],
+          "Scale": [0.1, 0.1, 0.1]
+        }
+      ]
+    }
+  ]
+}

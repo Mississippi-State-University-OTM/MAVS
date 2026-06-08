@@ -1,0 +1,475 @@
+{
+  "Object Labels": "labels.json",
+  "Layered Surface": {
+    "Mesh": "surfaces/surface.obj",
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "Trail": {
+      "Trail Width": 2.3333,
+      "Track Width": 0.7,
+      "Wheelbase": 1.2,
+      "Path": "waypoints/vehicle2_pos_1.vprp"
+    },
+    "Layers": "surface_textures/road_surfaces.json"
+  },
+  "Surface Mesh": [
+    {
+      "Mesh": "surfaces/surface.obj",
+      "Rotate Y to Z": false,
+      "YawPitchRoll": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  ],
+  "Objects": [
+    {
+      "_comment": "Fallen pine tree blocking the corridor, oriented perpendicular to vehicle path",
+      "Mesh": "vegetation/pine_tree/pine_tree.obj",
+      "Rotate Y to Z": false,
+      "Instances": [
+        {
+          "YawPitchRoll": [ 1.5708, 0.0, 0.0 ],
+          "Position": [ -60.0, -8.75, 0.0 ],
+          "Scale": [ 1.0, 1.0, 1.0 ]
+        }
+      ]
+    },
+    {
+      "Mesh": "vegetation/oak/oak.obj",
+      "Rotate Y to Z": false,
+      "Scale": [
+        2.0,
+        4.0
+      ],
+      "Scale Multiplier": [
+        0.8,
+        1.5
+      ],
+      "Instances": [
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -52.8,
+            -23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -52.8,
+            23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -54.72,
+            -23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -54.72,
+            23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -56.64,
+            -23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -56.64,
+            23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -58.56,
+            -23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -58.56,
+            23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -60.48,
+            -23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -60.48,
+            23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -62.4,
+            -23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -62.4,
+            23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -64.32,
+            -23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -64.32,
+            23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -66.24,
+            -23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -66.24,
+            23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -68.16,
+            -23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -68.16,
+            23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -70.08,
+            -23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -70.08,
+            23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -72.0,
+            -23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -72.0,
+            23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -73.92,
+            -23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -73.92,
+            23.3333,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      ]
+    }
+  ]
+}

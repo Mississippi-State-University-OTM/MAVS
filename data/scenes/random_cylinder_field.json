@@ -1,5 +1,6 @@
 {
   "Object Labels": "labels.json",
+  "VegOverrideFile": "scenes/meshes/veg_override_data.json",
 
   "Layered Surface": {
     "Mesh": "surfaces/surface.obj",
@@ -30,10 +31,10 @@
         "Offset": [0.0, 0.0, -0.1],
         "Number": 15,
         "Polygon": [
-          [-100, -20],
-          [-100, 20],
-          [20, 20],
-          [20, -20]
+          [-100.0, -20.0],
+          [-100.0, 20.0],
+          [20.0, 20.0],
+          [20.0, -20.0]
         ],
         "Minimum Spacing": 5.0,
         "Scale": [2.0, 6.0],

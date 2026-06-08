@@ -1,0 +1,447 @@
+{
+  "Object Labels": "labels.json",
+  "Surface Mesh": [
+    {
+      "Mesh": "surfaces/scene_builder_plane.obj",
+      "Rotate Y to Z": false,
+      "YawPitchRoll": [
+        0,
+        0,
+        0
+      ],
+      "Position": [
+        0,
+        0,
+        0
+      ],
+      "Scale": [
+        1,
+        1,
+        1
+      ],
+      "Material": "dry"
+    }
+  ],
+  "Objects": [
+    {
+      "Mesh": "surfaces/scene_builder_plane.obj",
+      "Rotate Y to Z": false,
+      "Smooth Normals": false,
+      "Instances": [
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            0,
+            0,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "Mesh": "vegetation/pine_tree/pine_tree.obj",
+      "Rotate Y to Z": false,
+      "Instances": [
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -16.245253836595637,
+            -3.934663662519739,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -16.245253836595637,
+            -18.83304273847314,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -16.245253836595637,
+            -32.289961153146955,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -23.084583577576367,
+            14.065225052239072,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -23.084583577576367,
+            1.1241301147570937,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -23.084583577576367,
+            -13.774248961196307,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -23.084583577576367,
+            -27.231167375870122,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            18.555872575333147,
+            9.006431274962239,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            18.555872575333147,
+            -3.934663662519739,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            18.555872575333147,
+            -18.83304273847314,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            18.555872575333147,
+            -32.289961153146955,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            11.716542834352417,
+            14.065225052239072,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            11.716542834352417,
+            1.1241301147570937,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            11.716542834352417,
+            -13.774248961196307,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            11.716542834352417,
+            -27.231167375870122,
+            0
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "Mesh": "vehicles/mrzr4/mrzr_no_wheel_rot.obj",
+      "Rotate Y to Z": false,
+      "Instances": [
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            -13.54,
+            37.539941,
+            0.9761500000000001
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "Mesh": "vehicles/mrzr4/mrzr_single_wheel.obj",
+      "Rotate Y to Z": false,
+      "Instances": [
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            90
+          ],
+          "Position": [
+            -12.19375,
+            38.190941,
+            0.3283500000000001
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            90
+          ],
+          "Position": [
+            -12.19375,
+            36.888940999999996,
+            0.3283500000000001
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            90
+          ],
+          "Position": [
+            -14.913749999999999,
+            38.209441,
+            0.3283500000000001
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "YawPitchRoll": [
+            0,
+            0,
+            90
+          ],
+          "Position": [
+            -14.913749999999999,
+            36.870441,
+            0.3283500000000001
+          ],
+          "Scale": [
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "Mesh": "vegetation/grass/grass_clump_1.obj",
+      "Rotate Y to Z": false,
+      "Random": {
+        "Offset": [
+          0,
+          0,
+          0
+        ],
+        "Number": 308,
+        "Polygon": [
+          [
+            -15.992503306748471,
+            -33.12307744570292
+          ],
+          [
+            8.166778477502803,
+            -33.12307744570292
+          ],
+          [
+            8.166778477502803,
+            17.81986387705704
+          ],
+          [
+            -15.992503306748471,
+            17.81986387705704
+          ]
+        ],
+        "Scale": [
+          0.85,
+          1.15
+        ]
+      },
+      "_Scene Builder Zone": {
+        "Placement": "density",
+        "Density": 0.25
+      }
+    }
+  ]
+}

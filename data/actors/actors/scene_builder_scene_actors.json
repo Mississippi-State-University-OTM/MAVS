@@ -1,0 +1,49 @@
+{
+    "Actors": [
+        {
+            "Mesh": "",
+            "Rotate Y to Z": false,
+            "Locked to Ground": true,
+            "Instances": [
+                {
+                    "Initial Position": [
+                        -17.184332156081485,
+                        42.46198460842571,
+                        1.258
+                    ],
+                    "Offset": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Speed": 5,
+                    "Waypoints File": "waypoints/path_1.json"
+                },
+                {
+                    "Initial Position": [
+                        -16.904332156081484,
+                        42.46198460842571,
+                        0.9780000000000001
+                    ],
+                    "Offset": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Speed": 5,
+                    "Waypoints File": "waypoints/path_1.json"
+                }
+            ]
+        }
+    ]
+}

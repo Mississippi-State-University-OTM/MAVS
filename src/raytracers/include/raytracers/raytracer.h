@@ -312,6 +312,8 @@ class Raytracer {
 	/// Return the cone index of the surface in PSI
 	virtual float GetSuraceConeIndex() { return 250.0f; }
 
+	virtual int GetObjectMeshOffset() { return 0; }
+
 	void TurnOffLabeling(){ perform_labeling_ = false; }
 	void TurnOnLabeling(){ perform_labeling_ = true; }
 	void TurnOnSpectral(){use_spectral_ = true; }
@@ -321,6 +323,8 @@ class Raytracer {
 
 	virtual void SetActorVelocity(int actor_id, glm::vec3 velocity) { return; }
 
+	std::string GetVegetationOverrideJson() { return veg_override_json_file_; }
+
  protected:
   glm::vec3 lower_left_corner_;
   glm::vec3 upper_right_corner_;
@@ -329,6 +333,7 @@ class Raytracer {
   bool use_surface_textures_;
   std::vector<BoundingBox> bounding_boxes_;
   std::vector<glm::quat> orientations_;
+  std::string veg_override_json_file_;
 
 };
 

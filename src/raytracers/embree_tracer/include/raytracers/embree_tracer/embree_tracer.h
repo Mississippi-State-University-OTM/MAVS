@@ -431,6 +431,8 @@ class EmbreeTracer : public Raytracer {
 	/// Set if labels have been loaded
 	void SetLabelsLoaded(bool labels_loaded) { labels_loaded_ = labels_loaded; }
 
+	int GetObjectMeshOffset() { return num_surface_meshes_ + num_layered_surfaces_; }
+
  private:
   glm::mat3 kidentity_matrix_;
   glm::mat3 MatrixFromNormal(float nx, float ny, float nz);
@@ -487,6 +489,9 @@ class EmbreeTracer : public Raytracer {
 	unsigned int inst_id_;
 	unsigned int num_dynamic_;
 	std::vector<int> actor_nums_;
+
+	int num_surface_meshes_;
+	int num_layered_surfaces_;
 
   unsigned long int num_facets_in_scene_;
 	int num_meshes_;

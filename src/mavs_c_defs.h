@@ -255,6 +255,8 @@ EXPORT_CMD void SetMavsRp3dVehicleReloadVis(mavs::vehicle::Vehicle* car, bool re
 
 EXPORT_CMD float * GetMavsVehicleTirePositionAndOrientation(mavs::vehicle::Vehicle* veh, int tire_num);
 
+EXPORT_CMD float GetRp3dVehicleVegResistance(mavs::vehicle::Vehicle* veh);
+
 EXPORT_CMD void SetRp3dExternalForce(mavs::vehicle::Vehicle* veh, float fx, float fy, float fz);
 
 EXPORT_CMD float * GetRp3dLookTo(mavs::vehicle::Vehicle* veh);

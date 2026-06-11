@@ -1,6 +1,8 @@
 {
   "Object Labels": "labels.json",
 
+  "VegOverrideFile": "scenes/meshes/veg_override_data.json",
+
   "Layered Surface": {
     "Mesh": "surfaces/surface.obj",
     "Trail": {

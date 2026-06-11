@@ -663,6 +663,7 @@ void Lidar::TraceParticleSystems(environment::Environment *env,
 	float d_close = std::numeric_limits<float>::max();
 	environment::ParticleSystem *systems = env->GetParticleSystems();
 	float rho = 0.0;
+	glm::vec3 particle_color(0.0f, 0.0f, 0.0f);
 	for (int ps = 0; ps < (int)env->GetNumParticleSystems(); ps++) {
 		//if (systems[ps].RayIntersectsSystem(position_, direction)) {
 			environment::Particle *particles = systems[ps].GetParticles();
@@ -674,13 +675,17 @@ void Lidar::TraceParticleSystems(environment::Environment *env,
 						float t = 1.0f - s * (1.0f - particles[p].transparency_);
 						transparency *= t;
 						rho = d.x;
-						if (d.y < d_close)d_close = d.y;
+						if (d.y < d_close) {
+							d_close = d.y;
+							particle_color = particles[p].color_;
+						}
 					}
 				}
 			}
 		//}
 	}
 	float optical_depth = -log(transparency);
+	
 	bool returned_from_ps = false;
 	if (optical_depth > optical_depth_thresh_) {
 		returned_from_ps = true;
@@ -690,6 +695,7 @@ void Lidar::TraceParticleSystems(environment::Environment *env,
 		float test_point = mavs::math::rand_in_range(0.0f, 1.0f);
 		if (thresh > test_point) returned_from_ps = true;
 	}
+
 	if (returned_from_ps) {
 		psys_errors_ += fabs(distances_[i]-d_close);
 		distances_[i] = d_close;
@@ -697,6 +703,7 @@ void Lidar::TraceParticleSystems(environment::Environment *env,
 		normals_[i] = -direction;
 		intensities_[i] = (1.0f-transparency)*rho;
 		point_labels_[i] = "dust";
+		point_colors_[i] = point_colors_[i] * transparency + 255.0f*(particle_color * (1.0f - transparency));
 	}
 } // TraceParticleSystems
 

@@ -33,12 +33,14 @@ Copyright 2018 (C) Mississippi State University
 #endif
 #include <iostream>
 #include <vector>
+#include <map>
 #ifdef None
 #undef None
 #endif
 #include <vehicles/rp3d_veh/mavs_rp3d_chassis.h>
 #include <vehicles/rp3d_veh/mavs_rp3d_suspension.h>
 #include <vehicles/rp3d_veh/mavs_powertrain.h>
+#include <vehicles/rp3d_veh/veg_force_grid.h>
 #include <reactphysics3d/reactphysics3d.h>
 #include <vehicles/vehicle.h>
 
@@ -87,6 +89,11 @@ struct rp3d_anim {
 	rp3d::Vector3 scale;
 };
 
+struct VegData {
+	float height = 0.0f;
+	float diameter = 0.0f;
+};
+
 class Rp3dVehicle : public Vehicle {
 public:
 	/// Constructor
@@ -113,6 +120,16 @@ public:
 		cg_long_offset_ = veh.cg_long_offset_;
 		chassis_dimensions_ = veh.chassis_dimensions_;
 		auto_commit_animations_ = veh.auto_commit_animations_;
+		num_tire_slices_ = veh.num_tire_slices_;
+		animate_tires_ = veh.animate_tires_;
+		do_chassis_collisions_ = veh.do_chassis_collisions_;
+		dtheta_slice_ = veh.dtheta_slice_;
+		load_visualization_ = veh.load_visualization_;
+		torque_mass_scale_factor_ = veh.torque_mass_scale_factor_;
+		vehicle_id_num_ = veh.vehicle_id_num_;
+		using_veg_grid_ = veh.using_veg_grid_;
+		veg_forces_initialized_ = veh.veg_forces_initialized_;
+		veg_force_grid_ = veh.veg_force_grid_;
 	}
 
 	/**
@@ -247,19 +264,19 @@ public:
 	}
 
 	/// Get the offset of the CG above the running gear
-	float GetCgOffset() { return cg_offset_; }
+	float GetCgOffset() const { return cg_offset_; }
 
 	/// Get the offset of the CG above the running gear
-	float GetCgLateralOffset() { return cg_lateral_offset_; }
+	float GetCgLateralOffset() const { return cg_lateral_offset_; }
 
 	/// Get the longitudinal (+X) offset of the CG above the running gear
-	float GetCgLongitudinalOffset() { return cg_long_offset_; }
+	float GetCgLongitudinalOffset() const { return cg_long_offset_; }
 
 	/// Get the distance from the front axle to cg, positive to the rear of vehicle
 	float GetCgLongOffset() { return axles_[0].long_offset; }
 
 	/// Return the name of the mesh file associated with the vehicle
-	std::string GetMeshFile() { return anim_.file; }
+	std::string GetMeshFile() const { return anim_.file; }
 
 	/**
 	* Make the vehicle skid steered or not.
@@ -344,12 +361,15 @@ public:
 	/// Get a pointer to the chassis object
 	mavs_rp3d::Chassis* GetChassis() { return &chassis_; }
 
-	int GetVehicleIdNum() { return vehicle_id_num_; }
+	int GetVehicleIdNum() const { return vehicle_id_num_; }
+
+	float GetCurrentVegResistance() const { return current_veg_resistance_; }
 
 	void SetChassisCollisions(bool cc) { do_chassis_collisions_ = cc; }
 
 private:
-	
+	void InitializeVegForces(environment::Environment* env);
+
 	bool auto_commit_animations_;
 
 	//Initialization Functions
@@ -375,11 +395,13 @@ private:
 	void ApplySuspensionForces();
 	void ApplyGroundForces(environment::Environment *env, float dt, float throttle, float brake, float steering);
 	void ApplyCollisionForces(environment::Environment* env);
+	void ApplyVegForces(float dt);
 	void ApplyDragForces(float velocity);
 	bool IsSceneMeshId(int id);
 
 	//chassis parameters
 	float sprung_mass_;
+	float gvw_; // Newtons
 	float cg_offset_;
 	float cg_lateral_offset_;
 	float cg_long_offset_;
@@ -387,7 +409,9 @@ private:
 	float torque_mass_scale_factor_;
 	float chassis_drag_coeff_;
 	bool do_chassis_collisions_;
-
+	bool using_veg_grid_;
+	bool veg_forces_initialized_;
+	float current_veg_resistance_;
 	// Loaded params
 	std::vector<rp3d_axle> axles_;
 	rp3d_anim anim_;
@@ -397,7 +421,8 @@ private:
 	std::vector<int> veh_tire_mesh_ids_;
 	std::vector<int> tire_id_nums_;
 	bool load_visualization_;
-
+	VegForceGrid veg_force_grid_;
+	std::vector<PlantObstacle> plant_obstacles_;
 	float GetLongVelSlope();
 	std::vector<float> time_trace_;
 	std::vector<float> long_vel_trace_;
@@ -408,6 +433,8 @@ private:
 
 	int num_tire_slices_;
 	float dtheta_slice_;
+
+	std::map<std::string, VegData> plant_info_;
 };
 
 }// namespace vehicle

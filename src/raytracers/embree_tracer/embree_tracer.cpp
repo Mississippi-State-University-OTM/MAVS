@@ -82,6 +82,8 @@ EmbreeTracer::EmbreeTracer(){
 	surface_material_ = "dry";
 	surface_cone_index_ = 250.0f*6894.76f;
 	inst_id_ = 0;
+	num_surface_meshes_ = 0;
+	num_layered_surfaces_ = 0;
 }
 
 EmbreeTracer::~EmbreeTracer(){
@@ -493,6 +495,7 @@ void EmbreeTracer::LoadSurfaceMesh(const rapidjson::Value& d) {
 	surface_ll_.y = std::numeric_limits<float>::max();
 	surface_ur_.x = std::numeric_limits<float>::lowest();
 	surface_ur_.y = std::numeric_limits<float>::lowest();
+	num_surface_meshes_ = d.Capacity();
 	for (unsigned int surfnum = 0; surfnum < d.Capacity(); surfnum++) {
 		if (d[surfnum].HasMember("Material")) {
 			surface_material_ = d[surfnum]["Material"].GetString();
@@ -929,6 +932,10 @@ bool EmbreeTracer::Load(std::string input_file) {
 
   mavs::MavsDataPath mavs_data_path;
   
+  if (d.HasMember("VegOverrideFile")) {
+	  veg_override_json_file_ = d["VegOverrideFile"].GetString();
+  }
+
   if (d.HasMember("PathToMeshes")){
     file_path_ = d["PathToMeshes"].GetString();
   }
@@ -1195,6 +1202,7 @@ unsigned int EmbreeTracer::SetLayeredSurfaceMesh(Mesh &mesh, glm::mat3x4 aff_rot
 
 	RTCScene scene = rtcNewScene(rtc_device_);
 	mesh.CalculateNormals();
+	num_layered_surfaces_ = 1;
 	layered_surface_meshes_.push_back(mesh);
 	int mesh_id = AddMeshToScene(mesh, scene, RTC_BUILD_QUALITY_MEDIUM); // this does the commit to the local scene
 	BoundingBox bb = mesh.GetBoundingBox();

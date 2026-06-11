@@ -63,6 +63,10 @@ struct Light{
     color.x = 255.0f;
     color.y = 255.0f;
     color.z = 255.0f;
+	position.x = 0.0f;
+	position.y = 0.0f;
+	position.z = 0.0f;
+	is_active = true;
     direction.x = 0.0f;
     direction.y = 0.0f;
     direction.z = -1.0f;

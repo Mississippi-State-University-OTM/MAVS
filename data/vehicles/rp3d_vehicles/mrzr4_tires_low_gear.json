@@ -9,6 +9,8 @@
     "Collisions": false
   },
 
+  "Using Veg Forces": true,
+
   "Powertrain": {
     "Final Drive Ratio": 1.5,
     "Max Engine Torque": 420.0,

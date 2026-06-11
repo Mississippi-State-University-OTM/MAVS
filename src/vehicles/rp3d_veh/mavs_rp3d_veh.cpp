@@ -27,6 +27,7 @@ SOFTWARE.
 #include <mavs_core/math/utils.h>
 #include <numeric>
 #include <glm/gtc/quaternion.hpp>
+#include <mavs_core/data_path.h>
 
 namespace mavs {
 namespace vehicle {
@@ -63,6 +64,7 @@ Rp3dVehicle::Rp3dVehicle() {
 	max_governed_speed_ = 100000.0f; //m/s
 
 	calculate_drag_forces_ = true;
+	using_veg_grid_ = false;
 
 	animate_tires_ = false;
 	load_visualization_ = true;
@@ -71,6 +73,9 @@ Rp3dVehicle::Rp3dVehicle() {
 	dtheta_slice_ = 5.0f * 3.14159f / 180.0f;
 	num_tire_slices_ = 3;
 	do_chassis_collisions_ = false;
+	veg_forces_initialized_ = false;
+	current_veg_resistance_ = 0.0f;
+	gvw_ = 0.0f;
 }
 
 Rp3dVehicle::~Rp3dVehicle() {
@@ -160,6 +165,10 @@ void Rp3dVehicle::Load(std::string input_file) {
 		if (d["Chassis"].HasMember("Collisions")) {
 			do_chassis_collisions_ = d["Chassis"]["Collisions"].GetBool();
 		}
+	}
+
+	if (d.HasMember("Using Veg Forces")) {
+		using_veg_grid_ = d["Using Veg Forces"].GetBool();
 	}
 
 	if (d.HasMember("Powertrain")) {
@@ -409,7 +418,11 @@ void Rp3dVehicle::Load(std::string input_file) {
 		tire_anim_.offset = rp3d::Vector3(0.0f, 0.0f, 0.0f);
 		tire_anim_.scale = rp3d::Vector3(0.00001f, 0.00001f, 0.00001f);
 	}
-
+	gvw_ = sprung_mass_;
+	for (int i = 0; i < running_gear_.size(); i++) {
+		gvw_ += running_gear_[i].GetBody()->getMass() + running_gear_[i].GetTire()->GetMass();
+	}
+	gvw_ = 9.806f * gvw_; // convert from kg to Newtons
 }
 
 void Rp3dVehicle::AddAxle(rp3d_axle axle) {
@@ -676,11 +689,136 @@ void Rp3dVehicle::ApplyCollisionForces(environment::Environment* env) {
 	}
 }
 
+void Rp3dVehicle::ApplyVegForces(float dt) {
+	glm::vec3 look_to = GetLookTo();
+	float heading = atan2f(look_to.y, look_to.x);
+	glm::mat2 veh_r; 
+	veh_r[0][0] = cosf(heading); veh_r[0][1] = sinf(heading);
+	veh_r[1][0] = -sinf(heading); veh_r[1][1] = cosf(heading);
+	float px = chassis_.GetPosition().x;
+	float py = chassis_.GetPosition().y;
+	float x = px + 0.5f*chassis_dimensions_.x;
+	float y = py + 0.5f * chassis_dimensions_.y;
+	float f_res = -veg_force_grid_.GetForceAtPoint(x, y);
+	float f_obs = 0.0f;
+	for (int i = 0; i < (int)plant_obstacles_.size(); i++) {
+		glm::vec2 pos(px, py);
+		if (plant_obstacles_[i].GetVehicleIntersection(veh_r, pos, chassis_dimensions_.x, chassis_dimensions_.y)) {
+			f_obs = f_obs - plant_obstacles_[i].GetForce();
+		}
+	}
+	float fmag = f_obs + f_res;
+	rp3d::Vector3 force(fmag * look_to.x, fmag * look_to.y, fmag * look_to.z);
+	rp3d::Vector3 point(x, y, chassis_.GetPosition().z);
+	chassis_.GetBody()->applyForceAtWorldPosition(force, point);
+	current_veg_resistance_ = fmag;
+}
+
+static float OverrideForce(float d, float h) {
+	float f = (2.0f - 1.0f / (1.0f + expf(-5.0f * (d - 2.5f)))) * (10.86f - 0.0534f * h) * (d * d * d);
+	return f;
+}
+
+static char veg_read_buffer[65536];
+void Rp3dVehicle::InitializeVegForces(environment::Environment* env) {
+	mavs::raytracer::Raytracer* scene = env->GetScene();
+	std::string vegfile = scene->GetVegetationOverrideJson();
+	
+	mavs::MavsDataPath mavs_data_path;
+	std::string mdp = mavs_data_path.GetPath();
+	vegfile = mdp + "/" + vegfile;
+
+	if (!mavs::utils::file_exists(vegfile)) {
+		std::cout << "WARNING: Requested vegetation input file, " << vegfile << ", which does not exist. Veg override forces will not be calculated." << std::endl;
+		using_veg_grid_ = false;
+		return;
+		//exit(97);
+	}
+
+	FILE* fp = fopen(vegfile.c_str(), "rb");
+	rapidjson::FileReadStream is(fp, veg_read_buffer, sizeof(veg_read_buffer));
+	rapidjson::Document d;
+	d.ParseStream(is);
+	fclose(fp);
+	if (!d.HasMember("veg_models")) {
+		std::cout << "WARNING: NO veg_models entry in file " << vegfile << ", not doing veg override calculation" << std::endl;
+		return;
+	}
+	for (int i = 0; i < d["veg_models"].Capacity(); i++) {
+		VegData vd;
+		vd.height = d["veg_models"][i]["height"].GetFloat();
+		vd.diameter = d["veg_models"][i]["diameter"].GetFloat();
+		std::string vegmesh = d["veg_models"][i]["mesh"].GetString();
+		plant_info_[vegmesh] = vd;
+	}
+	
+	float h = 100.0f*(running_gear_[0].GetTire()->GetRadius() + cg_offset_); // in cm, gvw_ is in Newtons
+	float crit_diam = 0.01f*powf(gvw_ / (108.6f - 0.534f * h), 1.0f / 3.0f); // default formula returns cm - convert it to meters
+	int num_obj = env->GetNumberObjects();
+
+	// on the first loop, establish the extent of the grid
+	float xlo = std::numeric_limits<float>::max();
+	float xhi = std::numeric_limits<float>::lowest();
+	float ylo = xlo;
+	float yhi = xhi;
+	int obj_offset = scene->GetObjectMeshOffset(); 
+	for (int i = 0; i < num_obj; i++) {
+		std::string objname = env->GetObjectName(i);
+		if (plant_info_.count(objname) > 0) {
+			mavs::raytracer::BoundingBox bb = env->GetObjectBoundingBox(i+obj_offset);
+			glm::vec2 ll = bb.GetLowerLeft();
+			glm::vec2 ur = bb.GetUpperRight();
+			if (ll.x < xlo)xlo = ll.x;
+			if (ll.y < ylo)ylo = ll.y;
+			if (ur.x > xhi)xhi = ur.x;
+			if (ur.y > yhi)yhi = ur.y;
+		}
+	}
+	float xdim = xhi - xlo;
+	float ydim = yhi - ylo;
+	glm::vec2 llc(xlo, ylo);
+	glm::vec2 dimensions(xhi - xlo, yhi - ylo);
+	
+	// with dimensions established, initialize the grid
+	veg_force_grid_.InitGrid(llc, chassis_dimensions_.y, dimensions);
+	// now loop through the plants again and add the forces
+	for (int i = 0; i < num_obj; i++) {
+		std::string objname = env->GetObjectName(i);
+		if (plant_info_.count(objname) > 0) {
+			mavs::raytracer::BoundingBox bb = env->GetObjectBoundingBox(i + obj_offset);
+
+			float x = 0.5f * (bb.GetUpperRight().x + bb.GetLowerLeft().x);
+			float y = 0.5f * (bb.GetUpperRight().y + bb.GetLowerLeft().y);
+				
+			float scale = (bb.GetUpperRight().z + bb.GetLowerLeft().z) / plant_info_[objname].height;
+			float diameter = scale * plant_info_[objname].diameter;
+			if (diameter < crit_diam) {
+				float fovr = OverrideForce(100.0 * diameter, h);
+				veg_force_grid_.AddForceAtPoint(x, y, fovr);
+			}
+			else {
+
+				PlantObstacle obs; 
+				obs.SetRadius(0.5f * diameter);
+				obs.SetForce(OverrideForce(100.0f * diameter, h));
+				obs.SetPosition(x, y);
+				plant_obstacles_.push_back(obs);
+			}
+		}
+	}
+}
+
 void Rp3dVehicle::Update(environment::Environment *env, float throttle, float steer, float brake, float dt) {
 	//Initialize the vehicle on the first time step
 	if (local_sim_time_ <= 0.0) {
 		Init(env);
 	}
+	// if using veg forces, initialize grid on the first step
+	if (using_veg_grid_ && !veg_forces_initialized_) {
+		InitializeVegForces(env);
+		veg_forces_initialized_ = true;
+	}
+
 	float dt_in = dt;
 	int nsteps = 1;
 	if (dt > max_dt_) {
@@ -698,6 +836,7 @@ void Rp3dVehicle::Update(environment::Environment *env, float throttle, float st
 		ApplySuspensionForces();
 		if (calculate_drag_forces_) ApplyDragForces(longitudinal_velocity);
 		if (do_chassis_collisions_) ApplyCollisionForces(env);
+		if (using_veg_grid_) ApplyVegForces(dt);
 		chassis_.GetBody()->applyForceToCenterOfMass(external_force_);
 		chassis_.GetBody()->applyForceAtWorldPosition(extern_force_at_point_, extern_force_application_point_);
 	}

@@ -41,6 +41,7 @@
 import ctypes
 from genericpath import samefile
 import math
+from re import S
 import sys
 import json
 import time
@@ -500,9 +501,9 @@ mavs_lib.CreateSceneFromRandom.restype = ctypes.c_void_p
 mavs_lib.CreateSceneFromRandom.argtypes = [ctypes.c_float, ctypes.c_float,
                                            ctypes.c_float, ctypes.c_float,
                                            ctypes.c_float, ctypes.c_float,
-                                           ctypes.c_float, ctypes.c_float,
+                                           ctypes.c_float, ctypes.c_float, 
                                            ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p,
-                                           ctypes.c_float,  
+                                           ctypes.c_float, ctypes.c_int,
                                            ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p]
 mavs_lib.CreateGapScene.restype = ctypes.c_void_p
 mavs_lib.CreateGapScene.argtypes = [ctypes.c_float, ctypes.c_float,
@@ -2952,6 +2953,8 @@ class MavsRandomScene(MavsScene):
         self.pothole_locations = mavs_lib.NewPointList2D()
         ## type of surface roughness - can be "variable", "gaussian", or "perlin"
         self.surface_roughness_type = "perlin"
+        ## length of growth simulation in years
+        self.sim_length_years = 15
     def __del__(self):
         """MavsRandomScene destructor."""
         mavs_lib.DeleteEmbreeScene(self.scene)
@@ -3001,6 +3004,7 @@ class MavsRandomScene(MavsScene):
                                                     PyStringToChar(self.surface_roughness_type),
                                                     PyStringToChar(self.basename),
                                                     ctypes.c_float(self.plant_density),
+                                                    ctypes.c_int(self.sim_length_years),
                                                     self.pothole_locations,
                                                     PyStringToChar(self.eco_file),
                                                     PyStringToChar(self.output_directory))

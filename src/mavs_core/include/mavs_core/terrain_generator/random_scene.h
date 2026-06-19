@@ -57,6 +57,7 @@ struct RandomSceneInputs {
 		terrain_length = 20.0f;
 		lo_mag = 1.0f;
 		hi_mag = 0.01f; 
+		sim_length_years = 15;
 		mesh_resolution = 0.25f;
 		trail_width = 0.0f;
 		track_width = 0.0f;
@@ -77,6 +78,7 @@ struct RandomSceneInputs {
 	float trail_width;
 	float track_width;
 	float wheelbase;
+	int sim_length_years;
 	std::string path_type;
 	std::string eco_file;
 	std::string output_directory;

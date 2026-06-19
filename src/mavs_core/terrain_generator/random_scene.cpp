@@ -311,7 +311,7 @@ void RandomScene::Create() {
 
 	ecosystem.SetTrail(trail);
 	ecosystem.SetGrowthFactor(inputs_.plant_density);
-
+	ecosystem.SetSimLength(inputs_.sim_length_years);
 	//simulate plant growth
 	ecosystem.Simulate();
 	// Save resulting scene to a file

@@ -1,0 +1,89 @@
+{
+	"Texture Inputs": "scenes/meshes/surface_textures/meadow_surfaces.json",
+
+	"Surface Mesh": "scenes/meshes/surfaces/surface.obj",
+	
+	"Anvel Replay File": "waypoints/vehicle2_pos_1.vprp",
+	
+	"Trail Properties": {
+		"Tire Width": 0.6,
+		"Wheelbase": 2.5,
+		"Ground Clearance": 0.0001,
+		"Trail Width": 4.5
+	},
+
+  "Species": [
+    {
+      "Mesh File": "vegetation/oat_grass/oat_grass_single.obj",
+      "Species Name": "Oat Grass",
+      "Num New Per Area": 2.0,
+      "Growth Rate": 1.0,
+      "Max Height": 1.5,
+      "Min Height": 0.25,
+      "Mesh Height": 0.968,
+      "Height To Diameter Ratio": 0.05,
+      "Max Age": 15,
+      "Rotate Mesh": false
+    },
+    {
+      "Mesh File": "vegetation/fern/fern_1.obj",
+      "Species Name": "Fern 1",
+      "Num New Per Area": 0.25,
+      "Growth Rate": 1.0,
+      "Max Height": 0.45,
+      "Min Height": 0.1,
+      "Mesh Height": 0.353,
+      "Height To Diameter Ratio": 2.0,
+      "Max Age": 15,
+      "Rotate Mesh": false
+    },
+    {
+      "Mesh File": "vegetation/greater_celandine/greater_celandine_1.obj",
+      "Species Name": "Greater Celandine",
+      "Num New Per Area": 3.0,
+      "Growth Rate": 1.0,
+      "Max Height": 0.45,
+      "Min Height": 0.1,
+      "Mesh Height": 0.39,
+      "Height To Diameter Ratio": 1.0,
+      "Max Age": 15,
+      "Rotate Mesh": false
+    },
+    {
+      "Mesh File": "vegetation/oak/oak.obj",
+      "Species Name": "Oak Tree",
+      "Num New Per Area": 0.015,
+      "Growth Rate": 0.1,
+      "Max Height": 20.0,
+      "Min Height": 5.0,
+      "Mesh Height": 17.54,
+      "Height To Diameter Ratio": 0.05,
+      "Max Age": 50,
+      "Rotate Mesh": false
+    },
+    {
+      "Mesh File": "vegetation/pine_tree/pine_tree.obj",
+      "Species Name": "Pine Tree",
+      "Num New Per Area": 0.035,
+      "Growth Rate": 0.1,
+      "Max Height": 18.0,
+      "Min Height": 4.0,
+      "Mesh Height": 16.31,
+      "Height To Diameter Ratio": 0.05,
+      "Max Age": 50,
+      "Rotate Mesh": false
+    },
+    {
+      "Mesh File": "vegetation/honey_locust/honey_locust_1.obj",
+      "Species Name": "Honey Locust",
+      "Num New Per Area": 0.025,
+      "Growth Rate": 0.1,
+      "Max Height": 13.0,
+      "Min Height": 3.5,
+      "Mesh Height": 11.2122,
+      "Height To Diameter Ratio": 0.05,
+      "Max Age": 50,
+      "Rotate Mesh": false
+    }
+  ]
+}

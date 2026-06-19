@@ -140,7 +140,7 @@ extern "C" {
 	}
 
 	EXPORT_CMD mavs::raytracer::embree::EmbreeTracer* CreateSceneFromRandom(float w, float l, float lm, float hm,
-		float mr, float tw, float wb, float track, char* path_type, char * roughness_type, char* basename, float plant_density,
+		float mr, float tw, float wb, float track, char* path_type, char * roughness_type, char* basename, float plant_density, int sim_length_years, 
 		 std::vector<glm::vec4> * potholes, char* ecofile, char* output_dir) {
 		mavs::terraingen::RandomSceneInputs input;
 		input.terrain_width = w;
@@ -150,6 +150,7 @@ extern "C" {
 		input.mesh_resolution = mr;
 		input.trail_width = tw;
 		input.wheelbase = wb;
+		input.sim_length_years = sim_length_years;
 		input.track_width = track;
 		input.path_type = std::string(path_type);
 		input.basename = std::string(basename);

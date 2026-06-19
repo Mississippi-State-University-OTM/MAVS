@@ -553,8 +553,9 @@ void Ecosystem::SaveToMavsScene(std::string outfile) {
 					writer.StartObject();
 					writer.Key("YawPitchRoll");
 					writer.StartArray();
-					writer.Double(0.0);
+					//writer.Double(0.0);
 					writer.Double((double)theta);
+					writer.Double(0.0); // ctg changed for the fixed rotation angles
 					writer.Double(0.0);
 					writer.EndArray();
 					writer.Key("Position");

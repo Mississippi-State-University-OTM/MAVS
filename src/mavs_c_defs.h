@@ -78,7 +78,7 @@ EXPORT_CMD mavs::raytracer::embree::EmbreeTracer* CreateGapScene(float w, float 
 	float mr, char* basename, float plant_density, char* ecofile, char* output_dir, float gap_width, float gap_depth, float gap_angle_radians);
 
 EXPORT_CMD mavs::raytracer::embree::EmbreeTracer* CreateSceneFromRandom(float w, float l, float lm, float hm,
-	float mr, float tw, float wb, float track, char* path_type, char * roughness_type, char* basename, float plant_density,
+	float mr, float tw, float wb, float track, char* path_type, char * roughness_type, char* basename, float plant_density, int sim_length_years, 
 	std::vector<glm::vec4> * potholes, char* ecofile, char* output_dir);
 
 EXPORT_CMD void SetEnvironmentScene(mavs::environment::Environment* env, mavs::raytracer::embree::EmbreeTracer* scene);

@@ -9,7 +9,7 @@
     "Collisions": false
   },
 
-  "Using Veg Forces": true,
+  "Using Veg Forces": false,
 
   "Powertrain": {
     "Final Drive Ratio": 1.5,

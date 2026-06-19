@@ -1,6 +1,5 @@
 {
   "Object Labels": "labels.json",
-
   "Layered Surface": {
     "Mesh": "surfaces/surface.obj",
     "Trail": {
@@ -13,7 +12,6 @@
     },
     "Layers": "surface_textures/meadow_surfaces.json"
   },
-
   "Surface Mesh": [
     {
       "Mesh": "surfaces/surface.obj",
@@ -35,16 +33,27 @@
       ]
     }
   ],
-
   "Objects": [
     {
       "Mesh": "misc/cube.obj",
       "Rotate Y to Z": false,
       "Instances": [
         {
-          "YawPitchRoll": [ 0, 0, 0 ],
-          "Position": [ 0.0, 0.0, 0.0 ],
-          "Scale": [ 0.25, 0.25, 10.0 ]
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "Scale": [
+            0.25,
+            0.25,
+            10.0
+          ]
         }
       ]
     }

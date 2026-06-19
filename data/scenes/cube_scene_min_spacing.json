@@ -1,9 +1,12 @@
 {
   "Object Labels": "labels.json",
-
   "Layered Surface": {
     "Mesh": "surfaces/surface.obj",
-    "Scale": [1.0, 1.0, 1.0],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ],
     "Trail": {
       "Trail Width": 2.0,
       "Track Width": 0.6,
@@ -12,7 +15,6 @@
     },
     "Layers": "surface_textures/road_surfaces.json"
   },
-
   "Surface Mesh": [
     {
       "Mesh": "surfaces/surface.obj",
@@ -34,21 +36,39 @@
       ]
     }
   ],
-
   "Objects": [
     {
       "Mesh": "misc/cube.obj",
       "Random": {
-        "Offset": [ 0.0, 0.0, -0.1 ],
+        "Offset": [
+          0.0,
+          0.0,
+          -0.1
+        ],
         "Number": 20,
         "Polygon": [
-          [ -5, -50 ],
-          [ -5, 50 ],
-          [ 5, 50 ],
-          [ 5, -50 ]
+          [
+            -5,
+            -50
+          ],
+          [
+            -5,
+            50
+          ],
+          [
+            5,
+            50
+          ],
+          [
+            5,
+            -50
+          ]
         ],
         "Minimum Spacing": 2.0,
-        "Scale": [ 1.0, 1.5 ]
+        "Scale": [
+          1.0,
+          1.5
+        ]
       }
     }
   ]

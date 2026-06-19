@@ -1,6 +1,5 @@
 {
   "Object Labels": "lemon_group_labels.json",
-
   "Layered Surface": {
     "Mesh": "surfaces/surface.obj",
     "Trail": {
@@ -15,7 +14,6 @@
     },
     "Layers": "surface_textures/meadow_surfaces.json"
   },
-
   "Surface Mesh": [
     {
       "Mesh": "surfaces/surface.obj",
@@ -37,22 +35,40 @@
       ]
     }
   ],
-
   "Objects": [
     {
       "Mesh": "vegetation/lemon_tree/Lemon_Fruit_Scaled.obj",
       "Rotate Y to Z": false,
       "Label By Group": true,
       "Random": {
-        "Offset": [ 0.0, 0.0, 0.0 ],
+        "Offset": [
+          0.0,
+          0.0,
+          0.0
+        ],
         "Number": 100,
         "Polygon": [
-          [ -50, -50 ],
-          [ -50, 50 ],
-          [ 50, 50 ],
-          [ 50, -50 ]
+          [
+            -50,
+            -50
+          ],
+          [
+            -50,
+            50
+          ],
+          [
+            50,
+            50
+          ],
+          [
+            50,
+            -50
+          ]
         ],
-        "Scale": [ 0.85, 1.15 ]
+        "Scale": [
+          0.85,
+          1.15
+        ]
       }
     }
   ]

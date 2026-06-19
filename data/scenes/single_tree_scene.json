@@ -1,8 +1,6 @@
 {
   "Object Labels": "labels.json",
-
   "VegOverrideFile": "scenes/meshes/veg_override_data.json",
-
   "Layered Surface": {
     "Mesh": "surfaces/surface.obj",
     "Trail": {
@@ -15,7 +13,6 @@
     },
     "Layers": "surface_textures/meadow_surfaces.json"
   },
-
   "Surface Mesh": [
     {
       "Mesh": "surfaces/surface.obj",
@@ -37,16 +34,27 @@
       ]
     }
   ],
-
   "Objects": [
     {
       "Mesh": "vegetation/honey_locust/honey_locust_1.obj",
       "Rotate Y to Z": false,
       "Instances": [
         {
-          "YawPitchRoll": [ 0, 0, 0 ],
-          "Position": [ 5.0, 0.0, 0.0 ],
-          "Scale": [ 1.0, 1.0, 1.0 ]
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            5.0,
+            0.0,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       ]
     }

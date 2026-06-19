@@ -545,8 +545,8 @@ void EmbreeTracer::LoadSurfaceMesh(const rapidjson::Value& d) {
 				exit(1);
 			}
 			glm::vec3 euler_angles;
-			euler_angles.x = d[surfnum]["YawPitchRoll"][0].GetFloat();
-			euler_angles.y = d[surfnum]["YawPitchRoll"][1].GetFloat();
+			euler_angles.y = d[surfnum]["YawPitchRoll"][0].GetFloat();
+			euler_angles.x = d[surfnum]["YawPitchRoll"][1].GetFloat();
 			euler_angles.z = d[surfnum]["YawPitchRoll"][2].GetFloat();
 			rot_scale = math::GetRotFromEuler(euler_angles);
 		}
@@ -644,8 +644,8 @@ void EmbreeTracer::LoadObjects(const rapidjson::Value& d) {
 						exit(1);
 					}
 					glm::vec3 euler_angles;
-					euler_angles.x = d[m]["Instances"][mi]["YawPitchRoll"][0].GetFloat();
-					euler_angles.y = d[m]["Instances"][mi]["YawPitchRoll"][1].GetFloat();
+					euler_angles.y = d[m]["Instances"][mi]["YawPitchRoll"][0].GetFloat();
+					euler_angles.x = d[m]["Instances"][mi]["YawPitchRoll"][1].GetFloat();
 					euler_angles.z = d[m]["Instances"][mi]["YawPitchRoll"][2].GetFloat();
 					rot_scale = math::GetRotFromEuler(euler_angles);
 				}

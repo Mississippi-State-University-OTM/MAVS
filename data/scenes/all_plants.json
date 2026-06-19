@@ -1,8 +1,6 @@
 {
   "Object Labels": "labels.json",
-
   "VegOverrideFile": "scenes/meshes/veg_override_data.json",
-
   "Layered Surface": {
     "Mesh": "surfaces/surface.obj",
     "Trail": {
@@ -17,7 +15,6 @@
     },
     "Layers": "surface_textures/meadow_surfaces.json"
   },
-
   "Surface Mesh": [
     {
       "Mesh": "surfaces/surface.obj",
@@ -39,16 +36,27 @@
       ]
     }
   ],
-
   "Objects": [
     {
       "Mesh": "vegetation/greater_celandine/greater_celandine_1.obj",
       "Rotate Y to Z": false,
       "Instances": [
         {
-          "YawPitchRoll": [ 0, 0, 0 ],
-          "Position": [ 0.0, -5.0, 0.0 ],
-          "Scale": [ 1.0, 1.0, 1.0 ]
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            0.0,
+            -5.0,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       ]
     },
@@ -57,9 +65,21 @@
       "Rotate Y to Z": false,
       "Instances": [
         {
-          "YawPitchRoll": [ 0, 0, 0 ],
-          "Position": [ 3.0, -5.0, 0.0 ],
-          "Scale": [ 1.0, 1.0, 1.0 ]
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            3.0,
+            -5.0,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       ]
     },
@@ -68,9 +88,21 @@
       "Rotate Y to Z": false,
       "Instances": [
         {
-          "YawPitchRoll": [ 0, 0, 0 ],
-          "Position": [ 7.0, -5.0, 0.0 ],
-          "Scale": [ 1.0, 1.0, 1.0 ]
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            7.0,
+            -5.0,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       ]
     },
@@ -79,9 +111,21 @@
       "Rotate Y to Z": false,
       "Instances": [
         {
-          "YawPitchRoll": [ 0, 0, 0 ],
-          "Position": [ 10.0, -5.0, 0.0 ],
-          "Scale": [ 1.0, 1.0, 1.0 ]
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            10.0,
+            -5.0,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       ]
     },
@@ -90,9 +134,21 @@
       "Rotate Y to Z": false,
       "Instances": [
         {
-          "YawPitchRoll": [ 0, 0, 0 ],
-          "Position": [ 11.0, -5.0, 0.0 ],
-          "Scale": [ 1.0, 1.0, 1.0 ]
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            11.0,
+            -5.0,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       ]
     },
@@ -101,9 +157,21 @@
       "Rotate Y to Z": false,
       "Instances": [
         {
-          "YawPitchRoll": [ 0, 0, 0 ],
-          "Position": [ 13.0, -5.0, 0.0 ],
-          "Scale": [ 1.0, 1.0, 1.0 ]
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            13.0,
+            -5.0,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       ]
     },
@@ -112,9 +180,21 @@
       "Rotate Y to Z": false,
       "Instances": [
         {
-          "YawPitchRoll": [ 0, 0, 0 ],
-          "Position": [ 15.0, -5.0, 0.0 ],
-          "Scale": [ 1.0, 1.0, 1.0 ]
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            15.0,
+            -5.0,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       ]
     },
@@ -123,9 +203,21 @@
       "Rotate Y to Z": false,
       "Instances": [
         {
-          "YawPitchRoll": [ 0, 0, 0 ],
-          "Position": [ 17.0, -5.0, 0.0 ],
-          "Scale": [ 1.0, 1.0, 1.0 ]
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            17.0,
+            -5.0,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       ]
     },
@@ -134,84 +226,161 @@
       "Rotate Y to Z": false,
       "Instances": [
         {
-          "YawPitchRoll": [ 0, 0, 0 ],
-          "Position": [ 22.0, -5.0, 0.0 ],
-          "Scale": [ 1.0, 1.0, 1.0 ]
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            22.0,
+            -5.0,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       ]
     },
-
     {
       "Mesh": "vegetation/oak/oak.obj",
       "Rotate Y to Z": false,
       "Instances": [
         {
-          "YawPitchRoll": [ 0, 0, 0 ],
-          "Position": [ 50.0, -5.0, 0.0 ],
-          "Scale": [ 1.0, 1.0, 1.0 ]
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            50.0,
+            -5.0,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       ]
     },
-
     {
       "Mesh": "vegetation/oak/oak_autumn.obj",
       "Rotate Y to Z": false,
       "Instances": [
         {
-          "YawPitchRoll": [ 0, 0, 0 ],
-          "Position": [ 60.0, -5.0, 0.0 ],
-          "Scale": [ 1.0, 1.0, 1.0 ]
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            60.0,
+            -5.0,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       ]
     },
-
     {
       "Mesh": "vegetation/honey_locust/honey_locust_1.obj",
       "Rotate Y to Z": false,
       "Instances": [
         {
-          "YawPitchRoll": [ 0, 0, 0 ],
-          "Position": [ 90.0, -5.0, 0.0 ],
-          "Scale": [ 1.0, 1.0, 1.0 ]
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            90.0,
+            -5.0,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       ]
     },
-
     {
       "Mesh": "vegetation/pine_tree/pine_tree.obj",
       "Rotate Y to Z": false,
       "Instances": [
         {
-          "YawPitchRoll": [ 0, 0, 0 ],
-          "Position": [ 120.0, -5.0, 0.0 ],
-          "Scale": [ 1.0, 1.0, 1.0 ]
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            120.0,
+            -5.0,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       ]
     },
-
     {
       "Mesh": "vegetation/narrow_leaved_paperbark/narrow_leaved_paperbark_1.obj",
       "Rotate Y to Z": false,
       "Instances": [
         {
-          "YawPitchRoll": [ 0, 0, 0 ],
-          "Position": [ 150.0, -5.0, 0.0 ],
-          "Scale": [ 1.0, 1.0, 1.0 ]
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            150.0,
+            -5.0,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       ]
     },
-
     {
       "Mesh": "vegetation/lemon_tree/Lemon_Fruit_Scaled.obj",
       "Rotate Y to Z": false,
       "Instances": [
         {
-          "YawPitchRoll": [ 0, 0, 0 ],
-          "Position": [ 170.0, -5.0, 0.0 ],
-          "Scale": [ 1.0, 1.0, 1.0 ]
+          "YawPitchRoll": [
+            0,
+            0,
+            0
+          ],
+          "Position": [
+            170.0,
+            -5.0,
+            0.0
+          ],
+          "Scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       ]
     }
-
   ]
 }

@@ -97,6 +97,14 @@ public:
 	Color MorelandColormap(float x, float xmin, float xmax);
 
 	/**
+	* Get a diverging GreenRed colormap (lower=greener)
+	* \param x The variable
+	* \param xmin The minimum value of the variable
+	* \param xmax the maximum possible valuable of the variable
+	*/
+	Color GreenRedColormap(float x, float xmin, float xmax);
+
+	/**
 	* Plot a trajectory
 	* \param x The x values
 	* \param y The y values

@@ -60,6 +60,44 @@ Mplot::Mplot(const Mplot &plot) {
 	plot_axis_ = plot.plot_axis_;
 }
 
+Color Mplot::GreenRedColormap(float x, float xmin, float xmax) {
+	Color color;
+	// 1. Clamp value to prevent out-of-bounds calculations
+	float value = std::max(xmin, std::min(x, xmax));
+
+	// 2. Normalize to a 0.0 - 1.0 range
+	float t = (value - xmin) / (xmax - xmin);
+
+	// Define extreme endpoints
+	Color red_max = { 255, 0, 0 };
+	Color green_min = { 0, 255, 0 };
+	Color neutral_color{ 255, 255, 200 };
+
+	int r = 0, g = 0, b = 0;
+
+	// 3. Interpolate based on which half of the gradient the value falls into
+	if (t < 0.5f) {
+		// Map t from [0.0, 0.5] to a local [0.0, 1.0] scale
+		float t_norm = t * 2.0f;
+
+		// Linear interpolation from Green to Neutral
+		color.r = (green_min.r + (neutral_color.r - green_min.r) * t_norm);
+		color.g = (green_min.g + (neutral_color.g - green_min.g) * t_norm);
+		color.b = (green_min.b + (neutral_color.b - green_min.b) * t_norm);
+	}
+	else {
+		// Map t from [0.5, 1.0] to a local [0.0, 1.0] scale
+		float t_norm = (t - 0.5f) * 2.0f;
+
+		// Linear interpolation from Neutral to Red
+		color.r = (neutral_color.r + (red_max.r - neutral_color.r) * t_norm);
+		color.g = (neutral_color.g + (red_max.g - neutral_color.g) * t_norm);
+		color.b = (neutral_color.b + (red_max.b - neutral_color.b) * t_norm);
+	}
+
+	return color;
+}
+
 Color Mplot::MorelandColormap(float x, float xmin, float xmax){
   // Diverging Color Maps for Scientific Visualization
   // Kenneth Moreland

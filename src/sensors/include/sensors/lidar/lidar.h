@@ -76,7 +76,7 @@ public:
 	Lidar(int mode);
 
 	/// Lidar copy contstructor
-	Lidar(const Lidar &s) {
+	Lidar(const Lidar& s) {
 		position_ = s.position_;
 		velocity_ = s.velocity_;
 		offset_ = s.offset_;
@@ -113,7 +113,7 @@ public:
 	void Load(std::string input_file);
 
 	///Update method, inherited from sensor base class, performs a scan.
-	void Update(environment::Environment *env, double dt);
+	void Update(environment::Environment* env, double dt);
 
 	///Returns the current scan in a ROS point cloud message format.
 	PointCloud GetRosPointCloud();
@@ -160,7 +160,7 @@ public:
 	* \param fname Output file name
 	*/
 	void WriteRegisteredPointsToText(std::string fname);
-		
+
 	/**
 	* Write the points to a space delimited column file. Writes the
 	* unregistered (x,y,z) coordinate in the local sensor frame.
@@ -281,7 +281,7 @@ public:
 
 	/// Get a vector of labeled xyzi points
 	std::vector<labeled_point> GetLabeledPoints();
-	
+
 	/// Return a vector of labeled xyzi-rgb points with no labels
 	std::vector<labeled_point> GetColorizedPoints();
 
@@ -292,7 +292,7 @@ public:
 	std::vector<glm::vec4> GetPointsXYZI();
 
 	/// Returns data in ROS LaserScan format
-	void GetLaserScan(LaserScan &scan);
+	void GetLaserScan(LaserScan& scan);
 
 	/**
 	* Returns data in PointCloud2 format, sensor frame
@@ -323,6 +323,8 @@ public:
 
 	///Returns the minimum scan range (meters)
 	float GetRangeMin() { return min_range_; }
+
+	void SetMinRange(float min_range) { min_range_ = min_range; }
 
 	///Returns the maximum scan range (meters)
 	float GetRangeMax() { return max_range_; }

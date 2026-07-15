@@ -2,7 +2,7 @@
 # Material Count: 4
 
 newmtl Material__14
-Ns 10.000002
+Ns 1.0
 Ka 1.000000 1.000000 1.000000
 Kd 0.588000 0.588000 0.588000
 Ks 0.000000 0.000000 0.000000
@@ -14,7 +14,7 @@ map_Kd gleditsia_triacanthos_flowers_color.bmp
 map_d gleditsia_triacanthos_flowers_mask.bmp
 
 newmtl Material__5
-Ns 10.000002
+Ns 1.0
 Ka 1.000000 1.000000 1.000000
 Kd 0.588000 0.588000 0.588000
 Ks 0.000000 0.000000 0.000000
@@ -25,7 +25,7 @@ illum 1
 map_Kd gleditsia_triacanthos_bark_reflect.bmp
 
 newmtl Material__6
-Ns 10.000002
+Ns 1.0
 Ka 1.000000 1.000000 1.000000
 Kd 0.588000 0.588000 0.588000
 Ks 0.000000 0.000000 0.000000
@@ -36,7 +36,7 @@ illum 1
 map_Kd gleditsia_triacanthos_bark2_a1.bmp
 
 newmtl Material__8
-Ns 10.000002
+Ns 1.0
 Ka 1.000000 1.000000 1.000000
 Kd 0.588000 0.588000 0.588000
 Ks 0.000000 0.000000 0.000000

@@ -415,6 +415,7 @@ mavs_lib.MavsLidarSetScanPattern.argtypes = [ctypes.c_float, ctypes.c_float, cty
                                              ctypes.c_float, ctypes.c_float, ctypes.c_float]
 mavs_lib.WriteMavsLidarToColorizedCloud.restype = ctypes.c_void_p
 mavs_lib.WriteMavsLidarToColorizedCloud.argtypes = [ctypes.c_void_p,ctypes.c_char_p]
+mavs_lib.SetLidarMinRange.argtypes = [ctypes.c_void_p,ctypes.c_float]
 mavs_lib.WriteMavsLidarToLabeledCloud.restype = ctypes.c_void_p
 mavs_lib.WriteMavsLidarToLabeledCloud.argtypes = [ctypes.c_void_p,ctypes.c_char_p]
 mavs_lib.WriteMavsLidarToPcd.restype = ctypes.c_void_p
@@ -2423,6 +2424,14 @@ class MavsLidar(MavsSensor):
         fname (string): The output file name, including path and extension.
         """
         mavs_lib.SaveMavsLidarImage(self.sensor,PyStringToChar(fname))
+        
+    def SetMinRange(self,min_range):
+        """Set the minimum range of the lidar.
+
+        Parameters:
+        min_range (float): In meters.
+        """
+        mavs_lib.SetLidarMinRange(self.sensor,ctypes.c_float(min_range))
     def SaveProjectedLidarImage(self,fname):
         """Save the current lidar point cloud to a projected image.
 

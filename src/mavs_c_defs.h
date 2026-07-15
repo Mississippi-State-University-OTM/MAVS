@@ -375,6 +375,8 @@ EXPORT_CMD void SetPointCloudColorType(mavs::sensor::Sensor* sens, char* type);
 
 EXPORT_CMD void DisplayMavsLidarPerspective(mavs::sensor::Sensor* sens, int im_width, int im_height);
 
+EXPORT_CMD void SetLidarMinRange(mavs::sensor::Sensor* sens, float min_range);
+
 EXPORT_CMD void SaveMavsSensorRaw(mavs::sensor::Sensor* sens);
 
 EXPORT_CMD void SaveMavsLidarImage(mavs::sensor::Sensor* sens, char* fname);

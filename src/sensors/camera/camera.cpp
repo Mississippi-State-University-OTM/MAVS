@@ -1404,7 +1404,9 @@ void Camera::AdjustSaturationAndTemperature() {
 	}
 }
 
-bool Camera::WorldToPixel(glm::vec3 point_world, glm::ivec2 &pixel) {
+bool Camera::WorldToPixel(glm::vec3 point_world, glm::ivec2& pixel) {
+	// first put in the pixel reference frame. 
+	glm::vec2 pixfloat;
 	glm::vec3 v = point_world - position_;
 	float z = glm::dot(v, look_to_);
 	if (z <= 0.0f) {
@@ -1412,11 +1414,36 @@ bool Camera::WorldToPixel(glm::vec3 point_world, glm::ivec2 &pixel) {
 	}
 	float x = glm::dot(v, look_side_);
 	float y = glm::dot(v, look_up_);
+	glm::vec2 p_meters_undistort(focal_length_ * x / z, focal_length_ * y / z);
+	if (use_distorted_) {
+		pixfloat = dm_.Distort(p_meters_undistort);
+		pixfloat = glm::vec2(pixfloat.x / horizontal_pixdim_, pixfloat.y / vertical_pixdim_);
+	}
+	else {
+		pixfloat = glm::vec2(p_meters_undistort.x / horizontal_pixdim_,
+			p_meters_undistort.y / vertical_pixdim_);
+	}
+	pixfloat.x += half_horizontal_dim_;
+	pixfloat.y += half_vertical_dim_;
+	pixel = glm::ivec2((int)pixfloat.x, (int)pixfloat.y);
 
+	return true;
+}
+/*
+bool Camera::WorldToPixel(glm::vec3 point_world, glm::ivec2 &pixel) {
+	
+	glm::vec3 v = point_world - position_;
+	float z = glm::dot(v, look_to_);
+	
+	if (z <= 0.0f) {
+		return false;
+	}
+	float x = glm::dot(v, look_side_);
+	float y = glm::dot(v, look_up_);
 	pixel = glm::ivec2((int)((focal_length_*x / z) / horizontal_pixdim_),
 		(int)((focal_length_*y / z) / vertical_pixdim_));
 	return true;
-}
+}*/
 
 void Camera::RenderParticleSystems(environment::Environment *env) {
 	glm::vec3 look_to_f = focal_length_ * look_to_;
@@ -1499,6 +1526,17 @@ void Camera::AddLidarPointsToImage(std::vector<glm::vec4> registered_xyzi) {
 	float fv = focal_length_ / vertical_pixdim_;
 	//mavs::Pose pose = GetPose();
 	int pixrad = (int)floor(0.5f*num_horizontal_pix_*num_vertical_pix_ / 1000000.0f);
+	float intens_max = 0.0f;
+	float intens_min = 1.0f;
+	for (int i = 0; i < (int)registered_xyzi.size(); i++) {
+		glm::vec3 p(registered_xyzi[i].x, registered_xyzi[i].y, registered_xyzi[i].z);
+		glm::vec3 v = p - position_;
+		float dist = glm::length(v);
+		if (dist > 0.1f) {
+			if (registered_xyzi[i].w > intens_max)intens_max = registered_xyzi[i].w;
+			if (registered_xyzi[i].w < intens_min)intens_min = registered_xyzi[i].w;
+		}
+	}
 	for (int i = 0; i < (int)registered_xyzi.size(); i++) {
 		glm::vec3 p(registered_xyzi[i].x, registered_xyzi[i].y, registered_xyzi[i].z);
 		/*glm::vec3 v = p - position_; // (glm::vec3)pose.position;
@@ -1515,11 +1553,14 @@ void Camera::AddLidarPointsToImage(std::vector<glm::vec4> registered_xyzi) {
 		glm::ivec2 pix;
 		bool in_image = WorldToPixel(p, pix);
 		// if in frame, render
+		
 		if (pix.x>=0 && pix.x<num_horizontal_pix_ && pix.y>=0 && pix.y<num_vertical_pix_) {
 			int n = GetFlattenedIndex(pix.x, pix.y);
 			float dp = glm::length(p - position_);
+
 			if (dp < range_buffer_[n]) {
-				mavs::utils::Color color = plotter.MorelandColormap(registered_xyzi[i].w, 0.0f, 1.0f);
+				//mavs::utils::Color color = plotter.MorelandColormap(registered_xyzi[i].w, 0.0f, 1.0f);
+				mavs::utils::Color color = plotter.GreenRedColormap(registered_xyzi[i].w, intens_min, intens_max);
 				if (pixrad <= 0) {
 					image_.draw_point(num_horizontal_pix_ - pix.x, num_vertical_pix_ - pix.y, (float *)&color);
 				}

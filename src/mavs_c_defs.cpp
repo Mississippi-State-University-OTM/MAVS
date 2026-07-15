@@ -1045,6 +1045,12 @@ extern "C" {
 		lidar->SetDisplayColorType(color_type);
 	}
 
+	EXPORT_CMD void SetLidarMinRange(mavs::sensor::Sensor* sens, float min_range) {
+		/// options are 'height', 'color', 'range', 'intensity', or 'white'
+		mavs::sensor::lidar::Lidar* lidar = static_cast<mavs::sensor::lidar::Lidar*>(sens);
+		lidar->SetMinRange(min_range);
+	}
+
 	EXPORT_CMD void SaveMavsSensorAnnotation(mavs::sensor::Sensor* sens, mavs::environment::Environment* env, char* ofname) {
 		std::string fname(ofname);
 		sens->AnnotateFrame(env, true);

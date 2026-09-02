@@ -21,6 +21,14 @@ endif()
 
 include(GNUInstallDirs)
 
+# On Linux, let mavs and its dependent shared libs (e.g. libembree3.so) find
+# each other when co-located in an arbitrary directory (e.g. a pip package's
+# lib/ folder), rather than requiring them to be on the system library path.
+if (NOT WIN32)
+	set(CMAKE_INSTALL_RPATH "$ORIGIN")
+	set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 
 # Build options

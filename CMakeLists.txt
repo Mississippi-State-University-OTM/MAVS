@@ -37,6 +37,8 @@ option(MAVS_USE_MPI "Build using MPI compilers for optimal performance" OFF)
 option(RP3D_DOUBLE_PRECISION "Use double precision calculations with RP3D" OFF)
 option(MAVS_USE_OMP "Enable multi-threading. Should not be used in combination with MPI" ON)
 option(MAVS_USE_CHRONO "Enable vehicle dynamics simulation with Chrono, if it is installed" OFF)
+option(MAVS_BUILD_EXAMPLES "Build the example executables" ON)
+option(MAVS_BUILD_UTILITIES "Build the utility executables" ON)
 
 if (MAVS_USE_CHRONO)
 	SET(CHRONO_DATA_PATH "~" CACHE PATH "Full path to chrono/data/vehicle" )
@@ -71,9 +73,13 @@ endif()
 add_subdirectory("src") 
 
 # examples
+if (MAVS_BUILD_EXAMPLES)
 add_subdirectory("examples")
+endif()
 # utilities
+if (MAVS_BUILD_UTILITIES)
 add_subdirectory("utilities")
+endif()
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
     add_subdirectory("unit_tests")

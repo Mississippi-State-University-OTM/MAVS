@@ -11,6 +11,12 @@ set(EMBREE_TUTORIALS CACHE BOOL OFF)
 #set_target_properties(embree PROPERTIES
 #    INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/embree/include)
 add_subdirectory(embree)
+if (NOT MSVC)
+	# See the matching note on the "mavs" target in src/CMakeLists.txt: avoid
+	# a runtime dependency on the build machine's libstdc++/libgcc_s, which
+	# can reference symbols an older target system's libstdc++.so.6 lacks.
+	target_link_options(embree PRIVATE -static-libstdc++ -static-libgcc)
+endif()
 
 # glm
 add_subdirectory(glm)
@@ -45,6 +51,9 @@ target_compile_options(reactphysics3d INTERFACE
 set(RP3D_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(RP3D_ENABLE_TESTS   OFF CACHE BOOL "" FORCE)
 set_property(TARGET reactphysics3d PROPERTY POSITION_INDEPENDENT_CODE ON)
+if (NOT MSVC)
+	target_link_options(reactphysics3d PRIVATE -static-libstdc++ -static-libgcc)
+endif()
 
 
 # wrappers for external libraries that aren't distributed via Git or other usual means

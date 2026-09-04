@@ -207,3 +207,6 @@ install(TARGETS TinyFileDialogs
 
 # TinyXML2
 add_subdirectory(tinyxml2)
+if (NOT MSVC)
+	target_link_options(tinyxml2 PRIVATE -static-libstdc++ -static-libgcc)
+endif()

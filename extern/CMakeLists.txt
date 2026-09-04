@@ -15,7 +15,7 @@ if (NOT MSVC)
 	# See the matching note on the "mavs" target in src/CMakeLists.txt: avoid
 	# a runtime dependency on the build machine's libstdc++/libgcc_s, which
 	# can reference symbols an older target system's libstdc++.so.6 lacks.
-	target_link_options(embree PRIVATE -static-libstdc++ -static-libgcc)
+	target_link_options(embree PRIVATE -static-libstdc++ -static-libgcc -Wl,--exclude-libs=ALL)
 endif()
 
 # glm
@@ -52,7 +52,7 @@ set(RP3D_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(RP3D_ENABLE_TESTS   OFF CACHE BOOL "" FORCE)
 set_property(TARGET reactphysics3d PROPERTY POSITION_INDEPENDENT_CODE ON)
 if (NOT MSVC)
-	target_link_options(reactphysics3d PRIVATE -static-libstdc++ -static-libgcc)
+	target_link_options(reactphysics3d PRIVATE -static-libstdc++ -static-libgcc -Wl,--exclude-libs=ALL)
 endif()
 
 
@@ -208,5 +208,5 @@ install(TARGETS TinyFileDialogs
 # TinyXML2
 add_subdirectory(tinyxml2)
 if (NOT MSVC)
-	target_link_options(tinyxml2 PRIVATE -static-libstdc++ -static-libgcc)
+	target_link_options(tinyxml2 PRIVATE -static-libstdc++ -static-libgcc -Wl,--exclude-libs=ALL)
 endif()

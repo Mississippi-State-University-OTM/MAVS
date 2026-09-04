@@ -28,7 +28,14 @@ if (NOT MSVC)
 	# even bundling a compatible copy alongside it doesn't reliably help,
 	# since the dynamic loader reuses whichever libstdc++.so.6 the process
 	# (e.g. Python) already loaded first.
-	target_link_options(mavs PRIVATE -static-libstdc++ -static-libgcc)
+	# --exclude-libs=ALL keeps the statically-linked-in libstdc++/libgcc
+	# symbols private to this .so rather than re-exporting them: multiple
+	# separately-built .so's (mavs, embree, reactphysics3d, tinyxml2) each
+	# doing -static-libstdc++ otherwise all publicly export their own copy
+	# of internal runtime symbols like __cxa_call_terminate, and having
+	# more than one library claim to provide the same unversioned symbol
+	# in the same process confuses the dynamic linker's resolution.
+	target_link_options(mavs PRIVATE -static-libstdc++ -static-libgcc -Wl,--exclude-libs=ALL)
 endif()
 target_include_directories(mavs
 PUBLIC # USE (INTERFACE) and BUILD (PRIVATE) headers

@@ -21,7 +21,7 @@ target_link_libraries(mavs
 PUBLIC
 	mavs_sim # mavs and mavs_sim are kind of redundant if PIC is set
 )
-if (NOT MSVC)
+if (NOT MSVC AND MAVS_PORTABLE_LINUX_BUILD)
 	# Avoid a runtime dependency on the build machine's libstdc++/libgcc_s:
 	# a newer build toolchain can produce a libmavs.so that references
 	# symbols an older target system's libstdc++.so.6 doesn't have, and

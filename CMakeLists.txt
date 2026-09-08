@@ -39,6 +39,7 @@ option(MAVS_USE_OMP "Enable multi-threading. Should not be used in combination w
 option(MAVS_USE_CHRONO "Enable vehicle dynamics simulation with Chrono, if it is installed" OFF)
 option(MAVS_BUILD_EXAMPLES "Build the example executables" ON)
 option(MAVS_BUILD_UTILITIES "Build the utility executables" ON)
+option(MAVS_PORTABLE_LINUX_BUILD "Statically link libstdc++/libgcc (and hide their re-exported symbols) for glibc/ABI portability across Linux distros. Only needed when building prebuilt, redistributable wheels/binaries; requires the static libstdc++ archive (e.g. the libstdc++-static package on RHEL-family systems) to be installed. Leave OFF for normal local builds." OFF)
 
 if (MAVS_USE_CHRONO)
 	SET(CHRONO_DATA_PATH "~" CACHE PATH "Full path to chrono/data/vehicle" )

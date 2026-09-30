@@ -29,7 +29,8 @@
 #include <functional>
 #include <string>
 #include <vector>
-// project includes
+// mavs includes
+#include <vehicles/vehicle.h>
 #include "glm/glm.hpp"
 #include "vehicles/tracked/tracked_soil.h"
 #include "vehicles/tracked/tracked_heightmap_terrain.h"
@@ -41,7 +42,7 @@ namespace mavs {
 namespace vehicle {
 namespace tracked {
 
-class TrackedVehicle {
+class TrackedVehicle : public Vehicle {
 public:
 
     using Controller = std::function<TrackSpeeds(double t, const TrackedVehicle&)>;
@@ -54,6 +55,8 @@ public:
 
     // cmd = (left, right): sprocket speeds [rad/s] (Speed) or torques [N m] (Torque).
     void Step(double dt, TrackSpeeds cmd);
+
+    void Update(environment::Environment* env, float throttle, float steer, float brake, float dt);
 
     void Settle(double duration = 1.5, double dt = 1e-3);
     
@@ -155,6 +158,10 @@ private:
     std::vector<HeightMapTerrain::RutIndex> ri_;
     std::vector<char> loading_, contact_;
     std::vector<std::array<double, 2>> jtmp_;
+
+    double max_track_speed_ = 15.0;
+
+    void SetMavsParams();
 };
 
 namespace controller {

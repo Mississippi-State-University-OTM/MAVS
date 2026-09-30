@@ -346,6 +346,30 @@ TrackDiag TrackedVehicle::TrackForces(int k, double dt, glm::dvec3& F, glm::dvec
     return d;
 }
 
+void TrackedVehicle::Update(environment::Environment* env, float throttle, float steer, float brake, float dt) {
+    TrackSpeeds cmd;
+    if (throttle > 0.0) {
+        cmd.left = throttle * max_track_speed_;
+        cmd.right = throttle * max_track_speed_;
+    }
+    else if (brake > 0.0) {
+        cmd.left = -brake * max_track_speed_;
+        cmd.right = -brake * max_track_speed_;
+    }
+    if (steer != 0.0) { cmd.right = steer * max_track_speed_; cmd.left = -steer * max_track_speed_; }
+
+
+    Step(dt, cmd);
+    SetMavsParams();
+}
+
+void TrackedVehicle::SetMavsParams() {
+    current_state_.pose.position = p_;
+    current_state_.pose.quaternion = glm::dquat(R_);
+    current_state_.twist.linear = vel_;
+    current_state_.twist.angular = omega_;
+}
+
 void TrackedVehicle::Step(double dt, TrackSpeeds cmd) {
     if (sim_options_.drive == DriveMode::Speed) sprocket_ = cmd;
 

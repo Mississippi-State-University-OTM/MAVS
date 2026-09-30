@@ -131,6 +131,8 @@
     [ "surfaces/Farm.obj", "rough trail" ],
     [ "surfaces/lunar_surfaces/pgda_site1.obj", "rough trail" ],
     [ "surfaces/lunar_surfaces/pgda_site4.obj", "rough trail" ],
+    [ "surfaces/pg_digital_twin/mesh_LowPoly_UAS_CAVS_PG_Ground_100ptsm_UTM16N_G18_3DMesh.obj", "rough trail" ],
+    [ "surfaces/pg_digital_twin/cavs_proving_ground.obj", "rough trail" ],
     [ "surfaces/pg_sw_corner/cavs_pg_textured_rotated_smoothed.obj", "rough trail" ],
     [ "surfaces/pg_sw_corner/cavs_pg_reduced.obj", "rough trail" ],
     [ "surfaces/traversal_scene_surface.obj", "rough trail" ],

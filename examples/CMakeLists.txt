@@ -32,6 +32,7 @@ set(EXAMPLES
 	
 	date_time_example
 	mavs_data_path_example
+	tracked_vehicle_example
     
 )
 if(MAVS_USE_EMBREE)

@@ -20,6 +20,13 @@ add_library(mavs_vehicle STATIC
 	uav/uav_controller.cpp
 	helicopter/mavs_helicopter.cpp
 	chrono/chrono_wheeled_json.cpp
+	tracked/tracked_heightmap_terrain.cpp
+	tracked/tracked_vehicle.cpp
+	tracked/tracked_render.cpp
+	tracked/tracked_sim_options.cpp
+	tracked/tracked_soil.cpp
+	tracked/tracked_vehicle_params.cpp
+	tracked/tracked_math_utils.cpp
 )
 else (MAVS_USE_CHRONO)
 add_library(mavs_vehicle STATIC
@@ -38,6 +45,13 @@ add_library(mavs_vehicle STATIC
 	uav/load_uav_sim.cpp
 	uav/uav_controller.cpp
 	helicopter/mavs_helicopter.cpp
+	tracked/tracked_heightmap_terrain.cpp
+	tracked/tracked_vehicle.cpp
+	tracked/tracked_render.cpp
+	tracked/tracked_sim_options.cpp
+	tracked/tracked_soil.cpp
+	tracked/tracked_vehicle_params.cpp
+	tracked/tracked_math_utils.cpp
 )
 endif(MAVS_USE_CHRONO)
 

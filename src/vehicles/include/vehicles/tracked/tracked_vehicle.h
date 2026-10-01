@@ -37,6 +37,7 @@
 #include "vehicles/tracked/tracked_helpers.h"
 #include "vehicles/tracked/tracked_vehicle_params.h"
 #include "vehicles/tracked/tracked_sim_options.h"
+#include "vehicles/tracked/tracked_track_path.h"
 
 namespace mavs {
 namespace vehicle {
@@ -124,6 +125,23 @@ public:
     // grid-aligned with the new window. Calls the refresh function if one is set.
     void RecenterTerrain();
 
+    // ---- track shoe animation (visual only; see tracked_track_path.h for frames)
+    // Replace the belt layout. Can be called at any time; the belt phase is kept.
+    void SetTrackLayout(const TrackLayout& layout);
+    const TrackLayout& GetTrackLayout() const { return track_layout_; }
+    int GetNumShoesPerTrack() const { return num_shoes_; }
+    double GetShoePitch() const { return shoe_pitch_; }
+    double GetTrackPathLength() const { return track_path_.Length(); }
+    // Belt travel [m] along the path since start, wrapped to [0, path length).
+    double GetTrackPhase(int k) const { return track_phase_[k]; }
+    // Spin angle [rad] about body +y of a non-slipping wheel of the given radius on track k
+    // (use it to spin sprocket/idler/road-wheel meshes in sync with the shoes).
+    double GetWheelSpinAngle(int k, double radius) const { return track_phase_[k] / radius; }
+    // Poses of all shoes: left track first (indices 0..n-1), then right (n..2n-1).
+    // world_frame = false returns them in the body frame (relative to GetPosition()/GetRotationMatrix()).
+    void GetTrackShoePoses(std::vector<TrackShoePose>& out, bool world_frame = true) const;
+    std::vector<TrackShoePose> GetTrackShoePoses(bool world_frame = true) const;
+
 private:
     TrackDiag TrackForces(int k, double dt, glm::dvec3& F, glm::dvec3& M);
 
@@ -188,6 +206,14 @@ private:
     std::vector<int> actor_ids_;
 
     void ResetTerrain(environment::Environment* env);
+
+    // track shoe animation
+    void BuildTrackPath();
+    TrackLayout track_layout_;
+    TrackPath track_path_;
+    int num_shoes_ = 0;
+    double shoe_pitch_ = 0.0;
+    std::array<double, 2> track_phase_{ 0.0, 0.0 };
 };
 
 namespace controller {

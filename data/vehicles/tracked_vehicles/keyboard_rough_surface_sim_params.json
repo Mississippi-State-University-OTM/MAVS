@@ -61,6 +61,15 @@
     "Rotate Y to X": false,
     "Offset": [ 0.0, 0.0, -0.25 ],
     "Scale": [ 1.0, 1.0, 1.0 ]
+  },
+
+  "Track Pad Mesh": {
+    "File": "vehicles/wolverine/track_pad_centered.obj",
+    "Rotate Y to Z": false,
+    "Rotate X to Y": false,
+    "Rotate Y to X": false,
+    "Offset": [ 0.0, 0.0, 0.0 ],
+    "Scale": [ 1.0, 1.0, 1.0 ]
   }
 
 }

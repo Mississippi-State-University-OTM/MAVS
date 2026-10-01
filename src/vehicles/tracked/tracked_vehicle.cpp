@@ -19,6 +19,8 @@ static bool mesh_rotate_x_to_y = false;
 static bool mesh_rotate_y_to_x = false;
 static glm::vec3 mesh_offset(0.0f, 0.0f, 0.0f);
 static glm::vec3 mesh_scale(1.0f, 1.0f, 1.0f);
+static std::string track_pad_mesh_file = "NULL";
+static std::vector <int> track_pad_ids;
 
 TrackedVehicle::TrackedVehicle(std::string input_file) {
 
@@ -122,6 +124,48 @@ TrackedVehicle::TrackedVehicle(std::string input_file) {
         }
     }
 
+    if (d.HasMember("Track Pad Mesh") && d["Track Pad Mesh"].IsObject()) {
+        const rapidjson::Value& pad_mesh = d["Track Pad Mesh"];
+        track_pad_mesh_file = pad_mesh["File"].GetString();
+        //mesh_rotate_y_to_z = pad_mesh["Rotate Y to Z"].GetBool();
+        //mesh_rotate_y_to_x = pad_mesh["Rotate Y to X"].GetBool();
+        //mesh_rotate_x_to_y = pad_mesh["Rotate X to Y"].GetBool();
+        //for (int ij = 0; ij < 3; ij++) {
+        //   mesh_offset[ij] = pad_mesh["Offset"][ij].GetFloat();
+        //    mesh_scale[ij] = pad_mesh["Scale"][ij].GetFloat();
+        //}
+    }
+
+    // Optional belt layout for track-shoe animation
+    if (d.HasMember("Track Layout") && d["Track Layout"].IsObject()) {
+        const rapidjson::Value& tl = d["Track Layout"];
+        if (tl.HasMember("Wheels") && tl["Wheels"].IsArray()) {
+            for (const auto& wv : tl["Wheels"].GetArray()) {
+                if (!wv.IsArray() || wv.Size() != 3) {
+                    std::cerr << "WARNING: Track Layout wheels must be [x, z, radius]; skipping entry." << std::endl;
+                    continue;
+                }
+                TrackWheel wheel;
+                wheel.x = wv[0].GetDouble();
+                wheel.z = wv[1].GetDouble();
+                wheel.radius = wv[2].GetDouble();
+                track_layout_.wheels.push_back(wheel);
+            }
+        }
+        if (tl.HasMember("Number of Shoes") && tl["Number of Shoes"].IsInt())
+            track_layout_.num_shoes = tl["Number of Shoes"].GetInt();
+        if (tl.HasMember("Shoe Pitch") && tl["Shoe Pitch"].IsNumber())
+            track_layout_.shoe_pitch = tl["Shoe Pitch"].GetDouble();
+        if (tl.HasMember("Shoe Offset") && tl["Shoe Offset"].IsArray() && tl["Shoe Offset"].Size() == 3)
+            for (int ij = 0; ij < 3; ij++) track_layout_.shoe_offset[ij] = tl["Shoe Offset"][ij].GetDouble();
+        // Euler angles in degrees about the shoe x, y, z axes
+        if (tl.HasMember("Shoe Mesh Rotation") && tl["Shoe Mesh Rotation"].IsArray() && tl["Shoe Mesh Rotation"].Size() == 3) {
+            glm::dvec3 eul;
+            for (int ij = 0; ij < 3; ij++) eul[ij] = glm::radians(tl["Shoe Mesh Rotation"][ij].GetDouble());
+            track_layout_.shoe_mesh_rotation = glm::dquat(eul);
+        }
+    }
+
     Init();
     
 }
@@ -156,7 +200,17 @@ void TrackedVehicle::Update(environment::Environment* env, float throttle, float
     if (!vehicle_loaded_) {
         actor_ids_ = env->AddActor(vehicle_mesh_file_, mesh_rotate_y_to_z, mesh_rotate_x_to_y, mesh_rotate_y_to_x, mesh_offset, mesh_scale);
         vehicle_loaded_ = true;
-
+        std::vector<TrackShoePose> shoe_poses;
+        GetTrackShoePoses(shoe_poses, true);
+        int nanim = 1;
+        for (size_t sp = 0; sp < shoe_poses.size(); sp++) {
+            //std::cout << sp << " " << shoe_poses[sp].position.x << " " << shoe_poses[sp].position.y << " " << shoe_poses[sp].position.z << std::endl;
+            std::vector<int> shoe_id = env->AddActor(track_pad_mesh_file, false, false, false, glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0));
+            track_pad_ids.push_back(nanim);
+            nanim++;
+            //std::cout << shoe_id[0] << std::endl;
+        }
+        //std::cout << "Added " << track_pad_ids.size() << " track pad animations " << std::endl;
         ResetTerrain(env);
 
         // Settle the vehicle into the inital position
@@ -182,6 +236,12 @@ void TrackedVehicle::Update(environment::Environment* env, float throttle, float
 
     for (size_t actor_idx = 0; actor_idx < actor_ids_.size(); actor_idx++) {
         env->SetActorPosition(actor_ids_[actor_idx], current_state_.pose.position, current_state_.pose.quaternion);
+        std::vector<TrackShoePose> shoe_poses;
+        GetTrackShoePoses(shoe_poses, true);
+        for (size_t sp = 0; sp < shoe_poses.size(); sp++) {
+            env->SetActorPosition(track_pad_ids[sp], shoe_poses[sp].position, shoe_poses[sp].orientation);
+            //std::cout << sp << " " << track_pad_ids[sp] <<" "<<shoe_poses[sp].position.x << " " << shoe_poses[sp].position.y << " " << shoe_poses[sp].position.z << std::endl;
+        }
     }
 
     time_since_last_terrain_refresh_ += dt;
@@ -251,6 +311,8 @@ void TrackedVehicle::Init(){
     const size_t ne = r_el_[0].size();
     z_.resize(ne); zp_.resize(ne); pn_.resize(ne); vb_.resize(ne); ri_.resize(ne);
     loading_.resize(ne); contact_.resize(ne); jtmp_.resize(ne);
+
+    BuildTrackPath();
 
     //SetPose(sim_options_.initial_position_x, sim_options_.initial_position_y, sim_options_.initial_yaw);
 }
@@ -485,6 +547,10 @@ void TrackedVehicle::Step(double dt, TrackSpeeds cmd) {
         }
     }
 
+    // advance the belt for animation: belt speed relative to the hull
+    for (int k = 0; k < 2; ++k)
+        track_phase_[k] = track_path_.Wrap(track_phase_[k] + vehicle_params_.sprocket_radius * sprocket_[k] * dt);
+
     // rigid body, semi-implicit Euler
     const glm::dvec3 F_w = R_ * F_b + glm::dvec3(0.0, 0.0, -vehicle_params_.mass * sim_options_.gravity * g_scale_);
     vel_ += F_w * (dt / vehicle_params_.mass);
@@ -532,6 +598,75 @@ VehicleState TrackedVehicle::GetCurrentVehicleState() const {
     s.omega_left = sprocket_[0];
     s.omega_right = sprocket_[1];
     return s;
+}
+
+void TrackedVehicle::SetTrackLayout(const TrackLayout& layout) {
+    track_layout_ = layout;
+    BuildTrackPath();
+}
+
+void TrackedVehicle::BuildTrackPath() {
+    std::vector<TrackWheel> wheels = track_layout_.wheels;
+    if (wheels.empty()) {
+        // default: sprocket-sized wheels at the ends of the contact patch, resting on the ground plane
+        const double r = vehicle_params_.sprocket_radius;
+        const double h = 0.5 * vehicle_params_.track_contact_length;
+        wheels = { TrackWheel{ -h, r, r }, TrackWheel{ h, r, r } };
+    }
+    track_path_.Build(wheels);
+
+    const double L = track_path_.Length();
+    if (track_layout_.num_shoes > 0) {
+        num_shoes_ = track_layout_.num_shoes;
+    } else {
+        if (!(track_layout_.shoe_pitch > 0.0))
+            throw std::invalid_argument("TrackLayout: set num_shoes > 0 or shoe_pitch > 0");
+        num_shoes_ = std::max(3, static_cast<int>(std::lround(L / track_layout_.shoe_pitch)));
+    }
+    shoe_pitch_ = L / num_shoes_;  // exact spacing so the loop closes
+    for (int k = 0; k < 2; ++k) track_phase_[k] = track_path_.Wrap(track_phase_[k]);
+}
+
+void TrackedVehicle::GetTrackShoePoses(std::vector<TrackShoePose>& out, bool world_frame) const {
+    const int n = num_shoes_;
+    out.resize(static_cast<size_t>(2 * n));
+    const glm::dquat q_hull = glm::quat_cast(R_);
+    const glm::dvec3 Y(0.0, 1.0, 0.0);
+    for (int k = 0; k < 2; ++k) {
+        for (int j = 0; j < n; ++j) {
+            // a shoe is a rigid link between two pins on the pitch line, so on the wheels it
+            // lies along the chord (no gaps or overlap between neighbouring shoes)
+            const double s_a = track_phase_[k] + j * shoe_pitch_;
+            const glm::dvec2 a2 = track_path_.Point(s_a);
+            const glm::dvec2 b2 = track_path_.Point(s_a + shoe_pitch_);
+            const glm::dvec3 a(a2.x, 0.0, a2.y), b(b2.x, 0.0, b2.y);
+
+            // shoe x points from the trailing pin to the leading one, i.e. body-forward on the ground run
+            glm::dvec3 X = a - b;
+            const double len = glm::length(X);
+            X = len > 1e-12 ? X / len : glm::dvec3(1.0, 0.0, 0.0);
+            const glm::dvec3 Z = glm::cross(X, Y);  // toward the inside of the loop
+            const glm::dmat3 Rs(X, Y, Z);            // columns
+
+            glm::dvec3 pos = track_center_[k] + 0.5 * (a + b) + Rs * track_layout_.shoe_offset;
+            glm::dquat q = glm::quat_cast(Rs) * track_layout_.shoe_mesh_rotation;
+            if (world_frame) {
+                pos = p_ + R_ * pos;
+                q = q_hull * q;
+            }
+            TrackShoePose& sp = out[static_cast<size_t>(k) * n + j];
+            sp.position = pos;
+            sp.orientation = glm::normalize(q);
+            sp.track = k;
+            sp.index = j;
+        }
+    }
+}
+
+std::vector<TrackShoePose> TrackedVehicle::GetTrackShoePoses(bool world_frame) const {
+    std::vector<TrackShoePose> out;
+    GetTrackShoePoses(out, world_frame);
+    return out;
 }
 
 std::vector<LogRow> TrackedVehicle::Run() {

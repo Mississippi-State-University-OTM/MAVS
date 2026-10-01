@@ -136,15 +136,13 @@ void TrackedVehicle::ResetTerrain(environment::Environment* env) {
     int nx = terrain_.Nx();
     int ny = terrain_.Ny();
     int ntot = nx * ny;
-    double nodataval = -999.9;
     new_heights.resize(ntot);
     double dx = terrain_.Dx();
     int n = 0;
     for (int j = 0; j < ny; j++) {
         double y = new_origin.y + (j + 0.5) * dx;
-    for (int i = 0; i < nx; i++) {
-        double x = new_origin.x + (i + 0.5) * dx;
-        
+        for (int i = 0; i < nx; i++) {
+            double x = new_origin.x + (i + 0.5) * dx;
             float z = env->GetGroundHeight((float)x, (float)y);
             if (z <= zmin && n>0) z = (float)new_heights[n-1];
             new_heights[n] = (double)z;
@@ -152,7 +150,6 @@ void TrackedVehicle::ResetTerrain(environment::Environment* env) {
         }
     }
     terrain_.SetHeights(new_heights);
-
 }
 
 void TrackedVehicle::Update(environment::Environment* env, float throttle, float steer, float brake, float dt) {

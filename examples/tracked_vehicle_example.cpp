@@ -29,17 +29,15 @@ int main(int argc, char** argv) {
 	glm::quat orient(1.0f, 0.0f, 0.0f, 0.0f);
 	mavs::sensor::camera::RgbCamera camera;
 	camera.SetEnvironmentProperties(&env);
-	camera.Initialize(480, 320, 0.00525f, 0.0035f, 0.0035f);
+	camera.Initialize(640, 480, 0.00466667f, 0.0035f, 0.0035f);
 	camera.SetRelativePose(sensor_offset, sensor_orient);
 	camera.SetName("camera");
-	//camera.SetAntiAliasing("oversampled");
-	//camera.SetPixelSampleFactor(3);
 	camera.SetPose(position, orient);
 	camera.SetElectronics(0.95f, 1.0f);
 
 	int nsteps = 0;
-	//while (camera.DisplayOpen() || nsteps == 0) {
-	while (render.DisplayOpen() || nsteps == 0) {
+	while (camera.DisplayOpen() || nsteps == 0) {
+	//while (render.DisplayOpen() || nsteps == 0) {
 
 		std::vector<bool> driving_commands = camera.GetKeyCommands();
 		float throttle = 0.0f;
@@ -59,9 +57,6 @@ int main(int argc, char** argv) {
 			steering = -1.0f;
 		}
 
-        //mavs::vehicle::tracked::TrackSpeeds cmd = render.GetKeyboardDrivingCommand();
-
-		//tracked_veh.Step(tracked_veh.GetSimulationDt(), cmd);
 		tracked_veh.Update(&env, throttle, steering, braking, (float)tracked_veh.GetSimulationDt());
         render.Update();
 
@@ -71,8 +66,7 @@ int main(int argc, char** argv) {
 			camera.Update(&env, 0.03);
 			camera.Display();
 		}
-		//
-
+		
 		nsteps++;
 
     }

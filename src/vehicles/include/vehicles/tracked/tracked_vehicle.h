@@ -162,6 +162,9 @@ private:
     double max_track_speed_ = 15.0;
 
     void SetMavsParams();
+    std::string vehicle_mesh_file_ = "";
+    bool vehicle_loaded_ = false;
+    std::vector<int> actor_ids_;
 };
 
 namespace controller {

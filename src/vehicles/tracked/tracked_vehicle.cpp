@@ -13,6 +13,12 @@ namespace mavs {
 namespace vehicle {
 namespace tracked {
 
+static bool mesh_rotate_y_to_z = false;
+static bool mesh_rotate_x_to_y = false;
+static bool mesh_rotate_y_to_x = false;
+static glm::vec3 mesh_offset(0.0f, 0.0f, 0.0f);
+static glm::vec3 mesh_scale(1.0f, 1.0f, 1.0f);
+
 TrackedVehicle::TrackedVehicle(std::string input_file) {
 
     // Open safely using standard C++ streams (ios::binary matches "rb")
@@ -103,6 +109,18 @@ TrackedVehicle::TrackedVehicle(std::string input_file) {
         std::cout << "WARNING: No field for \"Controller\" in simulation input file, using default." << std::endl;
     }
 
+    if (d.HasMember("Vehicle Mesh") && d["Vehicle Mesh"].IsObject()) {
+        const rapidjson::Value& mesh = d["Vehicle Mesh"];
+        vehicle_mesh_file_ = mesh["File"].GetString();
+        mesh_rotate_y_to_z = mesh["Rotate Y to Z"].GetBool();
+        mesh_rotate_y_to_x = mesh["Rotate Y to X"].GetBool();
+        mesh_rotate_x_to_y = mesh["Rotate X to Y"].GetBool();
+        for (int ij = 0; ij < 3; ij++) {
+            mesh_offset[ij] = mesh["Offset"][ij].GetFloat();
+            mesh_scale[ij] = mesh["Scale"][ij].GetFloat();
+        }
+    }
+
     Init();
 
     // Settle the vehicle into the inital position
@@ -110,6 +128,41 @@ TrackedVehicle::TrackedVehicle(std::string input_file) {
     Settle(1.5, 1e-3);
     
 }
+
+void TrackedVehicle::Update(environment::Environment* env, float throttle, float steer, float brake, float dt) {
+    if (!vehicle_loaded_) {
+        actor_ids_ = env->AddActor(vehicle_mesh_file_, mesh_rotate_y_to_z, mesh_rotate_x_to_y, mesh_rotate_y_to_x, mesh_offset, mesh_scale);
+        vehicle_loaded_ = true;
+    }
+
+    TrackSpeeds cmd;
+    if (throttle > 0.0) {
+        cmd.left = throttle * max_track_speed_;
+        cmd.right = throttle * max_track_speed_;
+    }
+    else if (brake > 0.0) {
+        cmd.left = -brake * max_track_speed_;
+        cmd.right = -brake * max_track_speed_;
+    }
+    if (steer != 0.0) { cmd.right = steer * max_track_speed_; cmd.left = -steer * max_track_speed_; }
+
+
+    Step(dt, cmd);
+
+    SetMavsParams();
+
+    for (size_t actor_idx = 0; actor_idx < actor_ids_.size(); actor_idx++) {
+        env->SetActorPosition(actor_ids_[actor_idx], current_state_.pose.position, current_state_.pose.quaternion);
+    }
+}
+
+void TrackedVehicle::SetMavsParams() {
+    current_state_.pose.position = p_;
+    current_state_.pose.quaternion = glm::dquat(R_);
+    current_state_.twist.linear = vel_;
+    current_state_.twist.angular = omega_;
+}
+
 
 TrackedVehicle::TrackedVehicle(const TrackedVehicleParams& vehicle, const TrackedSoil& soil, HeightMapTerrain& terrain, const SimOptions& options) {
 
@@ -344,30 +397,6 @@ TrackDiag TrackedVehicle::TrackForces(int k, double dt, glm::dvec3& F, glm::dvec
     d.belt_speed = belt;
     d.vx_track = vtx;
     return d;
-}
-
-void TrackedVehicle::Update(environment::Environment* env, float throttle, float steer, float brake, float dt) {
-    TrackSpeeds cmd;
-    if (throttle > 0.0) {
-        cmd.left = throttle * max_track_speed_;
-        cmd.right = throttle * max_track_speed_;
-    }
-    else if (brake > 0.0) {
-        cmd.left = -brake * max_track_speed_;
-        cmd.right = -brake * max_track_speed_;
-    }
-    if (steer != 0.0) { cmd.right = steer * max_track_speed_; cmd.left = -steer * max_track_speed_; }
-
-
-    Step(dt, cmd);
-    SetMavsParams();
-}
-
-void TrackedVehicle::SetMavsParams() {
-    current_state_.pose.position = p_;
-    current_state_.pose.quaternion = glm::dquat(R_);
-    current_state_.twist.linear = vel_;
-    current_state_.twist.angular = omega_;
 }
 
 void TrackedVehicle::Step(double dt, TrackSpeeds cmd) {

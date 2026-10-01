@@ -548,11 +548,12 @@ std::vector<int> Environment::AddActor(std::string meshfile, bool y_to_z, bool x
 			<< " actors." << std::endl;
 		exit(1);
 	}
-
+	std::vector<int> actor_idxs;
 	for (int i = 0; i < (int)actors_.size(); i++) {
 		actors_[i].SetId(actor_nums[i]);
+		actor_idxs.push_back(i);
 	}
-	return actor_nums;
+	return actor_idxs;
 }
 
 std::vector<int> Environment::LoadActors(std::string actor_file) {

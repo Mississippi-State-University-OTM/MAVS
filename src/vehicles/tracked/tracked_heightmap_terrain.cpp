@@ -9,6 +9,7 @@
 #include <fstream>
 #include <algorithm>
 #include <cmath>
+#include <cstdlib>
 #include <stdexcept>
 
 namespace mavs {
@@ -93,6 +94,7 @@ HeightMapTerrain::HeightMapTerrain(double x0, double y0, double dx, int nx, int 
     ny_ = ny;
     h_ = heights;
     CheckDims();
+    ++revision_;
 }
 
 void HeightMapTerrain::Init(double x0, double y0, double dx, int nx, int ny,std::vector<double> heights) {
@@ -103,6 +105,7 @@ void HeightMapTerrain::Init(double x0, double y0, double dx, int nx, int ny,std:
     ny_ = ny;
     h_ = heights;
     CheckDims();
+    ++revision_;
 }
 
 void HeightMapTerrain::CheckDims() {
@@ -157,9 +160,55 @@ void HeightMapTerrain::InitRut(double rdx) {
     rut_nx_ = static_cast<int>(std::ceil((xmax - xmin) / rdx)) + 1;
     rut_ny_ = static_cast<int>(std::ceil((ymax - ymin) / rdx)) + 1;
     rut_.assign(static_cast<size_t>(rut_nx_) * rut_ny_, 0.0);
+    rut_base_x_ = rx0_;
+    rut_base_y_ = ry0_;
+    rut_off_x_ = 0;
+    rut_off_y_ = 0;
 }
 
 void HeightMapTerrain::ResetRuts() { std::fill(rut_.begin(), rut_.end(), 0.0); }
+
+// ============================================================ moving window
+void HeightMapTerrain::SetOrigin(double x0, double y0) {
+    x0_ = x0;
+    y0_ = y0;
+    ++revision_;
+    if (rut_.empty()) return;
+
+    // Snap the rut grid to the whole rut cell nearest the new origin, so cells stay world-fixed.
+    const long long ox = std::llround((x0 - rut_base_x_) / rdx_);
+    const long long oy = std::llround((y0 - rut_base_y_) / rdx_);
+    const long long kx = ox - rut_off_x_;   // grid moves +kx cells: new(ix) = old(ix + kx)
+    const long long ky = oy - rut_off_y_;
+    if (kx == 0 && ky == 0) return;
+    rut_off_x_ = ox;
+    rut_off_y_ = oy;
+    rx0_ = rut_base_x_ + static_cast<double>(ox) * rdx_;
+    ry0_ = rut_base_y_ + static_cast<double>(oy) * rdx_;
+
+    if (std::llabs(kx) >= rut_nx_ || std::llabs(ky) >= rut_ny_) {   // no overlap left
+        ResetRuts();
+        return;
+    }
+    rut_tmp_.assign(rut_.size(), 0.0);   // cells entering the window start at zero sinkage
+    const int sx = static_cast<int>(kx), sy = static_cast<int>(ky);
+    const int ix_lo = std::max(0, -sx), ix_hi = std::min(rut_nx_, rut_nx_ - sx);
+    for (int iy = 0; iy < rut_ny_; ++iy) {
+        const int src_y = iy + sy;
+        if (src_y < 0 || src_y >= rut_ny_) continue;
+        const double* src = &rut_[static_cast<size_t>(src_y) * rut_nx_];
+        double* dst = &rut_tmp_[static_cast<size_t>(iy) * rut_nx_];
+        for (int ix = ix_lo; ix < ix_hi; ++ix) dst[ix] = src[ix + sx];
+    }
+    rut_.swap(rut_tmp_);
+}
+
+void HeightMapTerrain::SetHeights(const std::vector<double>& heights) {
+    if (heights.size() != h_.size())
+        throw std::invalid_argument("SetHeights: size must be Nx * Ny");
+    h_ = heights;
+    ++revision_;
+}
 
 HeightMapTerrain::RutIndex HeightMapTerrain::GetRutIndex(double x, double y) const {
     // nearbyint = round-half-to-even, matching numpy.rint
@@ -168,31 +217,6 @@ HeightMapTerrain::RutIndex HeightMapTerrain::GetRutIndex(double x, double y) con
     const bool inside = ix >= 0 && ix < rut_nx_ && iy >= 0 && iy < rut_ny_;
     return {std::clamp(iy, 0, rut_ny_ - 1), std::clamp(ix, 0, rut_nx_ - 1), inside};
 }
-
-/*void HeightMapTerrain::PlotHeightMap() {
-    std::vector<std::vector<float> > heights = Allocate2DVector(nx_, ny_, 0.0f);
-    int nc = 0;
-    for (int i = 0; i < nx_; i++) {
-        for (int j = 0; j < ny_; j++) {
-            heights[i][j] = (float)h_[nc];
-            nc++;
-        }
-    }
-    plotter_.PlotScalarColorMap(heights);
-}
-
-void HeightMapTerrain::SaveHeightMap(std::string fname) {
-    std::vector<std::vector<float> > heights = Allocate2DVector(nx_, ny_, 0.0f);
-    int nc = 0;
-    for (int i = 0; i < nx_; i++) {
-        for (int j = 0; j < ny_; j++) {
-            heights[i][j] = (float)h_[nc];
-            nc++;
-        }
-    }
-    plotter_.PlotScalarColorMap(heights);
-    plotter_.SaveCurrentPlot(fname);
-}*/
 
 }  // namespace tracked
 }  // namespace vehicle

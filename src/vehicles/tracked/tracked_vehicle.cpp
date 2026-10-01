@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <iostream>
 #include <fstream>
+#include <limits>
 
 namespace mavs {
 namespace vehicle {
@@ -122,17 +123,48 @@ TrackedVehicle::TrackedVehicle(std::string input_file) {
     }
 
     Init();
-
-    // Settle the vehicle into the inital position
-    SetPose(sim_options_.initial_position_x, sim_options_.initial_position_y, sim_options_.initial_yaw);
-    Settle(1.5, 1e-3);
     
+}
+
+void TrackedVehicle::ResetTerrain(environment::Environment* env) {
+    float zmin = std::numeric_limits<float>::lowest();
+    zmin *= 0.5;
+    std::vector<double> old_heights = terrain_.GetHeights();
+    glm::dvec2 new_origin(p_.x - 0.5 * terrain_.XDim(), p_.y - 0.5 * terrain_.YDim());
+    terrain_.SetOrigin(new_origin.x, new_origin.y);
+    std::vector<double> new_heights;
+    int nx = terrain_.Nx();
+    int ny = terrain_.Ny();
+    int ntot = nx * ny;
+    double nodataval = -999.9;
+    new_heights.resize(ntot);
+    double dx = terrain_.Dx();
+    int n = 0;
+    for (int j = 0; j < ny; j++) {
+        double y = new_origin.y + (j + 0.5) * dx;
+    for (int i = 0; i < nx; i++) {
+        double x = new_origin.x + (i + 0.5) * dx;
+        
+            float z = env->GetGroundHeight((float)x, (float)y);
+            if (z <= zmin && n>0) z = (float)new_heights[n-1];
+            new_heights[n] = (double)z;
+            n++;
+        }
+    }
+    terrain_.SetHeights(new_heights);
+
 }
 
 void TrackedVehicle::Update(environment::Environment* env, float throttle, float steer, float brake, float dt) {
     if (!vehicle_loaded_) {
         actor_ids_ = env->AddActor(vehicle_mesh_file_, mesh_rotate_y_to_z, mesh_rotate_x_to_y, mesh_rotate_y_to_x, mesh_offset, mesh_scale);
         vehicle_loaded_ = true;
+
+        ResetTerrain(env);
+
+        // Settle the vehicle into the inital position
+        SetPose(sim_options_.initial_position_x, sim_options_.initial_position_y, sim_options_.initial_yaw);
+        Settle(1.5, 1e-3);
     }
 
     TrackSpeeds cmd;
@@ -153,6 +185,12 @@ void TrackedVehicle::Update(environment::Environment* env, float throttle, float
 
     for (size_t actor_idx = 0; actor_idx < actor_ids_.size(); actor_idx++) {
         env->SetActorPosition(actor_ids_[actor_idx], current_state_.pose.position, current_state_.pose.quaternion);
+    }
+
+    time_since_last_terrain_refresh_ += dt;
+    if (time_since_last_terrain_refresh_ > 1.0f) {
+        ResetTerrain(env);
+        time_since_last_terrain_refresh_ = 0.0;
     }
 }
 
@@ -399,7 +437,31 @@ TrackDiag TrackedVehicle::TrackForces(int k, double dt, glm::dvec3& F, glm::dvec
     return d;
 }
 
+void TrackedVehicle::EnableMovingTerrain(double recenter_distance, TerrainRefresh refresh) {
+    recenter_distance_ = recenter_distance;
+    terrain_refresh_ = std::move(refresh);
+    moving_terrain_ = true;
+}
+
+void TrackedVehicle::RecenterTerrain() {
+    double xmin, xmax, ymin, ymax;
+    terrain_.Extent(xmin, xmax, ymin, ymax);
+    const double dx = terrain_.Dx();
+    const double sx = std::round((p_.x - 0.5 * (xmin + xmax)) / dx) * dx;
+    const double sy = std::round((p_.y - 0.5 * (ymin + ymax)) / dx) * dx;
+    if (sx == 0.0 && sy == 0.0) return;
+    terrain_.SetOrigin(terrain_.X0() + sx, terrain_.Y0() + sy);
+    if (terrain_refresh_) terrain_refresh_(terrain_);
+}
+
 void TrackedVehicle::Step(double dt, TrackSpeeds cmd) {
+    if (moving_terrain_) {
+        double xmin, xmax, ymin, ymax;
+        terrain_.Extent(xmin, xmax, ymin, ymax);
+        if (std::abs(p_.x - 0.5 * (xmin + xmax)) > recenter_distance_ ||
+            std::abs(p_.y - 0.5 * (ymin + ymax)) > recenter_distance_)
+            RecenterTerrain();
+    }
     if (sim_options_.drive == DriveMode::Speed) sprocket_ = cmd;
 
     glm::dvec3 F_b(0.0), M_b(0.0);

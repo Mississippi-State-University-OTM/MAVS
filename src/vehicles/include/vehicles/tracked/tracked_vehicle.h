@@ -42,6 +42,8 @@ namespace mavs {
 namespace vehicle {
 namespace tracked {
 
+class TrackedRender;
+
 class TrackedVehicle : public Vehicle {
 public:
 
@@ -109,6 +111,19 @@ public:
 
     const std::array<std::vector<glm::dvec3>, 2>& GetTrackElements() const { return r_el_; }
 
+    // ---- moving terrain window
+    // Called after the terrain origin moves; must refill the heights for the new window
+    // (terrain.SetHeights). Ruts are already shifted when it runs.
+    using TerrainRefresh = std::function<void(HeightMapTerrain& terrain)>;
+    // At the start of each Step(), if the vehicle is more than recenter_distance [m] from the
+    // window centre (in x or y), the window is recentred on it. Keep recenter_distance well
+    // under half the window size minus the vehicle's footprint, so the tracks never leave it.
+    void EnableMovingTerrain(double recenter_distance, TerrainRefresh refresh);
+    void DisableMovingTerrain() { moving_terrain_ = false; }
+    // Recentre now. The shift is a whole number of height cells, so existing heights stay
+    // grid-aligned with the new window. Calls the refresh function if one is set.
+    void RecenterTerrain();
+
 private:
     TrackDiag TrackForces(int k, double dt, glm::dvec3& F, glm::dvec3& M);
 
@@ -127,7 +142,8 @@ private:
     HeightMapTerrain terrain_;
     SimOptions sim_options_; 
 
-    //double m_;
+    double time_since_last_terrain_refresh_ = 0.0;
+
     glm::dvec3 I_ = glm::dvec3(0.0);
     glm::dvec3 Iinv_ = glm::dvec3(0.0);
     double du_ = 0.0;
@@ -161,10 +177,17 @@ private:
 
     double max_track_speed_ = 15.0;
 
+    // moving terrain window
+    bool moving_terrain_ = false;
+    double recenter_distance_ = 0.0;
+    TerrainRefresh terrain_refresh_;
+
     void SetMavsParams();
     std::string vehicle_mesh_file_ = "";
     bool vehicle_loaded_ = false;
     std::vector<int> actor_ids_;
+
+    void ResetTerrain(environment::Environment* env);
 };
 
 namespace controller {

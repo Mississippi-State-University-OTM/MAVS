@@ -243,23 +243,23 @@ void TrackedRender::UpdateDebugDisplay() {
     const auto track_centre = tracked_vehicle_->GetTrackCenter();   // two dvec3, cheap to copy
 
     // ---- 1. grayscale heightmap, computed once and cached
-    if (debug_terrain_base_.is_empty()) {
-        std::vector<double> h(static_cast<size_t>(W) * H);
-        double hmin = 1e300, hmax = -1e300;
-        for (int py = 0; py < H; ++py)
-            for (int px = 0; px < W; ++px) {
-                const double z = terrain.Height(x0 + (px + 0.5) * res, y0 + (H - 1 - py + 0.5) * res);
-                h[static_cast<size_t>(py) * W + px] = z;
-                hmin = std::min(hmin, z);
-                hmax = std::max(hmax, z);
-            }
-        const double range = std::max(hmax - hmin, 1e-9);
-        debug_terrain_base_.assign(W, H, 1, 1);
-        for (int py = 0; py < H; ++py)
-            for (int px = 0; px < W; ++px)   // map to 40..220 so ruts and the vehicle stay visible
-                debug_terrain_base_(px, py) =
-                    static_cast<float>(40.0 + 180.0 * (h[static_cast<size_t>(py) * W + px] - hmin) / range);
-    }
+    //if (debug_terrain_base_.is_empty()) {
+    std::vector<double> h(static_cast<size_t>(W) * H);
+    double hmin = 1e300, hmax = -1e300;
+    for (int py = 0; py < H; ++py)
+        for (int px = 0; px < W; ++px) {
+            const double z = terrain.Height(x0 + (px + 0.5) * res, y0 + (H - 1 - py + 0.5) * res);
+            h[static_cast<size_t>(py) * W + px] = z;
+            hmin = std::min(hmin, z);
+            hmax = std::max(hmax, z);
+        }
+    const double range = std::max(hmax - hmin, 1e-9);
+    debug_terrain_base_.assign(W, H, 1, 1);
+    for (int py = 0; py < H; ++py)
+        for (int px = 0; px < W; ++px)   // map to 40..220 so ruts and the vehicle stay visible
+            debug_terrain_base_(px, py) =
+                static_cast<float>(40.0 + 180.0 * (h[static_cast<size_t>(py) * W + px] - hmin) / range);
+    //}
 
     // ---- 2. terrain + sinkage overlay: blend toward orange/brown by plastic sinkage
     const double rut_scale = std::max(2.0 * tracked_vehicle_->GetSinkage(), 1e-3);   // full tint at 2x static sinkage
@@ -367,6 +367,12 @@ void TrackedRender::BuildTerrainMesh3D() {
 
 void TrackedRender::Update3DDisplay() {
     if (image3d_.is_empty() || display3d_.is_closed()) return;
+
+    if (fabs(cam_pos_.x - tracked_vehicle_->GetTerrain().X0()) > 0.01 || fabs(cam_pos_.y - tracked_vehicle_->GetTerrain().Y0()) > 0.01) {
+        cam_pos_ = glm::vec3(tracked_vehicle_->GetTerrain().X0(), tracked_vehicle_->GetTerrain().Y0(), tracked_vehicle_->GetPosition().z + 2.0);
+        BuildTerrainMesh3D();
+    }
+    
 
     // ~30 Hz of simulated time; redraw if the clock went backwards (Settle)
     const double frame_dt = 1.0 / 30.0;

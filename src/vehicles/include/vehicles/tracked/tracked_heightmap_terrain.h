@@ -53,6 +53,17 @@ public:
     int Ny() const { return ny_; }
     const std::vector<double>& heights() const { return h_; }
 
+    // ------------------------------------------------ moving window
+    // Move the height-map origin (lower-left node) to (x0, y0). Size and spacing are unchanged.
+    // Heights are NOT touched: refill them afterwards with SetHeights().
+    // The rut map is shifted by whole rut cells so every rut keeps its world position;
+    // ruts that leave the window are discarded, cells entering it start undisturbed (0).
+    void SetOrigin(double x0, double y0);
+    // Replace all heights; size must be Nx() * Ny(), same layout as the constructor.
+    void SetHeights(const std::vector<double>& heights);
+    // Bumped whenever heights or the origin change, so caches (e.g. the renderer) can rebuild.
+    unsigned long long Revision() const { return revision_; }
+
     // ------------------------------------------------ rut map
     struct RutIndex { int iy, ix; bool inside; };
 
@@ -74,9 +85,11 @@ public:
 
     void ParseJsonObject(const rapidjson::Value& vehicle);
 
-    //void PlotHeightMap();
+    double XDim() const { return nx_ * dx_; }
 
-    //void SaveHeightMap(std::string fname);
+    double YDim() const { return ny_ * dx_; }
+
+    std::vector<double> GetHeights() { return h_; }
 
 private:
     // height map
@@ -88,6 +101,12 @@ private:
     std::vector<double> rut_;
     double rx0_ = 0, ry0_ = 0, rdx_ = 0;
     int rut_nx_ = 0, rut_ny_ = 0;
+    // rut origin = base + whole-cell offset (kept as integers so repeated shifts don't drift)
+    double rut_base_x_ = 0, rut_base_y_ = 0;
+    long long rut_off_x_ = 0, rut_off_y_ = 0;
+    std::vector<double> rut_tmp_;   // scratch for shifting
+
+    unsigned long long revision_ = 0;
 
     void CheckDims();
 };

@@ -1,5 +1,6 @@
 // c++ includes
 #include <iostream>
+#include <algorithm>
 // project includes
 #include "vehicles/tracked/tracked_vehicle.h"
 #include "vehicles/tracked/tracked_render.h"
@@ -7,6 +8,39 @@
 #ifdef USE_EMBREE
 #include <raytracers/embree_tracer/embree_tracer.h>
 #endif
+
+static float throttle = 0.0f;
+static float steering = 0.0f;
+static float braking = 0.0f;
+static float cstep = 0.001f;
+
+static void UpdateDrivingCommand(std::vector<bool> keyboard_commands) {
+	
+	if (keyboard_commands[0]) {
+		throttle += cstep;
+		braking = 0.0f;
+	}
+	else if (keyboard_commands[1]) {
+		braking += cstep;
+		throttle = 0.0f;
+	}
+	else {
+		braking = 0.0f;
+		throttle = 0.0f;
+	}
+	if (keyboard_commands[2]) {
+		steering += cstep;
+	}
+	else if (keyboard_commands[3]) {
+		steering -= cstep;
+	}
+	else {
+		steering = 0.0f;
+	}
+	throttle = std::max(0.0f, std::min(1.0f, throttle));
+	braking = std::max(0.0f, std::min(1.0f, braking));
+	steering = std::max(-1.0f, std::min(1.0f, steering));
+}
 
 
 int main(int argc, char** argv) {
@@ -16,15 +50,17 @@ int main(int argc, char** argv) {
 
 	mavs::vehicle::tracked::TrackedVehicle tracked_veh(vehic_file);
 
-	mavs::vehicle::tracked::TrackedRender render(&tracked_veh);
+	mavs::vehicle::tracked::TrackedRender tracked_debug_render(&tracked_veh);
 
     mavs::raytracer::embree::EmbreeTracer scene;
     scene.Load(scene_file);
     mavs::environment::Environment env;
 	env.SetRaytracer(&scene);
-
-	glm::vec3 sensor_offset(-10.0f, 0.0f, 1.5f);
-	glm::quat sensor_orient(1.0f, 0.0f, 0.0f, 0.0f);
+	float theta = -1.570796f;
+	glm::vec3 sensor_offset(1.0f, 12.0f, 1.5f);
+	glm::quat sensor_orient(cosf(0.5f * theta), 0.0f, 0.0f, sinf(0.5f * theta));
+	//glm::vec3 sensor_offset(-10.0f, 0.0f, 1.5f);
+	//glm::quat sensor_orient(1.0f, 0.0f, 0.0f, 0.0f);
 	glm::vec3 position(0.0f, 0.0f, 1.0f);
 	glm::quat orient(1.0f, 0.0f, 0.0f, 0.0f);
 	mavs::sensor::camera::RgbCamera camera;
@@ -37,28 +73,11 @@ int main(int argc, char** argv) {
 
 	int nsteps = 0;
 	while (camera.DisplayOpen() || nsteps == 0) {
-	//while (render.DisplayOpen() || nsteps == 0) {
 
-		std::vector<bool> driving_commands = camera.GetKeyCommands();
-		float throttle = 0.0f;
-		float steering = 0.0f;
-		float braking = 0.0f;
-		driving_commands = camera.GetKeyCommands();
-		if (driving_commands[0]) {
-			throttle = 1.0f;
-		}
-		else if (driving_commands[1]) {
-			braking = 1.0f;
-		}
-		if (driving_commands[2]) {
-			steering = 1.0f;
-		}
-		else if (driving_commands[3]) {
-			steering = -1.0f;
-		}
+		UpdateDrivingCommand(camera.GetKeyCommands());
 
 		tracked_veh.Update(&env, throttle, steering, braking, (float)tracked_veh.GetSimulationDt());
-        render.Update();
+		tracked_debug_render.Update();
 
 		if (nsteps % 50 == 0) {
 			glm::dquat ori = tracked_veh.GetOrientation();

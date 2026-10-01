@@ -56,8 +56,11 @@ int main(int argc, char** argv) {
     scene.Load(scene_file);
     mavs::environment::Environment env;
 	env.SetRaytracer(&scene);
-	float theta = -1.570796f/4.0f;
-	glm::vec3 sensor_offset(-8.0f, 3.0f, 2.0f);
+	//float theta = -1.570796f/4.0f;
+	//glm::vec3 sensor_offset(-8.0f, 3.0f, 2.0f);
+	//glm::quat sensor_orient(cosf(0.5f * theta), 0.0f, 0.0f, sinf(0.5f * theta));
+	float theta = -1.570796f;
+	glm::vec3 sensor_offset(0.0f, 6.5f, 1.25f);
 	glm::quat sensor_orient(cosf(0.5f * theta), 0.0f, 0.0f, sinf(0.5f * theta));
 	//glm::vec3 sensor_offset(-10.0f, 0.0f, 1.5f);
 	//glm::quat sensor_orient(1.0f, 0.0f, 0.0f, 0.0f);

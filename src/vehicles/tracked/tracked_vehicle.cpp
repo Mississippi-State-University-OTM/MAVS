@@ -204,13 +204,10 @@ void TrackedVehicle::Update(environment::Environment* env, float throttle, float
         GetTrackShoePoses(shoe_poses, true);
         int nanim = 1;
         for (size_t sp = 0; sp < shoe_poses.size(); sp++) {
-            //std::cout << sp << " " << shoe_poses[sp].position.x << " " << shoe_poses[sp].position.y << " " << shoe_poses[sp].position.z << std::endl;
             std::vector<int> shoe_id = env->AddActor(track_pad_mesh_file, false, false, false, glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0));
             track_pad_ids.push_back(nanim);
             nanim++;
-            //std::cout << shoe_id[0] << std::endl;
         }
-        //std::cout << "Added " << track_pad_ids.size() << " track pad animations " << std::endl;
         ResetTerrain(env);
 
         // Settle the vehicle into the inital position

@@ -45,7 +45,6 @@ private:
     cimg_library::CImgDisplay debug_display_;
     cimg_library::CImg<float> debug_image_;
     cimg_library::CImg<float> debug_terrain_base_;   // cached grayscale heightmap (terrain is static)
-    double debug_last_draw_time_ = -1.0e9;
     
     glm::dvec2 DebugPixelToWorld(int px, int py) const;
     glm::ivec2 DebugWorldToPixel(const glm::dvec3& w) const;
@@ -58,7 +57,7 @@ private:
     double cam_yaw_ = 0.0;
     double cam_pitch_ = 0.0;
     double cam_hfov_ = 1.0471975512;                 // 60 deg horizontal field of view
-    double last_draw_time_3d_ = -1.0e9;
+
     // cached terrain mesh (decimated heightmap grid): world positions and grey level
     std::vector<glm::dvec3> terrain3d_pos_;
     std::vector<double> terrain3d_gray_;

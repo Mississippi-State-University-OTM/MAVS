@@ -31,16 +31,8 @@ public:
 
     HeightMapTerrain(double x0, double y0, double dx, int nx, int ny, std::vector<double> heights);
 
-    void Init(double x0, double y0, double dx, int nx, int ny, std::vector<double> heights);
+    //void Init(double x0, double y0, double dx, int nx, int ny, std::vector<double> heights);
 
-    static HeightMapTerrain FromFunction(const std::function<double(double, double)>& f,
-        double xmin, double xmax, double ymin, double ymax,
-        double dx);
-
-    static HeightMapTerrain Flat(double xmin, double xmax, double ymin, double ymax,
-        double dx = 0.5, double z = 0.0);
-
-    // ------------------------------------------------ height map
     // Undisturbed surface height at (x, y).
     double Height(double x, double y) const;
     // Bounds of the height map (also used to allocate the rut map).
@@ -92,6 +84,13 @@ public:
     std::vector<double> GetHeights() { return h_; }
 
 private:
+    static HeightMapTerrain FromFunction(const std::function<double(double, double)>& f,
+        double xmin, double xmax, double ymin, double ymax,
+        double dx);
+
+    static HeightMapTerrain Flat(double xmin, double xmax, double ymin, double ymax,
+        double dx = 0.5, double z = 0.0);
+
     // height map
     double x0_, y0_, dx_;
     int nx_, ny_;

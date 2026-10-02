@@ -25,14 +25,7 @@ struct SimOptions {
     double normal_damping_ratio = 0.2;
     double rut_dx = 0.0;   // <= 0 -> 1.2 * max(element spacing)
     double gravity = 9.806;
-    double initial_position_x = 0.0;
-    double initial_position_y = 0.0;
-    double initial_yaw = 0.0;
-    double simulation_duration = 20.0;
-    double dt = 2.0E-3;
-    int log_every = 25;
-    bool display_debug = false;
-    bool render_3d = false;
+    double max_dt = 2.0E-3;
 
     void Load(std::string input_file);
 

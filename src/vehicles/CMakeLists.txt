@@ -27,6 +27,7 @@ add_library(mavs_vehicle STATIC
 	tracked/tracked_soil.cpp
 	tracked/tracked_vehicle_params.cpp
 	tracked/tracked_math_utils.cpp
+	tracked/tracked_rendering_asset.cpp
 )
 else (MAVS_USE_CHRONO)
 add_library(mavs_vehicle STATIC
@@ -52,6 +53,7 @@ add_library(mavs_vehicle STATIC
 	tracked/tracked_soil.cpp
 	tracked/tracked_vehicle_params.cpp
 	tracked/tracked_math_utils.cpp
+	tracked/tracked_rendering_asset.cpp
 )
 endif(MAVS_USE_CHRONO)
 

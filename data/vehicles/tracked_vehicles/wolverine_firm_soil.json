@@ -31,14 +31,7 @@
     "normal_damping_ratio": 0.2,
     "rut_dx": 0.0,
     "gravity": 9.806,
-    "initial_pose_x": 0.0,
-    "initial_pose_y": 0.0,
-    "initial_pose_yaw": 0.0,
-    "simulation_duration": -1.0,
-    "dt": 2.0E-3,
-    "log_every": 25,
-    "display_debug": true,
-    "render_3d": true
+    "dt": 2.0E-3
   },
 
   "Terrain": {
@@ -46,16 +39,11 @@
     "xmax": 25.0,
     "ymin": -25.0,
     "ymax": 25.0,
-    "resolution": 0.05,
-    "Type": "Bumpy"
-  },
-
-  "Controller": {
-    "Type": "External"
+    "resolution": 0.05
   },
 
   "Vehicle Mesh": {
-    "File": "vehicles/wolverine/wolverine.obj",
+    "File": "vehicles/wolverine/wolverine_notrack.obj",
     "Rotate Y to Z": false,
     "Rotate X to Y": false,
     "Rotate Y to X": false,

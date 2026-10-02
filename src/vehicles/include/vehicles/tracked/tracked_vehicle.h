@@ -38,6 +38,7 @@
 #include "vehicles/tracked/tracked_vehicle_params.h"
 #include "vehicles/tracked/tracked_sim_options.h"
 #include "vehicles/tracked/tracked_track_path.h"
+#include "vehicles/tracked/tracked_rendering_asset.h"
 
 namespace mavs {
 namespace vehicle {
@@ -48,36 +49,18 @@ class TrackedRender;
 class TrackedVehicle : public Vehicle {
 public:
 
-    using Controller = std::function<TrackSpeeds(double t, const TrackedVehicle&)>;
-
     TrackedVehicle(std::string input_file);
-
-    TrackedVehicle(const TrackedVehicleParams& vehicle, const TrackedSoil& soil, HeightMapTerrain& terrain, const SimOptions& options = SimOptions());
 
     void SetPose(double x, double y, double yaw_radians);
 
-    // cmd = (left, right): sprocket speeds [rad/s] (Speed) or torques [N m] (Torque).
-    void Step(double dt, TrackSpeeds cmd);
-
     void Update(environment::Environment* env, float throttle, float steer, float brake, float dt);
 
-    void Settle(double duration = 1.5, double dt = 1e-3);
-    
-    std::vector<LogRow> Run();
+    void SetInitialPose(double init_x, double init_y, double init_yaw) { initial_position_x_ = init_x; initial_position_y_ = init_y; initial_yaw_ = init_yaw; }
 
-    VehicleState GetCurrentVehicleState() const;
+    const TrackSpeeds GetSprocketSpeeds() const { return sprocket_; }
 
-    const SimulationState& GetCurrentSimulationState() const { return current_simulation_state_; }
+    double GetElapsedTime() const { return elapsed_time_; }
 
-    // raw state access (for coupling to a host simulator)
-    const glm::dvec3& GetPosition() const { return p_; }
-    const glm::dmat3& GetRotationMatrix() const { return R_; }
-    const glm::dvec3& GetVelocityWorld() const { return vel_; }
-    const glm::dvec3& GetOmegaBody() const { return omega_; }
-
-    const TrackSpeeds SprocketSpeeds() const { return sprocket_; }
-
-    double GetTime() const { return elapsed_time_; }
     double GetSinkage() const { return z_static_estimate_; }
     SimOptions& GetSimOptions() { return sim_options_; }
 
@@ -88,16 +71,8 @@ public:
 
     void SetTerrain(HeightMapTerrain terrain_in) { terrain_ = terrain_in; }
 
-    void SetSimulationDuration(double duration) { sim_options_.simulation_duration = duration; }
-    double GetSimulationDuration() const { return sim_options_.simulation_duration; }
-
-    void SetSimulationDt(double dt) { sim_options_.dt = dt; }
-    double GetSimulationDt() const { return sim_options_.dt; }
-
-    void SetController(Controller controller_in) { controller_ = controller_in; }
-
-    void SetLogStepFrequency(int log_every_in) { sim_options_.log_every = log_every_in; }
-    int GetLogStopFrequency() const { return sim_options_.log_every; }
+    void SetSimulationMaxDt(double dt) { sim_options_.max_dt = dt; }
+    double GetSimulationMaxDt() const { return sim_options_.max_dt; }
 
     double GetDu()const { return du_; }
     double GetDw()const { return dw_; }
@@ -105,8 +80,6 @@ public:
     TrackedVehicleParams& GetVehicle() { return vehicle_params_; }
 
     TrackedSoil& GetSoil() { return soil_; }
-
-    double GetElapsedTime()const { return elapsed_time_; }
 
     const std::array<glm::dvec3, 2>& GetTrackCenter() const { return track_center_; }
 
@@ -142,7 +115,14 @@ public:
     void GetTrackShoePoses(std::vector<TrackShoePose>& out, bool world_frame = true) const;
     std::vector<TrackShoePose> GetTrackShoePoses(bool world_frame = true) const;
 
+    glm::dmat3 GetRotationMatrix() const { return R_; }
+
 private:
+    // cmd = (left, right): sprocket speeds [rad/s] (Speed) or torques [N m] (Torque).
+    void Step(double dt, TrackSpeeds cmd);
+
+    void Settle(double duration = 1.5, double dt = 1e-3);
+
     TrackDiag TrackForces(int k, double dt, glm::dvec3& F, glm::dvec3& M);
 
     void Advect(std::vector<std::array<double, 2>>& j, double shift);
@@ -153,14 +133,15 @@ private:
 
     void Init();
 
-    Controller controller_;
-
     TrackedVehicleParams vehicle_params_; 
     TrackedSoil soil_; 
     HeightMapTerrain terrain_;
     SimOptions sim_options_; 
 
     double time_since_last_terrain_refresh_ = 0.0;
+    double initial_position_x_ = 0.0;
+    double initial_position_y_ = 0.0;
+    double initial_yaw_ = 0.0;
 
     glm::dvec3 I_ = glm::dvec3(0.0);
     glm::dvec3 Iinv_ = glm::dvec3(0.0);
@@ -184,7 +165,7 @@ private:
     std::array<std::vector<std::array<double, 2>>, 2> j_;
     double g_scale_ = 1.0;
     double elapsed_time_ = 0.0;
-    SimulationState current_simulation_state_;
+    //SimulationState current_simulation_state_;
 
     // scratch buffers (avoid per-step allocation)
     std::vector<double> z_, zp_, pn_;
@@ -201,11 +182,19 @@ private:
     TerrainRefresh terrain_refresh_;
 
     void SetMavsParams();
-    std::string vehicle_mesh_file_ = "";
+    RenderingAsset vehicle_asset_;
+    RenderingAsset track_asset_;
+    void UpdateMavsAnimations(environment::Environment* env);
     bool vehicle_loaded_ = false;
     std::vector<int> actor_ids_;
+    std::vector<int> track_pad_ids_;
 
+    void InitAnimation(environment::Environment* env);
+
+    void UpdateTerrain(environment::Environment* env, float dt);
     void ResetTerrain(environment::Environment* env);
+
+    TrackSpeeds GetSprocketSpeedsFromTsb(double throttle, double steer, double brake);
 
     // track shoe animation
     void BuildTrackPath();
@@ -215,48 +204,6 @@ private:
     double shoe_pitch_ = 0.0;
     std::array<double, 2> track_phase_{ 0.0, 0.0 };
 };
-
-namespace controller {
-
-inline TrackedVehicle::Controller Ramp(double wl, double wr, double tr = 2.0) {
-    return [=](double t, const TrackedVehicle&) {
-        const double a = std::min(t / tr, 1.0);
-        TrackSpeeds cmd_track_speed;
-        cmd_track_speed.left = wl * a;
-        cmd_track_speed.right = wr * a;
-        return cmd_track_speed;
-        };
-}
-
-inline TrackedVehicle::Controller RampThenTurn(
-    double w,
-    double t_turn = 9.0,
-    double left_scale = 0.65,
-    double right_scale = 1.1,
-    double tr = 2.0)
-{
-    return [=](double t, const TrackedVehicle&) {
-        TrackSpeeds cmd;
-        if (t < t_turn) {
-            const double a = std::min(t / tr, 1.0);
-            cmd.left = w * a;
-            cmd.right = w * a;
-        }
-        else {
-            cmd.left = left_scale * w;
-            cmd.right = right_scale * w;
-        }
-        return cmd;
-        };
-}
-
-inline TrackedVehicle::Controller ConstantTorque(double wl, double wr) {
-	return [=](double, const TrackedVehicle&) {
-		return TrackSpeeds{ wl, wr };
-		};
-}
-
-} // namespace controller
 
 }  // namespace tracked
 } // namespace vehicle

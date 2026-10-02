@@ -10,23 +10,16 @@ namespace tracked {
 
 TrackedRender::TrackedRender(TrackedVehicle* tracked_vehicle_in) {
     tracked_vehicle_ = tracked_vehicle_in;
-    if (tracked_vehicle_->GetSimOptions().display_debug) {
-        debug_image_.assign(tracked_vehicle_->GetTerrain().Nx(), tracked_vehicle_->GetTerrain().Ny(), 1, 3, 0.0f);
-        debug_display_.assign(tracked_vehicle_->GetTerrain().Nx(), tracked_vehicle_->GetTerrain().Ny(), "Tracked Vehicle Simulation", 0);  // 0 = no auto-normalisation, pixels are 0..255
-    }
 
-    if (tracked_vehicle_->GetSimOptions().render_3d) {
-        Enable3DDisplay();
-    }
+    debug_image_.assign(tracked_vehicle_->GetTerrain().Nx(), tracked_vehicle_->GetTerrain().Ny(), 1, 3, 0.0f);
+    debug_display_.assign(tracked_vehicle_->GetTerrain().Nx(), tracked_vehicle_->GetTerrain().Ny(), "Tracked Vehicle Simulation", 0);  // 0 = no auto-normalisation, pixels are 0..255
+
+    Enable3DDisplay();
 }
 
 void TrackedRender::Update() {
-    if (tracked_vehicle_->GetSimOptions().display_debug) {
-        UpdateDebugDisplay();
-    }
-    if (!display3d_.is_closed()) {
-        Update3DDisplay();
-    }
+    UpdateDebugDisplay();
+    Update3DDisplay();
 }
 
 // ---- shared terrain colouring (2D and 3D views use the same rule)
@@ -181,7 +174,7 @@ glm::ivec2 TrackedRender::DebugWorldToPixel(const glm::dvec3& w) const {
 TrackSpeeds TrackedRender::GetKeyboardDrivingCommand() {
     double speed_step = 1.0e-3;
     double twice_speed_step = 4.0e-3;
-    TrackSpeeds cmd = tracked_vehicle_->SprocketSpeeds(); // sprocket_; // set the commanded speed to the current speed
+    TrackSpeeds cmd = tracked_vehicle_->GetSprocketSpeeds(); // set the commanded speed to the current speed
     if (debug_display_.is_keyARROWUP()) {
         double new_speed = std::max(cmd.left, cmd.right);
         cmd.left = new_speed + speed_step;
@@ -224,13 +217,6 @@ TrackSpeeds TrackedRender::GetKeyboardDrivingCommand() {
 
 void TrackedRender::UpdateDebugDisplay() {
     if (debug_image_.is_empty() || debug_display_.is_closed()) return;
-
-    // Redraw at ~30 Hz of simulated time instead of every physics step.
-    // Settle() resets the clock to 0, so also redraw whenever time goes backwards.
-    const double frame_dt = 1.0 / 30.0;
-    if (tracked_vehicle_->GetElapsedTime() >= debug_last_draw_time_ &&
-        tracked_vehicle_->GetElapsedTime() - debug_last_draw_time_ < frame_dt) return;
-    debug_last_draw_time_ = tracked_vehicle_->GetElapsedTime();
 
     const int W = debug_image_.width(), H = debug_image_.height();
 
@@ -319,7 +305,6 @@ void TrackedRender::Enable3DDisplay(int width, int height) {
     image3d_.assign(width, height, 1, 3, 0.0f);
     zbuf3d_.assign(static_cast<size_t>(width) * height, 0.0f);
     display3d_.assign(width, height, "Tracked Vehicle 3D", 0);   // 0 = no auto-normalisation
-    last_draw_time_3d_ = -1.0e9;
 }
 
 void TrackedRender::BuildTerrainMesh3D() {
@@ -372,13 +357,6 @@ void TrackedRender::Update3DDisplay() {
         cam_pos_ = glm::vec3(tracked_vehicle_->GetTerrain().X0(), tracked_vehicle_->GetTerrain().Y0(), tracked_vehicle_->GetPosition().z + 2.0);
         BuildTerrainMesh3D();
     }
-    
-
-    // ~30 Hz of simulated time; redraw if the clock went backwards (Settle)
-    const double frame_dt = 1.0 / 30.0;
-    if (tracked_vehicle_->GetElapsedTime() >= last_draw_time_3d_ &&
-        tracked_vehicle_->GetElapsedTime() - last_draw_time_3d_ < frame_dt) return;
-    last_draw_time_3d_ = tracked_vehicle_->GetElapsedTime();
 
     if (terrain3d_pos_.empty()) BuildTerrainMesh3D();
 

@@ -14,14 +14,6 @@ namespace mavs {
 namespace vehicle {
 namespace tracked {
 
-static bool mesh_rotate_y_to_z = false;
-static bool mesh_rotate_x_to_y = false;
-static bool mesh_rotate_y_to_x = false;
-static glm::vec3 mesh_offset(0.0f, 0.0f, 0.0f);
-static glm::vec3 mesh_scale(1.0f, 1.0f, 1.0f);
-static std::string track_pad_mesh_file = "NULL";
-static std::vector <int> track_pad_ids;
-
 TrackedVehicle::TrackedVehicle(std::string input_file) {
 
     // Open safely using standard C++ streams (ios::binary matches "rb")
@@ -72,68 +64,14 @@ TrackedVehicle::TrackedVehicle(std::string input_file) {
         std::cerr << "WARNING: No field for \"Terrain\" in simulation input file." << std::endl;
     }
 
-    // Get the terrain inputs members
-    if (d.HasMember("Controller") && d["Controller"].IsObject()) {
-        const rapidjson::Value& controller = d["Controller"];
-        std::string controller_type = "Ramp"; // Can be "Ramp", "RampThenTurn" or "ConstantTorque"
-        if (controller.HasMember("Type") && controller["Type"].IsString()) {
-            controller_type = controller["Type"].GetString();
-        }
-        if (controller_type == "Ramp") {
-            double wl = 7.87402;
-            double wr = 7.87402;
-            if (controller.HasMember("wl") && controller["wl"].IsNumber()) {
-                wl = controller["wl"].GetDouble();
-            }
-            if (controller.HasMember("wr") && controller["wr"].IsNumber()) {
-                wr = controller["wr"].GetDouble();
-            }
-            controller_ = controller::Ramp(wl, wr);
-        }
-        else if (controller_type == "RampThenTurn") {
-            double w = 7.87402;
-            if (controller.HasMember("w") && controller["w"].IsNumber()) {
-                w = controller["w"].GetDouble();
-            }
-            controller_ = controller::RampThenTurn(w);
-        }
-        else if (controller_type == "ConstantTorque") {
-
-        }
-        else if (controller_type == "External") {
-
-        }
-        else {
-            std::cerr << "ERROR: Controller Type " << controller_type << " not recognized, exiting." << std::endl;
-            exit(91);
-        }
-    }
-    else {
-        std::cout << "WARNING: No field for \"Controller\" in simulation input file, using default." << std::endl;
-    }
-
     if (d.HasMember("Vehicle Mesh") && d["Vehicle Mesh"].IsObject()) {
         const rapidjson::Value& mesh = d["Vehicle Mesh"];
-        vehicle_mesh_file_ = mesh["File"].GetString();
-        mesh_rotate_y_to_z = mesh["Rotate Y to Z"].GetBool();
-        mesh_rotate_y_to_x = mesh["Rotate Y to X"].GetBool();
-        mesh_rotate_x_to_y = mesh["Rotate X to Y"].GetBool();
-        for (int ij = 0; ij < 3; ij++) {
-            mesh_offset[ij] = mesh["Offset"][ij].GetFloat();
-            mesh_scale[ij] = mesh["Scale"][ij].GetFloat();
-        }
+        vehicle_asset_.ParseJsonObject(mesh);
     }
 
     if (d.HasMember("Track Pad Mesh") && d["Track Pad Mesh"].IsObject()) {
         const rapidjson::Value& pad_mesh = d["Track Pad Mesh"];
-        track_pad_mesh_file = pad_mesh["File"].GetString();
-        //mesh_rotate_y_to_z = pad_mesh["Rotate Y to Z"].GetBool();
-        //mesh_rotate_y_to_x = pad_mesh["Rotate Y to X"].GetBool();
-        //mesh_rotate_x_to_y = pad_mesh["Rotate X to Y"].GetBool();
-        //for (int ij = 0; ij < 3; ij++) {
-        //   mesh_offset[ij] = pad_mesh["Offset"][ij].GetFloat();
-        //    mesh_scale[ij] = pad_mesh["Scale"][ij].GetFloat();
-        //}
+        track_asset_.ParseJsonObject(pad_mesh);
     }
 
     // Optional belt layout for track-shoe animation
@@ -170,6 +108,19 @@ TrackedVehicle::TrackedVehicle(std::string input_file) {
     
 }
 
+void TrackedVehicle::SetPose(double x, double y, double yaw_radians) {
+    R_ = RFromRpy(0, 0, yaw_radians);
+    p_ = glm::dvec3(x, y, terrain_.Height(x, y) + vehicle_params_.cg_height);
+}
+
+void TrackedVehicle::UpdateTerrain(environment::Environment* env, float dt) {
+    time_since_last_terrain_refresh_ += dt;
+    if (time_since_last_terrain_refresh_ > 1.0f) {
+        ResetTerrain(env);
+        time_since_last_terrain_refresh_ = 0.0;
+    }
+}
+
 void TrackedVehicle::ResetTerrain(environment::Environment* env) {
     float zmin = std::numeric_limits<float>::lowest();
     zmin *= 0.5;
@@ -196,25 +147,7 @@ void TrackedVehicle::ResetTerrain(environment::Environment* env) {
     terrain_.SetHeights(new_heights);
 }
 
-void TrackedVehicle::Update(environment::Environment* env, float throttle, float steer, float brake, float dt) {
-    if (!vehicle_loaded_) {
-        actor_ids_ = env->AddActor(vehicle_mesh_file_, mesh_rotate_y_to_z, mesh_rotate_x_to_y, mesh_rotate_y_to_x, mesh_offset, mesh_scale);
-        vehicle_loaded_ = true;
-        std::vector<TrackShoePose> shoe_poses;
-        GetTrackShoePoses(shoe_poses, true);
-        int nanim = 1;
-        for (size_t sp = 0; sp < shoe_poses.size(); sp++) {
-            std::vector<int> shoe_id = env->AddActor(track_pad_mesh_file, false, false, false, glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0));
-            track_pad_ids.push_back(nanim);
-            nanim++;
-        }
-        ResetTerrain(env);
-
-        // Settle the vehicle into the inital position
-        SetPose(sim_options_.initial_position_x, sim_options_.initial_position_y, sim_options_.initial_yaw);
-        Settle(1.5, 1e-3);
-    }
-
+TrackSpeeds TrackedVehicle::GetSprocketSpeedsFromTsb(double throttle, double steer, double brake) {
     TrackSpeeds cmd;
     if (throttle > 0.0) {
         cmd.left = throttle * max_track_speed_;
@@ -225,26 +158,67 @@ void TrackedVehicle::Update(environment::Environment* env, float throttle, float
         cmd.right = -brake * max_track_speed_;
     }
     if (steer != 0.0) { cmd.right = steer * max_track_speed_; cmd.left = -steer * max_track_speed_; }
+    return cmd;
+}
 
+void TrackedVehicle::InitAnimation(environment::Environment* env) {
+    actor_ids_ = env->AddActor(vehicle_asset_.mesh_file, vehicle_asset_.rotate_y_to_z, vehicle_asset_.rotate_x_to_y, vehicle_asset_.rotate_y_to_x, vehicle_asset_.offset, vehicle_asset_.scale);
+    vehicle_loaded_ = true;
+    std::vector<TrackShoePose> shoe_poses;
+    GetTrackShoePoses(shoe_poses, true);
+    int nanim = 1;
+    for (size_t sp = 0; sp < shoe_poses.size(); sp++) {
+        std::vector<int> shoe_id = env->AddActor(track_asset_.mesh_file, track_asset_.rotate_y_to_z, track_asset_.rotate_x_to_y, track_asset_.rotate_y_to_x, track_asset_.offset, track_asset_.scale);
+        track_pad_ids_.push_back(nanim);
+        nanim++;
+    }
+    ResetTerrain(env);
 
-    Step(dt, cmd);
+    // Settle the vehicle into the inital position
+    SetPose(initial_position_x_, initial_position_y_, initial_yaw_);
+    Settle(1.5, 1e-3);
+}
 
+void TrackedVehicle::Update(environment::Environment* env, float throttle, float steer, float brake, float dt) {
+
+    // Initialize the animations
+    if (!vehicle_loaded_) InitAnimation(env);
+
+    // get the commanded sprocket speeds
+    TrackSpeeds cmd = GetSprocketSpeedsFromTsb(throttle, steer, brake);
+
+    // adjust the number of steps based on the requested time step
+    /*int nsteps = 1;
+    double dt_step = sim_options_.max_dt;
+    if (dt> sim_options_.max_dt){
+        nsteps = (int)ceil(dt / sim_options_.max_dt);
+        dt_step = dt / nsteps;
+    }*/
+    
+    // step the simulation 
+    //for (int ti = 0; ti < nsteps; ti++) {
+        //Step(dt_step, cmd);
+        Step(dt, cmd);
+    //}
+
+    // Set the MAVS vehicle output params
     SetMavsParams();
 
+    // Update the animation positions
+    UpdateMavsAnimations(env);
+
+    // update the terrain
+    UpdateTerrain(env, dt);
+}
+
+void TrackedVehicle::UpdateMavsAnimations(environment::Environment* env) {
     for (size_t actor_idx = 0; actor_idx < actor_ids_.size(); actor_idx++) {
         env->SetActorPosition(actor_ids_[actor_idx], current_state_.pose.position, current_state_.pose.quaternion);
         std::vector<TrackShoePose> shoe_poses;
         GetTrackShoePoses(shoe_poses, true);
         for (size_t sp = 0; sp < shoe_poses.size(); sp++) {
-            env->SetActorPosition(track_pad_ids[sp], shoe_poses[sp].position, shoe_poses[sp].orientation);
-            //std::cout << sp << " " << track_pad_ids[sp] <<" "<<shoe_poses[sp].position.x << " " << shoe_poses[sp].position.y << " " << shoe_poses[sp].position.z << std::endl;
+            env->SetActorPosition(track_pad_ids_[sp], shoe_poses[sp].position, shoe_poses[sp].orientation);
         }
-    }
-
-    time_since_last_terrain_refresh_ += dt;
-    if (time_since_last_terrain_refresh_ > 1.0f) {
-        ResetTerrain(env);
-        time_since_last_terrain_refresh_ = 0.0;
     }
 }
 
@@ -253,17 +227,6 @@ void TrackedVehicle::SetMavsParams() {
     current_state_.pose.quaternion = glm::dquat(R_);
     current_state_.twist.linear = vel_;
     current_state_.twist.angular = omega_;
-}
-
-
-TrackedVehicle::TrackedVehicle(const TrackedVehicleParams& vehicle, const TrackedSoil& soil, HeightMapTerrain& terrain, const SimOptions& options) {
-
-    vehicle_params_ = vehicle;
-    soil_ = soil;
-    terrain_ = terrain;
-    sim_options_ = options;
-
-    Init();
 }
 
 void TrackedVehicle::Init(){
@@ -311,12 +274,6 @@ void TrackedVehicle::Init(){
 
     BuildTrackPath();
 
-    //SetPose(sim_options_.initial_position_x, sim_options_.initial_position_y, sim_options_.initial_yaw);
-}
-
-void TrackedVehicle::SetPose(double x, double y, double yaw_radians) {
-    R_ = RFromRpy(0, 0, yaw_radians);
-    p_ = glm::dvec3(x, y, terrain_.Height(x, y) + vehicle_params_.cg_height);
 }
 
 void TrackedVehicle::Advect(std::vector<std::array<double, 2>>& j, double shift) {
@@ -558,7 +515,7 @@ void TrackedVehicle::Step(double dt, TrackSpeeds cmd) {
     R_ = Orthonormalise(R_ * RotExp(omega_ * dt));
     elapsed_time_ += dt;
 
-    current_simulation_state_.t = elapsed_time_;
+    /*current_simulation_state_.t = elapsed_time_;
     current_simulation_state_.diags = diags;
     current_simulation_state_.torques = torques;
     for (int k = 0; k < 2; ++k) {
@@ -568,7 +525,7 @@ void TrackedVehicle::Step(double dt, TrackSpeeds cmd) {
     current_simulation_state_.v_body = glm::transpose(R_) * vel_;
     current_simulation_state_.F_body = F_b;
     current_simulation_state_.M_body = M_b;
-
+    */
 }
 
 void TrackedVehicle::Settle(double duration, double dt) {
@@ -584,7 +541,7 @@ void TrackedVehicle::Settle(double duration, double dt) {
     elapsed_time_ = 0.0;
 }
 
-VehicleState TrackedVehicle::GetCurrentVehicleState() const {
+/*VehicleState TrackedVehicle::GetCurrentVehicleState() const {
     VehicleState s;
     RpyFromR(R_, s.roll, s.pitch, s.yaw);
     const glm::dvec3 vb = glm::transpose(R_) * vel_;
@@ -595,7 +552,7 @@ VehicleState TrackedVehicle::GetCurrentVehicleState() const {
     s.omega_left = sprocket_[0];
     s.omega_right = sprocket_[1];
     return s;
-}
+}*/
 
 void TrackedVehicle::SetTrackLayout(const TrackLayout& layout) {
     track_layout_ = layout;
@@ -666,7 +623,7 @@ std::vector<TrackShoePose> TrackedVehicle::GetTrackShoePoses(bool world_frame) c
     return out;
 }
 
-std::vector<LogRow> TrackedVehicle::Run() {
+/*std::vector<LogRow> TrackedVehicle::Run() {
     std::vector<LogRow> log;
     const long nsteps = std::lround(sim_options_.simulation_duration / sim_options_.dt);
     for (long i = 0; i < nsteps; ++i) {
@@ -690,7 +647,7 @@ std::vector<LogRow> TrackedVehicle::Run() {
         }
     }
     return log;
-}
+}*/
 
 }  // namespace tracked
 } // namespace vehicle

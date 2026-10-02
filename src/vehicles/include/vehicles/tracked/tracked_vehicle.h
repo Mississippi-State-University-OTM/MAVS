@@ -121,6 +121,8 @@ private:
     // cmd = (left, right): sprocket speeds [rad/s] (Speed) or torques [N m] (Torque).
     void Step(double dt, TrackSpeeds cmd);
 
+    void UpdateSim(double dt, TrackSpeeds cmd);
+
     void Settle(double duration = 1.5, double dt = 1e-3);
 
     TrackDiag TrackForces(int k, double dt, glm::dvec3& F, glm::dvec3& M);
@@ -165,7 +167,6 @@ private:
     std::array<std::vector<std::array<double, 2>>, 2> j_;
     double g_scale_ = 1.0;
     double elapsed_time_ = 0.0;
-    //SimulationState current_simulation_state_;
 
     // scratch buffers (avoid per-step allocation)
     std::vector<double> z_, zp_, pn_;

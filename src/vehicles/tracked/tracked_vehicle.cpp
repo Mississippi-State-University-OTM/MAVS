@@ -179,6 +179,21 @@ void TrackedVehicle::InitAnimation(environment::Environment* env) {
     Settle(1.5, 1e-3);
 }
 
+void TrackedVehicle::UpdateSim(double dt, TrackSpeeds cmd) {
+    // adjust the number of steps based on the requested time step
+    int nsteps = 1;
+    double dt_step = sim_options_.max_dt;
+    if (dt > sim_options_.max_dt) {
+        nsteps = (int)ceil(dt / sim_options_.max_dt);
+        dt_step = dt / nsteps;
+    }
+
+    // step the simulation 
+    for (int ti = 0; ti < nsteps; ti++) {
+        Step(dt_step, cmd);
+    }
+}
+
 void TrackedVehicle::Update(environment::Environment* env, float throttle, float steer, float brake, float dt) {
 
     // Initialize the animations
@@ -187,19 +202,8 @@ void TrackedVehicle::Update(environment::Environment* env, float throttle, float
     // get the commanded sprocket speeds
     TrackSpeeds cmd = GetSprocketSpeedsFromTsb(throttle, steer, brake);
 
-    // adjust the number of steps based on the requested time step
-    /*int nsteps = 1;
-    double dt_step = sim_options_.max_dt;
-    if (dt> sim_options_.max_dt){
-        nsteps = (int)ceil(dt / sim_options_.max_dt);
-        dt_step = dt / nsteps;
-    }*/
-    
-    // step the simulation 
-    //for (int ti = 0; ti < nsteps; ti++) {
-        //Step(dt_step, cmd);
-        Step(dt, cmd);
-    //}
+    // Update the track simulation
+    UpdateSim((double)dt, cmd);
 
     // Set the MAVS vehicle output params
     SetMavsParams();

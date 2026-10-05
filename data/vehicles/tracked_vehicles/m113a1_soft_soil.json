@@ -1,12 +1,12 @@
 {
   "Vehicle": {
-    "Mass": 18152.151744,
+    "Mass": 1156.0,
     "CG Height": 0.75,
-    "Tread": 2.3495,
-    "Track Width": 0.4445,
-    "Track Contact Length": 3.4544,
-    "Sprocket Radius": 0.254,
-    "Max Sprocket Speed": 25.0
+    "Tread": 2.16,
+    "Track Width": 0.38,
+    "Track Contact Length": 2.67,
+    "Sprocket Radius": 0.2985,
+    "Max Sprocket Speed": 65.0
   },
 
   "Soil": {
@@ -33,7 +33,7 @@
     "rut_dx": 0.0,
     "gravity": 9.806,
     "max_dt": 2.0E-3,
-    "debug_render": false
+    "debug_render": true
   },
 
   "Terrain": {
@@ -45,16 +45,16 @@
   },
 
   "Vehicle Mesh": {
-    "File": "vehicles/wolverine/wolverine.obj",
+    "File": "vehicles/m113a1/m113a1_notrack_transformed.obj",
     "Rotate Y to Z": false,
     "Rotate X to Y": false,
     "Rotate Y to X": false,
-    "Offset": [ 0.0, 0.0, -0.25 ],
+    "Offset": [ 0.0, 0.0, 0.55 ],
     "Scale": [ 1.0, 1.0, 1.0 ]
   },
 
   "Track Pad Mesh": {
-    "File": "vehicles/wolverine/track_pad_centered.obj",
+    "File": "vehicles/m113a1/m113a_track_pad.obj",
     "Rotate Y to Z": false,
     "Rotate X to Y": false,
     "Rotate Y to X": false,
@@ -64,14 +64,14 @@
 
   "Track Layout": {
     "Wheels": [
-      [ -1.75, 0.6, 0.254000 ],
-      [ 2.0, 0.6, 0.254000 ],
-      [ 1.19948, 0.272725, 0.272725 ],
-      [ 0.47711, 0.272725, 0.272725 ],
-      [ -0.24526, 0.272725, 0.272725 ],
-      [ -0.96763, 0.272725, 0.272725 ]
+      [ -1.55, 0.45, 0.254 ],
+      [ 2.6, 0.6, 0.254000 ],
+      [ 1.778, 0.272725, 0.272725 ],
+      [ 1.148, 0.272725, 0.272725 ],
+      [ -0.2222, 0.272725, 0.272725 ],
+      [ -0.898, 0.272725, 0.272725 ]
     ],
-    "Number of Shoes": 26,
+    "Number of Shoes": 46,
     "Shoe Offset": [ 0.0, 0.0, 0.04 ],
     "Shoe Mesh Rotation": [ 0.0, 0.0, 0.0 ]
   }

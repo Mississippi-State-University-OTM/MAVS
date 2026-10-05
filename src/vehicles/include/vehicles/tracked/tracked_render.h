@@ -16,7 +16,7 @@ namespace tracked {
 class TrackedRender {
 public:
 
-    TrackedRender() {}
+    TrackedRender() { tracked_terrain_ = NULL; }
     
     void Init(HeightMapTerrain* tracked_terrain_in);
 
@@ -32,10 +32,6 @@ public:
         cam_pos_ = position; cam_yaw_ = yaw_radians; cam_pitch_ = pitch_radians;
     }
     const glm::dvec3& GetCameraPosition() const { return cam_pos_; }
-
-    void UpdateDebugDisplay(glm::dvec3 pos, glm::dmat3 R, TrackedVehicleParams vp, std::array<glm::dvec3, 2> track_center, double sinkage);
-
-    void Update3DDisplay(glm::dvec3 pos, glm::dmat3 R, TrackedVehicleParams vp, std::array<glm::dvec3, 2> track_center, double sinkage, std::array<std::vector<glm::dvec3>, 2> r_el, double du, double dw);
 
     TrackSpeeds GetKeyboardDrivingCommand(TrackSpeeds cmd);
 
@@ -67,6 +63,10 @@ private:
     std::vector<double> terrain3d_gray_;
     int terrain3d_nx_ = 0, terrain3d_ny_ = 0;
     void BuildTerrainMesh3D();
+
+    void UpdateDebugDisplay(glm::dvec3 pos, glm::dmat3 R, TrackedVehicleParams vp, std::array<glm::dvec3, 2> track_center, double sinkage);
+
+    void Update3DDisplay(glm::dvec3 pos, glm::dmat3 R, TrackedVehicleParams vp, std::array<glm::dvec3, 2> track_center, double sinkage, std::array<std::vector<glm::dvec3>, 2> r_el, double du, double dw);
     
 };
 

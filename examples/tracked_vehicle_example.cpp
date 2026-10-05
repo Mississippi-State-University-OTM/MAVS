@@ -52,15 +52,18 @@ int main(int argc, char** argv) {
     scene.Load(scene_file);
     mavs::environment::Environment env;
 	env.SetRaytracer(&scene);
-	float theta = -1.570796f/4.0f;
-	glm::vec3 sensor_offset(-8.0f, 3.0f, 2.0f);
+	float theta = -3.14159f / 3.0f;// 0.0f;
+	float view_rad = 8.0f;
+	//float theta = -1.570796f/4.0f;
+	//glm::vec3 sensor_offset(-8.0f, 3.0f, 2.0f);
+	glm::vec3 sensor_offset(-view_rad*cosf(theta), -view_rad*sinf(theta), 2.0f);
 	glm::quat sensor_orient(cosf(0.5f * theta), 0.0f, 0.0f, sinf(0.5f * theta));
 	glm::vec3 position(0.0f, 0.0f, 1.0f);
 	glm::quat orient(1.0f, 0.0f, 0.0f, 0.0f);
 	mavs::sensor::camera::RgbCamera camera;
 	camera.SetEnvironmentProperties(&env);
-	//camera.Initialize(960, 540, 0.0062222222f, 0.0035f, 0.0035f);
-	camera.Initialize(480, 270, 0.0062222222f, 0.0035f, 0.0035f);
+	camera.Initialize(960, 540, 0.0062222222f, 0.0035f, 0.0035f);
+	//camera.Initialize(480, 270, 0.0062222222f, 0.0035f, 0.0035f);
 	camera.SetRelativePose(sensor_offset, sensor_orient);
 	camera.SetName("camera");
 	camera.SetPose(position, orient);
@@ -83,6 +86,10 @@ int main(int argc, char** argv) {
 		t_total += omp_get_wtime() - t0;
 
 		if (nsteps % 5 == 0) { // 20 Hz
+			//theta += 0.01f;
+			//glm::vec3 sensor_offset(-view_rad * cosf(theta), -view_rad * sinf(theta), 2.0f);
+			//glm::quat sensor_orient(cosf(0.5f * theta), 0.0f, 0.0f, sinf(0.5f * theta));
+			camera.SetRelativePose(sensor_offset, sensor_orient);
 			glm::dquat ori = tracked_veh.GetOrientation();
 			camera.SetPose(tracked_veh.GetPosition(), tracked_veh.GetOrientation());
 			camera.Update(&env, 0.03);

@@ -3,23 +3,24 @@
 #include "vehicles/tracked/tracked_math_utils.h"
 // c++ includes
 #include <algorithm>
+#include <array>
 
 namespace mavs {
 namespace vehicle {
 namespace tracked {
 
-TrackedRender::TrackedRender(TrackedVehicle* tracked_vehicle_in) {
-    tracked_vehicle_ = tracked_vehicle_in;
+void TrackedRender::Init(HeightMapTerrain* tracked_terrain_in) {
+    tracked_terrain_ = tracked_terrain_in;
 
-    debug_image_.assign(tracked_vehicle_->GetTerrain().Nx(), tracked_vehicle_->GetTerrain().Ny(), 1, 3, 0.0f);
-    debug_display_.assign(tracked_vehicle_->GetTerrain().Nx(), tracked_vehicle_->GetTerrain().Ny(), "Tracked Vehicle Simulation", 0);  // 0 = no auto-normalisation, pixels are 0..255
+    debug_image_.assign(tracked_terrain_->Nx(), tracked_terrain_->Ny(), 1, 3, 0.0f);
+    debug_display_.assign(tracked_terrain_->Nx(), tracked_terrain_->Ny(), "Tracked Vehicle Simulation", 0);  // 0 = no auto-normalisation, pixels are 0..255
 
     Enable3DDisplay();
 }
 
-void TrackedRender::Update() {
-    UpdateDebugDisplay();
-    Update3DDisplay();
+void TrackedRender::Update(glm::dvec3 pos, glm::dmat3 R, TrackedVehicleParams vp, std::array<glm::dvec3, 2> track_center, double sinkage, std::array<std::vector<glm::dvec3>, 2> r_el, double du, double dw) {
+    UpdateDebugDisplay(pos, R, vp, track_center, sinkage);
+    Update3DDisplay(pos, R, vp, track_center, sinkage, r_el, du, dw);
 }
 
 // ---- shared terrain colouring (2D and 3D views use the same rule)
@@ -155,26 +156,25 @@ static void DrawBox(RenderTarget& rt, const glm::dvec3& pos, const glm::dmat3& R
 // ASSUMPTION: HeightMapTerrain exposes its cell size and lower-left corner as
 // Resolution(), OriginX(), OriginY(). Rename these three calls to match your class.
 glm::dvec2 TrackedRender::DebugPixelToWorld(int px, int py) const {
-    HeightMapTerrain& terrain = tracked_vehicle_->GetTerrain();
-    const double res = terrain.Dx();
+    //HeightMapTerrain& terrain = tracked_vehicle_->GetTerrain();
+    const double res = tracked_terrain_->Dx();
     const int H = debug_image_.height();
-    return glm::dvec2(terrain.X0() + (px + 0.5) * res,
-                      terrain.Y0() + (H - 1 - py + 0.5) * res);
+    return glm::dvec2(tracked_terrain_->X0() + (px + 0.5) * res, tracked_terrain_->Y0() + (H - 1 - py + 0.5) * res);
 }
 
 glm::ivec2 TrackedRender::DebugWorldToPixel(const glm::dvec3& w) const {
-    HeightMapTerrain& terrain = tracked_vehicle_->GetTerrain();
-    const double res = terrain.Dx();
+    //HeightMapTerrain& terrain = tracked_vehicle_->GetTerrain();
+    const double res = tracked_terrain_->Dx();
     const int H = debug_image_.height();
-    const int px = static_cast<int>(std::floor((w.x - terrain.X0()) / res));
-    const int iy = static_cast<int>(std::floor((w.y - terrain.Y0()) / res));
+    const int px = static_cast<int>(std::floor((w.x - tracked_terrain_->X0()) / res));
+    const int iy = static_cast<int>(std::floor((w.y - tracked_terrain_->Y0()) / res));
     return glm::ivec2(px, H - 1 - iy);
 }
 
-TrackSpeeds TrackedRender::GetKeyboardDrivingCommand() {
+TrackSpeeds TrackedRender::GetKeyboardDrivingCommand(TrackSpeeds cmd) {
     double speed_step = 1.0e-3;
     double twice_speed_step = 4.0e-3;
-    TrackSpeeds cmd = tracked_vehicle_->GetSprocketSpeeds(); // set the commanded speed to the current speed
+    //TrackSpeeds cmd = tracked_vehicle_->GetSprocketSpeeds(); // set the commanded speed to the current speed
     if (debug_display_.is_keyARROWUP()) {
         double new_speed = std::max(cmd.left, cmd.right);
         cmd.left = new_speed + speed_step;
@@ -215,18 +215,19 @@ TrackSpeeds TrackedRender::GetKeyboardDrivingCommand() {
     return cmd;
 }
 
-void TrackedRender::UpdateDebugDisplay() {
+void TrackedRender::UpdateDebugDisplay(glm::dvec3 pos, glm::dmat3 R, TrackedVehicleParams vp, std::array<glm::dvec3, 2> track_center, double sinkage) {
     if (debug_image_.is_empty() || debug_display_.is_closed()) return;
 
     const int W = debug_image_.width(), H = debug_image_.height();
 
     // Fetch everything from the vehicle once per frame, not once per pixel.
-    HeightMapTerrain& terrain = tracked_vehicle_->GetTerrain();   // GetTerrain() must return a reference
-    const double res = terrain.Dx(), x0 = terrain.X0(), y0 = terrain.Y0();
-    const glm::dvec3 pos = tracked_vehicle_->GetPosition();
-    const glm::dmat3 R = tracked_vehicle_->GetRotationMatrix();
-    const auto& vp = tracked_vehicle_->GetVehicle();
-    const auto track_center = tracked_vehicle_->GetTrackCenter();   // two dvec3, cheap to copy
+    const double res = tracked_terrain_->Dx();
+    const double x0 = tracked_terrain_->X0();
+    const double y0 = tracked_terrain_->Y0();
+    //const glm::dvec3 pos = tracked_vehicle_->GetPosition();
+    //const glm::dmat3 R = tracked_vehicle_->GetRotationMatrix();
+    //const auto& vp = tracked_vehicle_->GetVehicle();
+    //const auto track_center = tracked_vehicle_->GetTrackCenter();   // two dvec3, cheap to copy
 
     // ---- 1. grayscale heightmap, computed once and cached
     //if (debug_terrain_base_.is_empty()) {
@@ -234,7 +235,7 @@ void TrackedRender::UpdateDebugDisplay() {
     double hmin = 1e300, hmax = -1e300;
     for (int py = 0; py < H; ++py)
         for (int px = 0; px < W; ++px) {
-            const double z = terrain.Height(x0 + (px + 0.5) * res, y0 + (H - 1 - py + 0.5) * res);
+            const double z = tracked_terrain_->Height(x0 + (px + 0.5) * res, y0 + (H - 1 - py + 0.5) * res);
             h[static_cast<size_t>(py) * W + px] = z;
             hmin = std::min(hmin, z);
             hmax = std::max(hmax, z);
@@ -248,13 +249,13 @@ void TrackedRender::UpdateDebugDisplay() {
     //}
 
     // ---- 2. terrain + sinkage overlay: blend toward orange/brown by plastic sinkage
-    const double rut_scale = std::max(2.0 * tracked_vehicle_->GetSinkage(), 1e-3);   // full tint at 2x static sinkage
+    const double rut_scale = std::max(2.0 * sinkage, 1e-3);   // full tint at 2x static sinkage
     for (int py = 0; py < H; ++py) {
         const double wy = y0 + (H - 1 - py + 0.5) * res;
         for (int px = 0; px < W; ++px) {
             const double wx = x0 + (px + 0.5) * res;
-            const HeightMapTerrain::RutIndex ri = terrain.GetRutIndex(wx, wy);
-            const double sink = ri.inside ? terrain.Rut(ri.iy, ri.ix) : 0.0;
+            const HeightMapTerrain::RutIndex ri = tracked_terrain_->GetRutIndex(wx, wy);
+            const double sink = ri.inside ? tracked_terrain_->Rut(ri.iy, ri.ix) : 0.0;
             const glm::dvec3 col = TerrainColour(debug_terrain_base_(px, py), sink, rut_scale);
             for (int ch = 0; ch < 3; ++ch)
                 debug_image_(px, py, 0, ch) = static_cast<float>(col[ch]);
@@ -295,7 +296,7 @@ void TrackedRender::UpdateDebugDisplay() {
     debug_image_.draw_line(cg.x, cg.y, nose.x, nose.y, yellow);
     debug_image_.draw_circle(cg.x, cg.y, 2, yellow);
 
-    debug_display_.set_title("Tracked Vehicle Simulation  t = %.2f s", tracked_vehicle_->GetElapsedTime());
+    debug_display_.set_title("Tracked Vehicle Simulation");
     debug_display_.display(debug_image_);
 }
 
@@ -308,9 +309,9 @@ void TrackedRender::Enable3DDisplay(int width, int height) {
 }
 
 void TrackedRender::BuildTerrainMesh3D() {
-    HeightMapTerrain& terrain = tracked_vehicle_->GetTerrain();
-    const int Nx = terrain.Nx(), Ny = terrain.Ny();
-    const double dx = terrain.Dx(), x0 = terrain.X0(), y0 = terrain.Y0();
+    //HeightMapTerrain& terrain = tracked_vehicle_->GetTerrain();
+    const int Nx = tracked_terrain_->Nx(), Ny = tracked_terrain_->Ny();
+    const double dx = tracked_terrain_->Dx(), x0 = tracked_terrain_->X0(), y0 = tracked_terrain_->Y0();
     auto cell_world = [&](int i, int j) {   // heightmap cell centre, same as the 2D view
         return glm::dvec2(x0 + (i + 0.5) * dx, y0 + (j + 0.5) * dx);
     };
@@ -320,7 +321,7 @@ void TrackedRender::BuildTerrainMesh3D() {
     for (int j = 0; j < Ny; ++j)
         for (int i = 0; i < Nx; ++i) {
             const glm::dvec2 w = cell_world(i, j);
-            const double z = terrain.Height(w.x, w.y);
+            const double z = tracked_terrain_->Height(w.x, w.y);
             hmin = std::min(hmin, z);
             hmax = std::max(hmax, z);
         }
@@ -343,18 +344,18 @@ void TrackedRender::BuildTerrainMesh3D() {
     for (int b = 0; b < terrain3d_ny_; ++b)
         for (int a = 0; a < terrain3d_nx_; ++a) {
             const glm::dvec2 w = cell_world(xs[a], ys[b]);
-            const double z = terrain.Height(w.x, w.y);
+            const double z = tracked_terrain_->Height(w.x, w.y);
             const size_t idx = static_cast<size_t>(b) * terrain3d_nx_ + a;
             terrain3d_pos_[idx] = glm::dvec3(w.x, w.y, z);
             terrain3d_gray_[idx] = 40.0 + 180.0 * (z - hmin) / range;
         }
 }
 
-void TrackedRender::Update3DDisplay() {
+void TrackedRender::Update3DDisplay(glm::dvec3 pos, glm::dmat3 R, TrackedVehicleParams vp, std::array<glm::dvec3, 2> track_center, double sinkage, std::array<std::vector<glm::dvec3>, 2> r_el, double du, double dw) {
     if (image3d_.is_empty() || display3d_.is_closed()) return;
 
-    if (fabs(cam_pos_.x - tracked_vehicle_->GetTerrain().X0()) > 0.01 || fabs(cam_pos_.y - tracked_vehicle_->GetTerrain().Y0()) > 0.01) {
-        cam_pos_ = glm::vec3(tracked_vehicle_->GetTerrain().X0(), tracked_vehicle_->GetTerrain().Y0(), tracked_vehicle_->GetPosition().z + 2.0);
+    if (fabs(cam_pos_.x - tracked_terrain_->X0()) > 0.01 || fabs(cam_pos_.y - tracked_terrain_->Y0()) > 0.01) {
+        cam_pos_ = glm::vec3(tracked_terrain_->X0(), tracked_terrain_->Y0(), pos.z + 2.0);
         BuildTerrainMesh3D();
     }
 
@@ -363,12 +364,12 @@ void TrackedRender::Update3DDisplay() {
     const int W = image3d_.width(), H = image3d_.height();
 
     // Fetch everything from the vehicle once per frame, not once per vertex/element.
-    HeightMapTerrain& terrain = tracked_vehicle_->GetTerrain();   // GetTerrain() must return a reference
-    const glm::dvec3 pos = tracked_vehicle_->GetPosition();
-    const glm::dmat3 R = tracked_vehicle_->GetRotationMatrix();
-    const auto& vp = tracked_vehicle_->GetVehicle();
-    const auto track_center = tracked_vehicle_->GetTrackCenter();
-    const auto& r_el = tracked_vehicle_->GetTrackElements();       // no per-frame copy if it returns a reference
+    //HeightMapTerrain& terrain = tracked_vehicle_->GetTerrain();   // GetTerrain() must return a reference
+    //const glm::dvec3 pos = tracked_vehicle_->GetPosition();
+    //const glm::dmat3 R = tracked_vehicle_->GetRotationMatrix();
+    //const auto& vp = tracked_vehicle_->GetVehicle();
+    //const auto track_center = tracked_vehicle_->GetTrackCenter();
+    //const auto& r_el = tracked_vehicle_->GetTrackElements();       // no per-frame copy if it returns a reference
 
     // ---- camera
     double ltx = pos.x - cam_pos_.x;
@@ -398,12 +399,12 @@ void TrackedRender::Update3DDisplay() {
 
     // ---- terrain: 2D colouring; rutted vertices are lowered by the plastic sinkage
     //      so the tracks sit visibly in their ruts instead of below the surface
-    const double rut_scale = std::max(2.0 * tracked_vehicle_->GetSinkage(), 1e-3);
+    const double rut_scale = std::max(2.0 * sinkage, 1e-3);
     std::vector<CamVert> tv(terrain3d_pos_.size());
     for (size_t i = 0; i < terrain3d_pos_.size(); ++i) {
         glm::dvec3 w = terrain3d_pos_[i];
-        const HeightMapTerrain::RutIndex ri = terrain.GetRutIndex(w.x, w.y);
-        const double sink = ri.inside ? terrain.Rut(ri.iy, ri.ix) : 0.0;
+        const HeightMapTerrain::RutIndex ri = tracked_terrain_->GetRutIndex(w.x, w.y);
+        const double sink = ri.inside ? tracked_terrain_->Rut(ri.iy, ri.ix) : 0.0;
         w.z -= sink;
         tv[i].p = cam.ToCam(w);
         tv[i].col = TerrainColour(terrain3d_gray_[i], sink, rut_scale);
@@ -421,8 +422,8 @@ void TrackedRender::Update3DDisplay() {
     const glm::dvec3 green(0.0, 200.0, 0.0), yellow(255.0, 220.0, 0.0);
 
     // track elements: one yellow cuboid per contact element, bottom face on the contact plane
-    double du = tracked_vehicle_->GetDu();
-    double dw = tracked_vehicle_->GetDw();
+    //double du = tracked_vehicle_->GetDu();
+    //double dw = tracked_vehicle_->GetDw();
     const double t_el = 2.0*std::min(du, dw);                 // element thickness (visual only)
     const glm::dvec3 h_el(0.45 * du, 0.45 * dw, 0.5 * t_el);    // 10% gap between elements
     for (int k = 0; k < 2; ++k)
@@ -442,8 +443,7 @@ void TrackedRender::Update3DDisplay() {
             glm::dvec3(0.5 * L, 0.5 * 0.95 * inner_w, 0.5 * (z_top - z_bot)),
             green, light);
 
-    display3d_.set_title("Tracked Vehicle 3D  t = %.2f s  cam (%.1f, %.1f, %.1f)",
-                         tracked_vehicle_->GetElapsedTime(), cam_pos_.x, cam_pos_.y, cam_pos_.z);
+    display3d_.set_title("Tracked Vehicle 3D  t =  cam (%.1f, %.1f, %.1f)", cam_pos_.x, cam_pos_.y, cam_pos_.z);
     display3d_.display(image3d_);
 }
 

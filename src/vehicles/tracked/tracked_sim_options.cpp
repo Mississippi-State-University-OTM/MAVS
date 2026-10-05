@@ -48,6 +48,10 @@ void SimOptions::ParseJsonObject(const rapidjson::Value& sim_options) {
         compaction = sim_options["compaction"].GetBool();
     }
 
+    if (sim_options.HasMember("debug_render") && sim_options["debug_render"].IsBool()) {
+        render_debug = sim_options["debug_render"].GetBool();
+    }
+
     if (sim_options.HasMember("v_eps") && sim_options["v_eps"].IsNumber()) {
         v_eps = sim_options["v_eps"].GetDouble();
     }

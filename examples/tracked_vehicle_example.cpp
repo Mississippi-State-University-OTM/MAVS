@@ -4,7 +4,6 @@
 #include <omp.h>
 // project includes
 #include "vehicles/tracked/tracked_vehicle.h"
-#include "vehicles/tracked/tracked_render.h"
 #include <sensors/mavs_sensors.h>
 #include <raytracers/embree_tracer/embree_tracer.h>
 
@@ -49,8 +48,6 @@ int main(int argc, char** argv) {
 	mavs::vehicle::tracked::TrackedVehicle tracked_veh(vehic_file);
 	tracked_veh.SetInitialPose(0.0, 0.0, 0.0);
 
-	//mavs::vehicle::tracked::TrackedRender tracked_debug_render(&tracked_veh);
-
     mavs::raytracer::embree::EmbreeTracer scene;
     scene.Load(scene_file);
     mavs::environment::Environment env;
@@ -70,7 +67,7 @@ int main(int argc, char** argv) {
 	camera.SetElectronics(0.95f, 1.0f);
 
 	// do an initial step to load all the MAVS stuff
-	tracked_veh.Update(&env, throttle, steering, braking, 0.0000001);
+	tracked_veh.Update(&env, throttle, steering, braking, 0.0000001f);
 
 	// simulation setup 
 	float dt = 0.01f; // 100 Hz
@@ -92,7 +89,6 @@ int main(int argc, char** argv) {
 			camera.Display();
 			
 		}
-		//if (nsteps % 10 == 0) tracked_debug_render.Update(); // 10 Hz
 		
 		nsteps++;
 		

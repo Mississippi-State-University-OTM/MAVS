@@ -3,8 +3,10 @@
 // debug rendering for the tracked vehicle class
 
 // project includes
-#include "tracked_vehicle.h"
+#include "tracked_heightmap_terrain.h"
+#include "tracked_helpers.h"
 #include "tracked_sim_options.h"
+#include "tracked_vehicle_params.h"
 #include <CImg.h>
 
 namespace mavs {
@@ -14,7 +16,9 @@ namespace tracked {
 class TrackedRender {
 public:
 
-    TrackedRender(TrackedVehicle* tracked_vehicle_in);
+    TrackedRender() {}
+    
+    void Init(HeightMapTerrain* tracked_terrain_in);
 
     bool DisplayOpen() const { return !debug_display_.is_closed(); }
 
@@ -29,17 +33,17 @@ public:
     }
     const glm::dvec3& GetCameraPosition() const { return cam_pos_; }
 
-    void UpdateDebugDisplay();
+    void UpdateDebugDisplay(glm::dvec3 pos, glm::dmat3 R, TrackedVehicleParams vp, std::array<glm::dvec3, 2> track_center, double sinkage);
 
-    void Update3DDisplay();
+    void Update3DDisplay(glm::dvec3 pos, glm::dmat3 R, TrackedVehicleParams vp, std::array<glm::dvec3, 2> track_center, double sinkage, std::array<std::vector<glm::dvec3>, 2> r_el, double du, double dw);
 
-    TrackSpeeds GetKeyboardDrivingCommand();
+    TrackSpeeds GetKeyboardDrivingCommand(TrackSpeeds cmd);
 
-    void Update();
+    void Update(glm::dvec3 pos, glm::dmat3 R, TrackedVehicleParams vp, std::array<glm::dvec3, 2> track_center, double sinkage, std::array<std::vector<glm::dvec3>, 2> r_el, double du, double dw);
 
 private:
 
-    TrackedVehicle* tracked_vehicle_;
+    HeightMapTerrain* tracked_terrain_;
 
     // visualization windows
     cimg_library::CImgDisplay debug_display_;

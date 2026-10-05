@@ -105,7 +105,7 @@ TrackedVehicle::TrackedVehicle(std::string input_file) {
     }
 
     Init();
-    
+    if (sim_options_.render_debug) tracked_debug_render_.Init(&terrain_);
 }
 
 void TrackedVehicle::SetPose(double x, double y, double yaw_radians) {
@@ -213,6 +213,19 @@ void TrackedVehicle::Update(environment::Environment* env, float throttle, float
 
     // update the terrain
     UpdateTerrain(env, dt);
+
+    // Update the debug render
+    UpdateDebugRender(dt);
+}
+
+void TrackedVehicle::UpdateDebugRender(double dt) {
+    if (sim_options_.render_debug) {
+        time_since_last_debug_render_ += dt;
+        if (time_since_last_debug_render_ > 0.1) {
+            tracked_debug_render_.Update(current_state_.pose.position, glm::dmat3(current_state_.pose.quaternion), vehicle_params_, track_center_, z_static_estimate_, r_el_, du_, dw_);
+            time_since_last_debug_render_ = 0.0;
+        }
+    }
 }
 
 void TrackedVehicle::UpdateMavsAnimations(environment::Environment* env) {

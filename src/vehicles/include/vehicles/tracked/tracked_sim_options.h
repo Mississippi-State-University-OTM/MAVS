@@ -26,6 +26,7 @@ struct SimOptions {
     double rut_dx = 0.0;   // <= 0 -> 1.2 * max(element spacing)
     double gravity = 9.806;
     double max_dt = 2.0E-3;
+    bool render_debug = false;
 
     void Load(std::string input_file);
 

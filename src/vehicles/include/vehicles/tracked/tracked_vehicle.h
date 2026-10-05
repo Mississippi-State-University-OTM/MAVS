@@ -39,6 +39,7 @@
 #include "vehicles/tracked/tracked_sim_options.h"
 #include "vehicles/tracked/tracked_track_path.h"
 #include "vehicles/tracked/tracked_rendering_asset.h"
+#include "vehicles/tracked/tracked_render.h"
 
 namespace mavs {
 namespace vehicle {
@@ -210,6 +211,11 @@ private:
     int num_shoes_ = 0;
     double shoe_pitch_ = 0.0;
     std::array<double, 2> track_phase_{ 0.0, 0.0 };
+
+    // debug rendering
+    mavs::vehicle::tracked::TrackedRender tracked_debug_render_;
+    double time_since_last_debug_render_ = 0.0;
+    void UpdateDebugRender(double dt);
 };
 
 }  // namespace tracked

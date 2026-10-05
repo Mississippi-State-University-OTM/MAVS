@@ -147,17 +147,17 @@ void TrackedVehicle::ResetTerrain(environment::Environment* env) {
     terrain_.SetHeights(new_heights);
 }
 
-TrackSpeeds TrackedVehicle::GetSprocketSpeedsFromTsb(double throttle, double steer, double brake) {
+TrackSpeeds TrackedVehicle::GetSprocketSpeedsFromTsb(double throttle, double steer, double brake) const {
     TrackSpeeds cmd;
     if (throttle > 0.0) {
-        cmd.left = throttle * max_track_speed_;
-        cmd.right = throttle * max_track_speed_;
+        cmd.left = throttle * vehicle_params_.max_sprocket_speed;
+        cmd.right = throttle * vehicle_params_.max_sprocket_speed;
     }
     else if (brake > 0.0) {
-        cmd.left = -brake * max_track_speed_;
-        cmd.right = -brake * max_track_speed_;
+        cmd.left = -brake * vehicle_params_.max_sprocket_speed;
+        cmd.right = -brake * vehicle_params_.max_sprocket_speed;
     }
-    if (steer != 0.0) { cmd.right = steer * max_track_speed_; cmd.left = -steer * max_track_speed_; }
+    if (steer != 0.0) { cmd.right = steer * vehicle_params_.max_sprocket_speed; cmd.left = -steer * vehicle_params_.max_sprocket_speed; }
     return cmd;
 }
 

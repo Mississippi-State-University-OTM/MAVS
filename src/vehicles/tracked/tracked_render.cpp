@@ -226,7 +226,7 @@ void TrackedRender::UpdateDebugDisplay() {
     const glm::dvec3 pos = tracked_vehicle_->GetPosition();
     const glm::dmat3 R = tracked_vehicle_->GetRotationMatrix();
     const auto& vp = tracked_vehicle_->GetVehicle();
-    const auto track_centre = tracked_vehicle_->GetTrackCenter();   // two dvec3, cheap to copy
+    const auto track_center = tracked_vehicle_->GetTrackCenter();   // two dvec3, cheap to copy
 
     // ---- 1. grayscale heightmap, computed once and cached
     //if (debug_terrain_base_.is_empty()) {
@@ -285,9 +285,9 @@ void TrackedRender::UpdateDebugDisplay() {
 
     const double L = vp.track_contact_length;
     for (int k = 0; k < 2; ++k)
-        draw_body_rect(track_centre[k], L, vp.track_width, green, 0.85f, false);
+        draw_body_rect(track_center[k], L, vp.track_width, green, 0.85f, false);
 
-    const glm::dvec3 hull_c = 0.5 * (track_centre[0] + track_centre[1]);
+    const glm::dvec3 hull_c = 0.5 * (track_center[0] + track_center[1]);
     draw_body_rect(hull_c, L, vp.tread_width + vp.track_width, white, 1.0f, true);
 
     const glm::ivec2 cg = DebugWorldToPixel(pos);
@@ -367,7 +367,7 @@ void TrackedRender::Update3DDisplay() {
     const glm::dvec3 pos = tracked_vehicle_->GetPosition();
     const glm::dmat3 R = tracked_vehicle_->GetRotationMatrix();
     const auto& vp = tracked_vehicle_->GetVehicle();
-    const auto track_centre = tracked_vehicle_->GetTrackCenter();
+    const auto track_center = tracked_vehicle_->GetTrackCenter();
     const auto& r_el = tracked_vehicle_->GetTrackElements();       // no per-frame copy if it returns a reference
 
     // ---- camera
@@ -432,11 +432,11 @@ void TrackedRender::Update3DDisplay() {
     // hull: green cuboid between the tracks (visual proportions; tweak to taste)
     const double L = vp.track_contact_length;
     const double rs = vp.sprocket_radius;
-    const double z_track = track_centre[0].z;                     // contact plane, body frame
+    const double z_track = track_center[0].z;                     // contact plane, body frame
     const double z_bot = z_track + rs;
     const double z_top = z_bot + 2.0 * std::max(vp.cg_height - rs, rs);
     const double inner_w = std::max(vp.tread_width - vp.track_width, 0.25 * vp.tread_width);
-    const glm::dvec3 hull_c = 0.5 * (track_centre[0] + track_centre[1]);
+    const glm::dvec3 hull_c = 0.5 * (track_center[0] + track_center[1]);
     DrawBox(rt, pos, R,
             glm::dvec3(hull_c.x, hull_c.y, 0.5 * (z_bot + z_top)),
             glm::dvec3(0.5 * L, 0.5 * 0.95 * inner_w, 0.5 * (z_top - z_bot)),

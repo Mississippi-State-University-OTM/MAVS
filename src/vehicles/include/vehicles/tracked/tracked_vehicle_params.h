@@ -30,6 +30,7 @@ struct TrackedVehicleParams {
     double sprocket_inertia = 0.0; // per side, for torque drive [kg m^2]
     double internal_friction = 0.0; // Coulomb drivetrain torque per side [N m]
     double internal_viscous = 0.0; // viscous drivetrain loss per side [N m s/rad]
+    double max_sprocket_speed = 25.0; // max rotational speed of the sprocket in rad/s
 
     glm::dvec3 InertiaDiag() const;
 

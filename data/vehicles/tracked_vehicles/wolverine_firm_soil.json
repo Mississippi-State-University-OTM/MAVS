@@ -5,7 +5,8 @@
     "Tread": 2.3495,
     "Track Width": 0.4445,
     "Track Contact Length": 3.4544,
-    "Sprocket Radius": 0.254
+    "Sprocket Radius": 0.254,
+    "Max Sprocket Speed": 25.0
   },
 
   "Soil": {
@@ -31,7 +32,7 @@
     "normal_damping_ratio": 0.2,
     "rut_dx": 0.0,
     "gravity": 9.806,
-    "dt": 2.0E-3
+    "max_dt": 2.0E-3
   },
 
   "Terrain": {

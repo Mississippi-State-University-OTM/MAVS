@@ -44,8 +44,6 @@ namespace mavs {
 namespace vehicle {
 namespace tracked {
 
-class TrackedRender;
-
 class TrackedVehicle : public Vehicle {
 public:
 
@@ -89,12 +87,14 @@ public:
     // Called after the terrain origin moves; must refill the heights for the new window
     // (terrain.SetHeights). Ruts are already shifted when it runs.
     using TerrainRefresh = std::function<void(HeightMapTerrain& terrain)>;
+
     // At the start of each Step(), if the vehicle is more than recenter_distance [m] from the
-    // window centre (in x or y), the window is recentred on it. Keep recenter_distance well
+    // window center (in x or y), the window is recentred on it. Keep recenter_distance well
     // under half the window size minus the vehicle's footprint, so the tracks never leave it.
     void EnableMovingTerrain(double recenter_distance, TerrainRefresh refresh);
     void DisableMovingTerrain() { moving_terrain_ = false; }
-    // Recentre now. The shift is a whole number of height cells, so existing heights stay
+
+    // The shift is a whole number of height cells, so existing heights stay
     // grid-aligned with the new window. Calls the refresh function if one is set.
     void RecenterTerrain();
 
@@ -105,17 +105,25 @@ public:
     int GetNumShoesPerTrack() const { return num_shoes_; }
     double GetShoePitch() const { return shoe_pitch_; }
     double GetTrackPathLength() const { return track_path_.Length(); }
+
     // Belt travel [m] along the path since start, wrapped to [0, path length).
     double GetTrackPhase(int k) const { return track_phase_[k]; }
+
     // Spin angle [rad] about body +y of a non-slipping wheel of the given radius on track k
     // (use it to spin sprocket/idler/road-wheel meshes in sync with the shoes).
     double GetWheelSpinAngle(int k, double radius) const { return track_phase_[k] / radius; }
+
     // Poses of all shoes: left track first (indices 0..n-1), then right (n..2n-1).
     // world_frame = false returns them in the body frame (relative to GetPosition()/GetRotationMatrix()).
     void GetTrackShoePoses(std::vector<TrackShoePose>& out, bool world_frame = true) const;
+
     std::vector<TrackShoePose> GetTrackShoePoses(bool world_frame = true) const;
 
     glm::dmat3 GetRotationMatrix() const { return R_; }
+
+    double GetMaxSprocketSpeed() const { return vehicle_params_.max_sprocket_speed; }
+
+    void SetMaxSprocketSpeed(double max_sprok_spd) { vehicle_params_.max_sprocket_speed = max_sprok_spd; }
 
 private:
     // cmd = (left, right): sprocket speeds [rad/s] (Speed) or torques [N m] (Torque).
@@ -175,8 +183,6 @@ private:
     std::vector<char> loading_, contact_;
     std::vector<std::array<double, 2>> jtmp_;
 
-    double max_track_speed_ = 15.0;
-
     // moving terrain window
     bool moving_terrain_ = false;
     double recenter_distance_ = 0.0;
@@ -195,7 +201,7 @@ private:
     void UpdateTerrain(environment::Environment* env, float dt);
     void ResetTerrain(environment::Environment* env);
 
-    TrackSpeeds GetSprocketSpeedsFromTsb(double throttle, double steer, double brake);
+    TrackSpeeds GetSprocketSpeedsFromTsb(double throttle, double steer, double brake) const;
 
     // track shoe animation
     void BuildTrackPath();

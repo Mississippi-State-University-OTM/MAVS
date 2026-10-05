@@ -49,7 +49,6 @@ int main(int argc, char** argv) {
 	mavs::vehicle::tracked::TrackedVehicle tracked_veh(vehic_file);
 	tracked_veh.SetInitialPose(0.0, 0.0, 0.0);
 
-
 	//mavs::vehicle::tracked::TrackedRender tracked_debug_render(&tracked_veh);
 
     mavs::raytracer::embree::EmbreeTracer scene;
@@ -63,7 +62,8 @@ int main(int argc, char** argv) {
 	glm::quat orient(1.0f, 0.0f, 0.0f, 0.0f);
 	mavs::sensor::camera::RgbCamera camera;
 	camera.SetEnvironmentProperties(&env);
-	camera.Initialize(960, 540, 0.0062222222f, 0.0035f, 0.0035f);
+	//camera.Initialize(960, 540, 0.0062222222f, 0.0035f, 0.0035f);
+	camera.Initialize(480, 270, 0.0062222222f, 0.0035f, 0.0035f);
 	camera.SetRelativePose(sensor_offset, sensor_orient);
 	camera.SetName("camera");
 	camera.SetPose(position, orient);
@@ -76,14 +76,16 @@ int main(int argc, char** argv) {
 	float dt = 0.01f; // 100 Hz
 	int nsteps = 0;
 	double t_total = 0.0;
+	double t_start = omp_get_wtime();
 	while (camera.DisplayOpen() || nsteps == 0) {
 
 		UpdateDrivingCommand(camera.GetKeyCommands());
+
 		double t0 = omp_get_wtime();
 		tracked_veh.Update(&env, throttle, steering, braking, dt);
-		
 		t_total += omp_get_wtime() - t0;
-		if (nsteps % 4 == 0) { // 25 Hz
+
+		if (nsteps % 5 == 0) { // 20 Hz
 			glm::dquat ori = tracked_veh.GetOrientation();
 			camera.SetPose(tracked_veh.GetPosition(), tracked_veh.GetOrientation());
 			camera.Update(&env, 0.03);
@@ -95,6 +97,6 @@ int main(int argc, char** argv) {
 		nsteps++;
 		
     }
-	std::cout << "Simulated " << tracked_veh.GetElapsedTime() <<" seconds in " << t_total << " seconds of wall time " << std::endl;
+	std::cout << "Simulated " << tracked_veh.GetElapsedTime() <<" seconds in " << t_total << " seconds of wall time " << (omp_get_wtime()-t_start) << std::endl;
 
 }

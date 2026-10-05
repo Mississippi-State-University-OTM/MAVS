@@ -54,8 +54,8 @@ void SimOptions::ParseJsonObject(const rapidjson::Value& sim_options) {
     if (sim_options.HasMember("gravity") && sim_options["gravity"].IsNumber()) {
         gravity = sim_options["gravity"].GetDouble();
     }
-    if (sim_options.HasMember("dt") && sim_options["dt"].IsNumber()) {
-        max_dt = sim_options["dt"].GetDouble();
+    if (sim_options.HasMember("max_dt") && sim_options["max_dt"].IsNumber()) {
+        max_dt = sim_options["max_dt"].GetDouble();
     }
     if (sim_options.HasMember("rut_dx") && sim_options["rut_dx"].IsNumber()) {
         rut_dx = sim_options["rut_dx"].GetDouble();

@@ -44,6 +44,9 @@ void TrackedVehicleParams::ParseJsonObject(const rapidjson::Value& vehicle) {
     if (vehicle.HasMember("Internal Viscous") && vehicle["Internal Viscous"].IsNumber()) {
         internal_viscous = vehicle["Internal Viscous"].GetDouble();
     }
+    if (vehicle.HasMember("Max Sprocket Speed") && vehicle["Max Sprocket Speed"].IsNumber()) {
+        max_sprocket_speed = vehicle["Max Sprocket Speed"].GetDouble();
+    }
 }
 
 void TrackedVehicleParams::Load(std::string input_file) {

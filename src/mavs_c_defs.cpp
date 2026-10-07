@@ -32,6 +32,7 @@ SOFTWARE.
 #include "mavs_c_defs.h"
 //#include "vehicles/car/full_car.h"
 #include <vehicles/rp3d_veh/mavs_rp3d_veh.h>
+#include <vehicles/tracked/tracked_vehicle.h>
 #include <sensors/mavs_sensors.h>
 #include "sensors/camera/add_rain_to_existing_image.h"
 #include <sensors/lidar/lidar_tools.h>
@@ -668,6 +669,61 @@ extern "C" {
 	EXPORT_CMD void SetLocalOrigin(mavs::environment::Environment* env, double lat, double lon, double alt){
 		env -> SetLocalOrigin(lat,lon,alt);
 	}
+
+	//---------------------- Tracked Vehicle Functions -----------------------------------------------------//
+
+	EXPORT_CMD mavs::vehicle::tracked::TrackedVehicle* NewMavsTrackedVehicle() {
+		mavs::vehicle::tracked::TrackedVehicle* tracked = new mavs::vehicle::tracked::TrackedVehicle;
+		return tracked;
+	}
+
+	EXPORT_CMD void LoadTrackedVehicle(mavs::vehicle::tracked::TrackedVehicle* tracked, char* infile) {
+		//mavs::vehicle::tracked::TrackedVehicle* tracked = static_cast<mavs::vehicle::tracked::TrackedVehicle*>(veh);
+		std::string file_to_load(infile);
+		tracked->Load(file_to_load);
+	}
+
+	EXPORT_CMD void UpdateTrackedVehicle(mavs::vehicle::tracked::TrackedVehicle* tracked, mavs::environment::Environment* env, float throttle, float steering, float brake, float dt) {
+		//mavs::vehicle::tracked::TrackedVehicle* tracked = static_cast<mavs::vehicle::tracked::TrackedVehicle*>(veh);
+		tracked->Update(env, throttle, steering, brake, dt);
+	}
+
+	EXPORT_CMD void SetTrackedVehicleInitialPose(mavs::vehicle::tracked::TrackedVehicle* tracked, float x_init, float y_init, float yaw_init) {
+		//mavs::vehicle::tracked::TrackedVehicle* tracked = static_cast<mavs::vehicle::tracked::TrackedVehicle*>(veh);
+		tracked->SetInitialPose((double)x_init, (double)y_init, (double)yaw_init);
+	}
+
+	EXPORT_CMD float* GetTrackedVehiclePosition(mavs::vehicle::tracked::TrackedVehicle* tracked) {
+		glm::vec3 pos = tracked->GetPosition();
+		static float position[3];
+		for (int i = 0; i < 3; i++)position[i] = pos[i];
+		return position;
+	}
+
+	EXPORT_CMD float* GetTrackedVehicleOrientation(mavs::vehicle::tracked::TrackedVehicle* tracked) {
+		glm::quat ori = tracked->GetOrientation();
+		static float orientation[4];
+		orientation[0] = ori.w;
+		orientation[1] = ori.x;
+		orientation[2] = ori.y;
+		orientation[3] = ori.z;
+		//for (int i = 0; i < 4; i++)orientation[i] = ori[i];
+		return orientation;
+	}
+
+	EXPORT_CMD float GetTrackedVehicleHeading(mavs::vehicle::tracked::TrackedVehicle* tracked) {
+		glm::vec3 look_to = tracked->GetLookTo();
+		float heading = atan2(look_to.y, look_to.x);
+		return heading;
+	}
+
+	EXPORT_CMD float GetTrackedVehicleSpeed(mavs::vehicle::tracked::TrackedVehicle* tracked) {
+		float speed = tracked->GetSpeed();
+		return speed;
+	}
+
+	// --------------------------------------------------------------------------------------------------//
+
 
 	//--- Vehicle model constructors ------------//
 	EXPORT_CMD mavs::vehicle::Vehicle* NewMavsRp3dVehicle() {

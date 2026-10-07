@@ -45,7 +45,8 @@ int main(int argc, char** argv) {
     std::string scene_file(argv[1]);
     std::string vehic_file(argv[2]);
 
-	mavs::vehicle::tracked::TrackedVehicle tracked_veh(vehic_file);
+	mavs::vehicle::tracked::TrackedVehicle tracked_veh;
+	tracked_veh.Load(vehic_file);
 	tracked_veh.SetInitialPose(0.0, 0.0, 0.0);
 
     mavs::raytracer::embree::EmbreeTracer scene;
@@ -100,6 +101,6 @@ int main(int argc, char** argv) {
 		nsteps++;
 		
     }
-	std::cout << "Simulated " << tracked_veh.GetElapsedTime() <<" seconds in " << t_total << " seconds of wall time " << (omp_get_wtime()-t_start) << std::endl;
+	std::cout << "Simulated " << tracked_veh.GetLocalSimTime() <<" seconds in " << t_total << " seconds of wall time " << (omp_get_wtime()-t_start) << std::endl;
 
 }

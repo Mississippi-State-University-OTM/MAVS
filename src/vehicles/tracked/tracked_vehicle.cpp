@@ -14,8 +14,12 @@ namespace mavs {
 namespace vehicle {
 namespace tracked {
 
-TrackedVehicle::TrackedVehicle(std::string input_file) {
+TrackedVehicle::TrackedVehicle() {
+    initialized_ = false;
+}
 
+void TrackedVehicle::Load(std::string input_file) {
+    local_sim_time_ = 0.0;
     // Open safely using standard C++ streams (ios::binary matches "rb")
     std::ifstream ifs(input_file, std::ios::in | std::ios::binary);
     if (!ifs.is_open()) {
@@ -106,11 +110,63 @@ TrackedVehicle::TrackedVehicle(std::string input_file) {
 
     Init();
     if (sim_options_.render_debug) tracked_debug_render_.Init(&terrain_);
+    initialized_ = true;
 }
 
 void TrackedVehicle::SetPose(double x, double y, double yaw_radians) {
-    R_ = RFromRpy(0, 0, yaw_radians);
-    p_ = glm::dvec3(x, y, terrain_.Height(x, y) + vehicle_params_.cg_height);
+    // Start from rest with a clean contact history
+    velocity_ = glm::dvec3(0.0);
+    angular_velocity_ = glm::dvec3(0.0);
+    sprocket_speeds_ = { 0.0, 0.0 };
+    for (int k = 0; k < 2; ++k)
+        std::fill(j_[k].begin(), j_[k].end(), std::array<double, 2>{ 0.0, 0.0 });
+
+    // 1) Yaw-only pose: find where every track element sits in x/y
+    const glm::dmat3 R_yaw = RFromRpy(0, 0, yaw_radians);
+    const glm::dvec3 p_xy(x, y, 0.0);
+    std::vector<glm::dvec3> pts;
+    for (int k = 0; k < 2; ++k)
+        for (const glm::dvec3& rb : r_el_[k]) {
+            const glm::dvec3 rw = p_xy + R_yaw * rb;
+            pts.emplace_back(rw.x, rw.y, terrain_.Height(rw.x, rw.y));
+        }
+
+    // 2) Least-squares plane h = h0 + gx*x + gy*y through the terrain under the tracks
+    glm::dvec3 mean(0.0);
+    for (const auto& q : pts) mean += q;
+    mean /= static_cast<double>(pts.size());
+    double sxx = 0, sxy = 0, syy = 0, sxh = 0, syh = 0;
+    for (const auto& q : pts) {
+        const double dx = q.x - mean.x, dy = q.y - mean.y, dh = q.z - mean.z;
+        sxx += dx * dx; sxy += dx * dy; syy += dy * dy;
+        sxh += dx * dh; syh += dy * dh;
+    }
+    double gx = 0.0, gy = 0.0;
+    const double det = sxx * syy - sxy * sxy;
+    if (det > 1e-12) {
+        gx = (syy * sxh - sxy * syh) / det;
+        gy = (sxx * syh - sxy * sxh) / det;
+    }
+
+    // 3) Hull orientation: body z = terrain normal, body x = heading projected onto the plane
+    const glm::dvec3 nrm = glm::normalize(glm::dvec3(-gx, -gy, 1.0));
+    const glm::dvec3 fwd = R_yaw[0];
+    const glm::dvec3 xb = glm::normalize(fwd - glm::dot(fwd, nrm) * nrm);
+    const glm::dvec3 yb = glm::cross(nrm, xb);
+    R_ = glm::dmat3(xb, yb, nrm);
+
+    // 4) Height: lowest CG height at which no track element is below the terrain,
+    //    plus a small clearance so the vehicle starts just above contact
+    const double clearance = 0.05;
+    double z_init = std::numeric_limits<double>::lowest();
+    for (int k = 0; k < 2; ++k)
+        for (const glm::dvec3& rb : r_el_[k]) {
+            const glm::dvec3 off = R_ * rb;
+            const double h = terrain_.Height(x + off.x, y + off.y);
+            z_init = std::max(z_init, h - off.z);
+        }
+    z_init += clearance;
+    position_ = glm::dvec3(x, y, z_init);
 }
 
 void TrackedVehicle::UpdateTerrain(environment::Environment* env, float dt) {
@@ -125,7 +181,7 @@ void TrackedVehicle::ResetTerrain(environment::Environment* env) {
     float zmin = std::numeric_limits<float>::lowest();
     zmin *= 0.5;
     std::vector<double> old_heights = terrain_.GetHeights();
-    glm::dvec2 new_origin(p_.x - 0.5 * terrain_.XDim(), p_.y - 0.5 * terrain_.YDim());
+    glm::dvec2 new_origin(position_.x - 0.5 * terrain_.XDim(), position_.y - 0.5 * terrain_.YDim());
     terrain_.SetOrigin(new_origin.x, new_origin.y);
     std::vector<double> new_heights;
     int nx = terrain_.Nx();
@@ -147,17 +203,24 @@ void TrackedVehicle::ResetTerrain(environment::Environment* env) {
     terrain_.SetHeights(new_heights);
 }
 
-TrackSpeeds TrackedVehicle::GetSprocketSpeedsFromTsb(double throttle, double steer, double brake) const {
+TrackSpeeds TrackedVehicle::GetSprocketSpeedsFromTsb(double throttle, double steer, double brake, double dt) const {
     TrackSpeeds cmd;
-    if (throttle > 0.0) {
-        cmd.left = throttle * vehicle_params_.max_sprocket_speed;
-        cmd.right = throttle * vehicle_params_.max_sprocket_speed;
+    //double steering_gain = 1.0 - 0.7 * throttle;
+    //double left_speed = throttle - steer*steering_gain;
+    //double right_speed = throttle + steer*steering_gain;
+    double left_speed = throttle - steer;
+    double right_speed = throttle + steer;
+    double max_mag = std::max(std::abs(left_speed), std::abs(right_speed));
+    if (max_mag > 1.0) {
+        left_speed /= max_mag;
+        right_speed /= max_mag;
     }
-    else if (brake > 0.0) {
-        cmd.left = -brake * vehicle_params_.max_sprocket_speed;
-        cmd.right = -brake * vehicle_params_.max_sprocket_speed;
-    }
-    if (steer != 0.0) { cmd.right = steer * vehicle_params_.max_sprocket_speed; cmd.left = -steer * vehicle_params_.max_sprocket_speed; }
+    cmd.left = left_speed * max_mag * vehicle_params_.max_sprocket_speed;
+    cmd.right = right_speed * max_mag* vehicle_params_.max_sprocket_speed;
+
+    cmd.right = std::max(-vehicle_params_.max_sprocket_speed, std::min(cmd.right, vehicle_params_.max_sprocket_speed));
+    cmd.left = std::max(-vehicle_params_.max_sprocket_speed, std::min(cmd.left, vehicle_params_.max_sprocket_speed));
+    
     return cmd;
 }
 
@@ -172,11 +235,14 @@ void TrackedVehicle::InitAnimation(environment::Environment* env) {
         track_pad_ids_.push_back(nanim);
         nanim++;
     }
+    // Center the local height map on the start position before sampling it,
+    // otherwise SetPose reads heights from wherever position_ happened to be
+    position_ = glm::dvec3(initial_position_x_, initial_position_y_, 0.0);
     ResetTerrain(env);
 
     // Settle the vehicle into the inital position
     SetPose(initial_position_x_, initial_position_y_, initial_yaw_);
-    Settle(1.5, 1e-3);
+    Settle(5.0, 0.25e-3);
 }
 
 void TrackedVehicle::UpdateSim(double dt, TrackSpeeds cmd) {
@@ -195,18 +261,22 @@ void TrackedVehicle::UpdateSim(double dt, TrackSpeeds cmd) {
 }
 
 void TrackedVehicle::Update(environment::Environment* env, float throttle, float steer, float brake, float dt) {
+    if (!initialized_) {
+        std::cerr << "ERROR: MAVS TRACKED VEHICLE: NO VEHICLE FILE LOADED" << std::endl;
+        exit(47);
+    }
 
     // Initialize the animations
     if (!vehicle_loaded_) InitAnimation(env);
 
     // get the commanded sprocket speeds
-    TrackSpeeds cmd = GetSprocketSpeedsFromTsb(throttle, steer, brake);
+    TrackSpeeds cmd = GetSprocketSpeedsFromTsb(throttle, steer, brake, (double)dt);
 
     // Update the track simulation
     UpdateSim((double)dt, cmd);
 
     // Set the MAVS vehicle output params
-    SetMavsParams();
+    SetMavsParams((double)dt);
 
     // Update the animation positions
     UpdateMavsAnimations(env);
@@ -239,12 +309,116 @@ void TrackedVehicle::UpdateMavsAnimations(environment::Environment* env) {
     }
 }
 
-void TrackedVehicle::SetMavsParams() {
-    current_state_.pose.position = p_;
+void TrackedVehicle::SetMavsParams(double dt) {
+    current_state_.accel.linear = (1.0 / dt) * (velocity_ - current_state_.twist.linear);
+    current_state_.accel.angular = (1.0 / dt) * (angular_velocity_ - current_state_.twist.angular);
+    current_state_.pose.position = position_;
     current_state_.pose.quaternion = glm::dquat(R_);
-    current_state_.twist.linear = vel_;
-    current_state_.twist.angular = omega_;
+    current_state_.twist.linear = velocity_;
+    current_state_.twist.angular = angular_velocity_;
 }
+
+void TrackedVehicle::EnableMovingTerrain(double recenter_distance, TerrainRefresh refresh) {
+    recenter_distance_ = recenter_distance;
+    terrain_refresh_ = std::move(refresh);
+    moving_terrain_ = true;
+}
+
+void TrackedVehicle::RecenterTerrain() {
+    double xmin, xmax, ymin, ymax;
+    terrain_.Extent(xmin, xmax, ymin, ymax);
+    const double dx = terrain_.Dx();
+    const double sx = std::round((position_.x - 0.5 * (xmin + xmax)) / dx) * dx;
+    const double sy = std::round((position_.y - 0.5 * (ymin + ymax)) / dx) * dx;
+    if (sx == 0.0 && sy == 0.0) return;
+    terrain_.SetOrigin(terrain_.X0() + sx, terrain_.Y0() + sy);
+    if (terrain_refresh_) terrain_refresh_(terrain_);
+}
+
+void TrackedVehicle::Settle(double duration, double dt) {
+    const DriveMode drive = sim_options_.drive;
+    sim_options_.drive = DriveMode::Speed;
+    const int n = static_cast<int>(duration / dt);
+    for (int i = 0; i < n; ++i) {
+        g_scale_ = std::min(1.0, 1.5 * (i + 1) / n);
+        Step(dt, { 0.0, 0.0 });
+    }
+    g_scale_ = 1.0;
+    sim_options_.drive = drive;
+    local_sim_time_ = 0.0;
+}
+
+void TrackedVehicle::SetTrackLayout(const TrackLayout& layout) {
+    track_layout_ = layout;
+    BuildTrackPath();
+}
+
+void TrackedVehicle::BuildTrackPath() {
+    std::vector<TrackWheel> wheels = track_layout_.wheels;
+    if (wheels.empty()) {
+        // default: sprocket-sized wheels at the ends of the contact patch, resting on the ground plane
+        const double r = vehicle_params_.sprocket_radius;
+        const double h = 0.5 * vehicle_params_.track_contact_length;
+        wheels = { TrackWheel{ -h, r, r }, TrackWheel{ h, r, r } };
+    }
+    track_path_.Build(wheels);
+
+    const double L = track_path_.Length();
+    if (track_layout_.num_shoes > 0) {
+        num_shoes_ = track_layout_.num_shoes;
+    }
+    else {
+        if (!(track_layout_.shoe_pitch > 0.0))
+            throw std::invalid_argument("TrackLayout: set num_shoes > 0 or shoe_pitch > 0");
+        num_shoes_ = std::max(3, static_cast<int>(std::lround(L / track_layout_.shoe_pitch)));
+    }
+    shoe_pitch_ = L / num_shoes_;  // exact spacing so the loop closes
+    for (int k = 0; k < 2; ++k) track_phase_[k] = track_path_.Wrap(track_phase_[k]);
+}
+
+void TrackedVehicle::GetTrackShoePoses(std::vector<TrackShoePose>& out, bool world_frame) const {
+    const int n = num_shoes_;
+    out.resize(static_cast<size_t>(2 * n));
+    const glm::dquat q_hull = glm::quat_cast(R_);
+    const glm::dvec3 Y(0.0, 1.0, 0.0);
+    for (int k = 0; k < 2; ++k) {
+        for (int j = 0; j < n; ++j) {
+            // a shoe is a rigid link between two pins on the pitch line, so on the wheels it
+            // lies along the chord (no gaps or overlap between neighbouring shoes)
+            const double s_a = track_phase_[k] + j * shoe_pitch_;
+            const glm::dvec2 a2 = track_path_.Point(s_a);
+            const glm::dvec2 b2 = track_path_.Point(s_a + shoe_pitch_);
+            const glm::dvec3 a(a2.x, 0.0, a2.y), b(b2.x, 0.0, b2.y);
+
+            // shoe x points from the trailing pin to the leading one, i.e. body-forward on the ground run
+            glm::dvec3 X = a - b;
+            const double len = glm::length(X);
+            X = len > 1e-12 ? X / len : glm::dvec3(1.0, 0.0, 0.0);
+            const glm::dvec3 Z = glm::cross(X, Y);  // toward the inside of the loop
+            const glm::dmat3 Rs(X, Y, Z);            // columns
+
+            glm::dvec3 pos = track_center_[k] + 0.5 * (a + b) + Rs * track_layout_.shoe_offset;
+            glm::dquat q = glm::quat_cast(Rs) * track_layout_.shoe_mesh_rotation;
+            if (world_frame) {
+                pos = position_ + R_ * pos;
+                q = q_hull * q;
+            }
+            TrackShoePose& sp = out[static_cast<size_t>(k) * n + j];
+            sp.position = pos;
+            sp.orientation = glm::normalize(q);
+            sp.track = k;
+            sp.index = j;
+        }
+    }
+}
+
+// ------- All the real physics stuff is happening down here ------- //
+//                             |                                     //
+//                             |                                     //
+//                             |                                     //
+//                             |                                     //
+//                             V                                     //
+//-------------------------------------------------------------------//
 
 void TrackedVehicle::Init(){
 
@@ -327,25 +501,55 @@ TrackDiag TrackedVehicle::TrackForces(int k, double dt, glm::dvec3& F, glm::dvec
     const size_t ne = rb.size();
     const double kb = kb_, n = soil_.n, tanp = soil_.TanPhi();
     const double cosn = std::max(R_[2][2], 1e-3);   // world-z component of body z
-    const glm::dvec3 vel_b = glm::transpose(R_) * vel_;
+    const glm::dvec3 vel_b = glm::transpose(R_) * velocity_;
     TrackDiag d;
     F = glm::dvec3(0.0);
     M = glm::dvec3(0.0);
 
+    // ---- track compliance: each element is backed by a spring (road wheels / suspension / belt)
+    //      that lets it deflect up toward the hull so the track conforms to the terrain.
+    //      track_static_defl <= 0 gives the old rigid-plate behaviour.
+    const double track_static_defl = 0.03;  // [m] element deflection under static load on flat ground
+    const double track_max_travel = 0.15;   // [m] bump stop: beyond this the element is rigid again
+    const double p_static = vehicle_params_.mass * sim_options_.gravity /
+        (2.0 * vehicle_params_.track_width * vehicle_params_.track_contact_length);
+    const double track_k = track_static_defl > 0.0 ? p_static / track_static_defl : 0.0;  // [Pa/m]
+
     // ---- pass 1: sinkage and normal pressure (rut read before any update)
     for (size_t e = 0; e < ne; ++e) {
-        const glm::dvec3 rw = p_ + R_ * rb[e];
+        const glm::dvec3 rw = position_ + R_ * rb[e];
         const double hs = terrain_.Height(rw.x, rw.y);
         ri_[e] = terrain_.GetRutIndex(rw.x, rw.y);
         const double zp = terrain_.Rut(ri_[e].iy, ri_[e].ix);
-        const double z = (hs - rw.z) * cosn;
-        const glm::dvec3 vb = vel_b + glm::cross(omega_, rb[e]);
-        const bool loading = z > zp;
-        const double p_load = kb * std::pow(std::max(z, 0.0), n);
+        const double z_rigid = (hs - rw.z) * cosn;   // sinkage if the element were rigidly attached
+        const glm::dvec3 vb = vel_b + glm::cross(angular_velocity_, rb[e]);
         const double p_top = kb * std::pow(zp, n);
         const double ku = zp > 0 ? p_top / std::max(soil_.rebound * zp, 1e-12) : 0.0;
-        const double p_unl = std::max(p_top - ku * (zp - z), 0.0);
-        const double p_st = loading ? p_load : p_unl;
+        // static soil pressure as a function of soil sinkage s (loading / unloading branches)
+        auto soil_p = [&](double s) {
+            return s > zp ? kb * std::pow(std::max(s, 0.0), n) : std::max(p_top - ku * (zp - s), 0.0);
+        };
+
+        // element deflection: solve soil_p(z_rigid - delta) = track_k * delta (monotone, bisection)
+        double delta = 0.0;
+        if (track_k > 0.0 && soil_p(z_rigid) > 0.0) {
+            const double s_zero = zp > 0 ? zp * (1.0 - soil_.rebound) : 0.0;  // sinkage where soil_p hits 0
+            double hi = std::min(track_max_travel, z_rigid - s_zero);
+            if (soil_p(z_rigid - hi) - track_k * hi >= 0.0) {
+                delta = hi;  // on the bump stop
+            } else {
+                double lo = 0.0;
+                for (int it = 0; it < 20; ++it) {
+                    const double mid = 0.5 * (lo + hi);
+                    if (soil_p(z_rigid - mid) - track_k * mid > 0.0) lo = mid; else hi = mid;
+                }
+                delta = 0.5 * (lo + hi);
+            }
+        }
+
+        const double z = z_rigid - delta;   // actual soil sinkage
+        const bool loading = z > zp;
+        const double p_st = soil_p(z);
         const bool contact = p_st > 0;
         z_[e] = z;
         zp_[e] = zp;
@@ -363,12 +567,13 @@ TrackDiag TrackedVehicle::TrackForces(int k, double dt, glm::dvec3& F, glm::dvec
         }
 
     // ---- shear displacement field
-    const double belt = vehicle_params_.sprocket_radius * sprocket_[k];
+    const double belt = vehicle_params_.sprocket_radius * sprocket_speeds_[k];
     std::vector<std::array<double, 2>>& j = j_[k];
     Advect(j, belt * dt);
-    const double a = omega_.z * dt;
+    const double a = angular_velocity_.z * dt;
     const double ca = std::cos(a), sa = std::sin(a);
     const double eps_v = 0.01 * sim_options_.v_eps;
+    const double lateral_scale = 8.0;   // 1.0 = isotropic shear; >1 = more lateral grip
     double contact_count = 0, sink_sum = 0;
     for (size_t e = 0; e < ne; ++e) {
         const double jx = ca * j[e][0] + sa * j[e][1];
@@ -392,7 +597,7 @@ TrackDiag TrackedVehicle::TrackForces(int k, double dt, glm::dvec3& F, glm::dvec
             dx = jnx / den;
             dy = jny / den;
         }
-        const glm::dvec3 f(-tau * A_ * dx, -tau * A_ * dy, pn_[e] * A_);
+        const glm::dvec3 f(-tau * A_ * dx, -lateral_scale * tau * A_ * dy, pn_[e] * A_);
         F += f;
         M += glm::cross(rb[e], f);
         d.thrust += f.x;
@@ -402,7 +607,7 @@ TrackDiag TrackedVehicle::TrackForces(int k, double dt, glm::dvec3& F, glm::dvec
 
     // ---- lumped forces at the track
     const glm::dvec3 rc = track_center_[k];
-    const glm::dvec3 vc = vel_b + glm::cross(omega_, rc);
+    const glm::dvec3 vc = vel_b + glm::cross(angular_velocity_, rc);
     const double vtx = vc.x, vty = vc.y;
     const double vt2 = vtx * vtx + vty * vty + sim_options_.v_eps * sim_options_.v_eps;
     auto add = [&](const glm::dvec3& pos, const glm::dvec3& fe) { F += fe; M += glm::cross(pos, fe); };
@@ -420,7 +625,7 @@ TrackDiag TrackedVehicle::TrackForces(int k, double dt, glm::dvec3& F, glm::dvec
     for (int c = 0; c < nx; ++c) {
         glm::dvec3 ahead = rb[Idx(row, c)];
         ahead.x += off;   // one rut cell beyond the edge
-        const glm::dvec3 aw = p_ + R_ * ahead;
+        const glm::dvec3 aw = position_ + R_ * ahead;
         const HeightMapTerrain::RutIndex ra = terrain_.GetRutIndex(aw.x, aw.y);
         const double zp_ahead = terrain_.Rut(ra.iy, ra.ix);
         const double z_edge = std::max(z_[Idx(row, c)], zp_ahead);
@@ -467,32 +672,15 @@ TrackDiag TrackedVehicle::TrackForces(int k, double dt, glm::dvec3& F, glm::dvec
     return d;
 }
 
-void TrackedVehicle::EnableMovingTerrain(double recenter_distance, TerrainRefresh refresh) {
-    recenter_distance_ = recenter_distance;
-    terrain_refresh_ = std::move(refresh);
-    moving_terrain_ = true;
-}
-
-void TrackedVehicle::RecenterTerrain() {
-    double xmin, xmax, ymin, ymax;
-    terrain_.Extent(xmin, xmax, ymin, ymax);
-    const double dx = terrain_.Dx();
-    const double sx = std::round((p_.x - 0.5 * (xmin + xmax)) / dx) * dx;
-    const double sy = std::round((p_.y - 0.5 * (ymin + ymax)) / dx) * dx;
-    if (sx == 0.0 && sy == 0.0) return;
-    terrain_.SetOrigin(terrain_.X0() + sx, terrain_.Y0() + sy);
-    if (terrain_refresh_) terrain_refresh_(terrain_);
-}
-
 void TrackedVehicle::Step(double dt, TrackSpeeds cmd) {
     if (moving_terrain_) {
         double xmin, xmax, ymin, ymax;
         terrain_.Extent(xmin, xmax, ymin, ymax);
-        if (std::abs(p_.x - 0.5 * (xmin + xmax)) > recenter_distance_ ||
-            std::abs(p_.y - 0.5 * (ymin + ymax)) > recenter_distance_)
+        if (std::abs(position_.x - 0.5 * (xmin + xmax)) > recenter_distance_ ||
+            std::abs(position_.y - 0.5 * (ymin + ymax)) > recenter_distance_)
             RecenterTerrain();
     }
-    if (sim_options_.drive == DriveMode::Speed) sprocket_ = cmd;
+    if (sim_options_.drive == DriveMode::Speed) sprocket_speeds_ = cmd;
 
     glm::dvec3 F_b(0.0), M_b(0.0);
     std::array<TrackDiag, 2> diags;
@@ -505,7 +693,7 @@ void TrackedVehicle::Step(double dt, TrackSpeeds cmd) {
 
     std::array<double, 2> torques{};
     for (int k = 0; k < 2; ++k) {
-        const double w = sprocket_[k];
+        const double w = sprocket_speeds_[k];
         const double T_int = vehicle_params_.internal_friction * std::tanh(w / 0.05) + vehicle_params_.internal_viscous * w;
         const double T_soil = vehicle_params_.sprocket_radius * diags[k].thrust;
         if (sim_options_.drive == DriveMode::Speed) {
@@ -514,157 +702,25 @@ void TrackedVehicle::Step(double dt, TrackSpeeds cmd) {
             if (vehicle_params_.sprocket_inertia <= 0)
                 throw std::invalid_argument("torque drive needs vehicle.sprocket_inertia > 0");
             torques[k] = cmd[k];
-            sprocket_[k] += (cmd[k] - T_soil - T_int) / vehicle_params_.sprocket_inertia * dt;
+            sprocket_speeds_[k] += (cmd[k] - T_soil - T_int) / vehicle_params_.sprocket_inertia * dt;
         }
     }
 
     // advance the belt for animation: belt speed relative to the hull
     for (int k = 0; k < 2; ++k)
-        track_phase_[k] = track_path_.Wrap(track_phase_[k] + vehicle_params_.sprocket_radius * sprocket_[k] * dt);
+        track_phase_[k] = track_path_.Wrap(track_phase_[k] + vehicle_params_.sprocket_radius * sprocket_speeds_[k] * dt);
 
     // rigid body, semi-implicit Euler
     const glm::dvec3 F_w = R_ * F_b + glm::dvec3(0.0, 0.0, -vehicle_params_.mass * sim_options_.gravity * g_scale_);
-    vel_ += F_w * (dt / vehicle_params_.mass);
-    const glm::dvec3 Iw(I_[0] * omega_.x, I_[1] * omega_.y, I_[2] * omega_.z);
-    const glm::dvec3 rhs = M_b - glm::cross(omega_, Iw);
-    omega_ += glm::dvec3(Iinv_[0] * rhs.x, Iinv_[1] * rhs.y, Iinv_[2] * rhs.z) * dt;
-    p_ += vel_ * dt;
-    R_ = Orthonormalise(R_ * RotExp(omega_ * dt));
-    elapsed_time_ += dt;
+    velocity_ += F_w * (dt / vehicle_params_.mass);
+    const glm::dvec3 Iw(I_[0] * angular_velocity_.x, I_[1] * angular_velocity_.y, I_[2] * angular_velocity_.z);
+    const glm::dvec3 rhs = M_b - glm::cross(angular_velocity_, Iw);
+    angular_velocity_ += glm::dvec3(Iinv_[0] * rhs.x, Iinv_[1] * rhs.y, Iinv_[2] * rhs.z) * dt;
+    position_ += velocity_ * dt;
+    R_ = Orthonormalise(R_ * RotExp(angular_velocity_ * dt));
+    local_sim_time_ += dt;
 
-    /*current_simulation_state_.t = elapsed_time_;
-    current_simulation_state_.diags = diags;
-    current_simulation_state_.torques = torques;
-    for (int k = 0; k < 2; ++k) {
-        const double belt = diags[k].belt_speed;
-        current_simulation_state_.slips[k] = std::abs(belt) > 1e-6 ? 1 - diags[k].vx_track / belt : 0.0;
-    }
-    current_simulation_state_.v_body = glm::transpose(R_) * vel_;
-    current_simulation_state_.F_body = F_b;
-    current_simulation_state_.M_body = M_b;
-    */
 }
-
-void TrackedVehicle::Settle(double duration, double dt) {
-    const DriveMode drive = sim_options_.drive;
-    sim_options_.drive = DriveMode::Speed;
-    const int n = static_cast<int>(duration / dt);
-    for (int i = 0; i < n; ++i) {
-        g_scale_ = std::min(1.0, 1.5 * (i + 1) / n);
-        Step(dt, {0.0, 0.0});
-    }
-    g_scale_ = 1.0;
-    sim_options_.drive = drive;
-    elapsed_time_ = 0.0;
-}
-
-/*VehicleState TrackedVehicle::GetCurrentVehicleState() const {
-    VehicleState s;
-    RpyFromR(R_, s.roll, s.pitch, s.yaw);
-    const glm::dvec3 vb = glm::transpose(R_) * vel_;
-    s.t = elapsed_time_;
-    s.x = p_.x; s.y = p_.y; s.z = p_.z;
-    s.vx = vb.x; s.vy = vb.y; s.vz = vb.z;
-    s.yaw_rate = omega_.z;
-    s.omega_left = sprocket_[0];
-    s.omega_right = sprocket_[1];
-    return s;
-}*/
-
-void TrackedVehicle::SetTrackLayout(const TrackLayout& layout) {
-    track_layout_ = layout;
-    BuildTrackPath();
-}
-
-void TrackedVehicle::BuildTrackPath() {
-    std::vector<TrackWheel> wheels = track_layout_.wheels;
-    if (wheels.empty()) {
-        // default: sprocket-sized wheels at the ends of the contact patch, resting on the ground plane
-        const double r = vehicle_params_.sprocket_radius;
-        const double h = 0.5 * vehicle_params_.track_contact_length;
-        wheels = { TrackWheel{ -h, r, r }, TrackWheel{ h, r, r } };
-    }
-    track_path_.Build(wheels);
-
-    const double L = track_path_.Length();
-    if (track_layout_.num_shoes > 0) {
-        num_shoes_ = track_layout_.num_shoes;
-    } else {
-        if (!(track_layout_.shoe_pitch > 0.0))
-            throw std::invalid_argument("TrackLayout: set num_shoes > 0 or shoe_pitch > 0");
-        num_shoes_ = std::max(3, static_cast<int>(std::lround(L / track_layout_.shoe_pitch)));
-    }
-    shoe_pitch_ = L / num_shoes_;  // exact spacing so the loop closes
-    for (int k = 0; k < 2; ++k) track_phase_[k] = track_path_.Wrap(track_phase_[k]);
-}
-
-void TrackedVehicle::GetTrackShoePoses(std::vector<TrackShoePose>& out, bool world_frame) const {
-    const int n = num_shoes_;
-    out.resize(static_cast<size_t>(2 * n));
-    const glm::dquat q_hull = glm::quat_cast(R_);
-    const glm::dvec3 Y(0.0, 1.0, 0.0);
-    for (int k = 0; k < 2; ++k) {
-        for (int j = 0; j < n; ++j) {
-            // a shoe is a rigid link between two pins on the pitch line, so on the wheels it
-            // lies along the chord (no gaps or overlap between neighbouring shoes)
-            const double s_a = track_phase_[k] + j * shoe_pitch_;
-            const glm::dvec2 a2 = track_path_.Point(s_a);
-            const glm::dvec2 b2 = track_path_.Point(s_a + shoe_pitch_);
-            const glm::dvec3 a(a2.x, 0.0, a2.y), b(b2.x, 0.0, b2.y);
-
-            // shoe x points from the trailing pin to the leading one, i.e. body-forward on the ground run
-            glm::dvec3 X = a - b;
-            const double len = glm::length(X);
-            X = len > 1e-12 ? X / len : glm::dvec3(1.0, 0.0, 0.0);
-            const glm::dvec3 Z = glm::cross(X, Y);  // toward the inside of the loop
-            const glm::dmat3 Rs(X, Y, Z);            // columns
-
-            glm::dvec3 pos = track_center_[k] + 0.5 * (a + b) + Rs * track_layout_.shoe_offset;
-            glm::dquat q = glm::quat_cast(Rs) * track_layout_.shoe_mesh_rotation;
-            if (world_frame) {
-                pos = p_ + R_ * pos;
-                q = q_hull * q;
-            }
-            TrackShoePose& sp = out[static_cast<size_t>(k) * n + j];
-            sp.position = pos;
-            sp.orientation = glm::normalize(q);
-            sp.track = k;
-            sp.index = j;
-        }
-    }
-}
-
-std::vector<TrackShoePose> TrackedVehicle::GetTrackShoePoses(bool world_frame) const {
-    std::vector<TrackShoePose> out;
-    GetTrackShoePoses(out, world_frame);
-    return out;
-}
-
-/*std::vector<LogRow> TrackedVehicle::Run() {
-    std::vector<LogRow> log;
-    const long nsteps = std::lround(sim_options_.simulation_duration / sim_options_.dt);
-    for (long i = 0; i < nsteps; ++i) {
-        Step(sim_options_.dt, controller_(elapsed_time_, *this));
-        const SimulationState& out = current_simulation_state_;
-        if (i % sim_options_.log_every == 0 || i == nsteps - 1) {
-            const TrackDiag& d0 = out.diags[0];
-            const TrackDiag& d1 = out.diags[1];
-            LogRow r;
-            r.s = GetCurrentVehicleState();
-            r.thrust_left = d0.thrust;          r.thrust_right = d1.thrust;
-            r.torque_left = out.torques[0];     r.torque_right = out.torques[1];
-            r.slip_left = out.slips[0];         r.slip_right = out.slips[1];
-            r.sinkage_left = d0.sinkage;        r.sinkage_right = d1.sinkage;
-            r.N_left = d0.N;                    r.N_right = d1.N;
-            r.F_compaction = d0.F_compaction + d1.F_compaction;
-            r.F_bulldoze_x = d0.F_bulldoze_x + d1.F_bulldoze_x;
-            r.F_bulldoze_y = d0.F_bulldoze_y + d1.F_bulldoze_y;
-            r.outside_map = d0.outside_map + d1.outside_map;
-            log.push_back(r);
-        }
-    }
-    return log;
-}*/
 
 }  // namespace tracked
 } // namespace vehicle

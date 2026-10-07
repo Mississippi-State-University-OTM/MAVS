@@ -37,11 +37,11 @@
   },
 
   "Terrain": {
-    "xmin": -25.0,
-    "xmax": 25.0,
-    "ymin": -25.0,
-    "ymax": 25.0,
-    "resolution": 0.05
+    "xmin": -16.0,
+    "xmax": 16.0,
+    "ymin": -16.0,
+    "ymax": 16.0,
+    "resolution": 0.04
   },
 
   "Vehicle Mesh": {

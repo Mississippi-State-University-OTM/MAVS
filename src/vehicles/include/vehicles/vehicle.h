@@ -129,6 +129,10 @@ class Vehicle : public Communicator {
 		return current_state_.pose.quaternion;
 	}
 
+	glm::mat3 GetOrientationMatrix() {
+		return glm::mat3((glm::quat)current_state_.pose.quaternion);
+	}
+
 	/// Get the "Look To" vector of the vehilce
 	glm::vec3 GetLookTo() {
 		glm::mat3 R = glm::toMat3(current_state_.pose.quaternion);

@@ -2,7 +2,7 @@
   "Object Labels": "labels.json",
   "Surface Mesh": [
     {
-      "Mesh": "surfaces/pg_sw_corner/ground_points.obj",
+      "Mesh": "surfaces/pg_digital_twin/cavs_proving_ground.obj",
       "Rotate Y to Z": false,
       "YawPitchRoll": [
         0.0,
@@ -23,7 +23,7 @@
   ],
   "Objects": [
     {
-      "Mesh": "surfaces/pg_sw_corner/ground_points.obj",
+      "Mesh": "surfaces/pg_digital_twin/cavs_proving_ground.obj",
       "Rotate Y to Z": false,
       "Smooth Normals": false,
       "Instances": [

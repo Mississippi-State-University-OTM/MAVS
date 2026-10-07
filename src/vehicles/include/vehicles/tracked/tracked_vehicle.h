@@ -48,7 +48,9 @@ namespace tracked {
 class TrackedVehicle : public Vehicle {
 public:
 
-    TrackedVehicle(std::string input_file);
+    TrackedVehicle();
+
+    void Load(std::string input_file);
 
     void SetPose(double x, double y, double yaw_radians);
 
@@ -56,37 +58,14 @@ public:
 
     void SetInitialPose(double init_x, double init_y, double init_yaw) { initial_position_x_ = init_x; initial_position_y_ = init_y; initial_yaw_ = init_yaw; }
 
-    const TrackSpeeds GetSprocketSpeeds() const { return sprocket_; }
+    // Poses of all shoes: left track first (indices 0..n-1), then right (n..2n-1).
+    // world_frame = false returns them in the body frame (relative to GetPosition()/GetRotationMatrix()).
+    void GetTrackShoePoses(std::vector<TrackShoePose>& out, bool world_frame = true) const;
 
-    double GetElapsedTime() const { return elapsed_time_; }
-
-    double GetSinkage() const { return z_static_estimate_; }
-    SimOptions& GetSimOptions() { return sim_options_; }
-
-    double GetGravity() const { return sim_options_.gravity; }
-    void SetGravity(double grav_in) { sim_options_.gravity = grav_in; }
-
-    HeightMapTerrain& GetTerrain() { return terrain_; }
-
-    void SetTerrain(HeightMapTerrain terrain_in) { terrain_ = terrain_in; }
-
-    void SetSimulationMaxDt(double dt) { sim_options_.max_dt = dt; }
-    double GetSimulationMaxDt() const { return sim_options_.max_dt; }
-
-    double GetDu()const { return du_; }
-    double GetDw()const { return dw_; }
-
-    TrackedVehicleParams& GetVehicle() { return vehicle_params_; }
-
-    TrackedSoil& GetSoil() { return soil_; }
-
-    const std::array<glm::dvec3, 2>& GetTrackCenter() const { return track_center_; }
-
-    const std::array<std::vector<glm::dvec3>, 2>& GetTrackElements() const { return r_el_; }
-
+private:
     // ---- moving terrain window
-    // Called after the terrain origin moves; must refill the heights for the new window
-    // (terrain.SetHeights). Ruts are already shifted when it runs.
+// Called after the terrain origin moves; must refill the heights for the new window
+// (terrain.SetHeights). Ruts are already shifted when it runs.
     using TerrainRefresh = std::function<void(HeightMapTerrain& terrain)>;
 
     // At the start of each Step(), if the vehicle is more than recenter_distance [m] from the
@@ -114,19 +93,6 @@ public:
     // (use it to spin sprocket/idler/road-wheel meshes in sync with the shoes).
     double GetWheelSpinAngle(int k, double radius) const { return track_phase_[k] / radius; }
 
-    // Poses of all shoes: left track first (indices 0..n-1), then right (n..2n-1).
-    // world_frame = false returns them in the body frame (relative to GetPosition()/GetRotationMatrix()).
-    void GetTrackShoePoses(std::vector<TrackShoePose>& out, bool world_frame = true) const;
-
-    std::vector<TrackShoePose> GetTrackShoePoses(bool world_frame = true) const;
-
-    glm::dmat3 GetRotationMatrix() const { return R_; }
-
-    double GetMaxSprocketSpeed() const { return vehicle_params_.max_sprocket_speed; }
-
-    void SetMaxSprocketSpeed(double max_sprok_spd) { vehicle_params_.max_sprocket_speed = max_sprok_spd; }
-
-private:
     // cmd = (left, right): sprocket speeds [rad/s] (Speed) or torques [N m] (Torque).
     void Step(double dt, TrackSpeeds cmd);
 
@@ -143,6 +109,7 @@ private:
     size_t Idx(int i, int c) const { return static_cast<size_t>(i) * sim_options_.nx + c; }
 
     void Init();
+    bool initialized_ = false;
 
     TrackedVehicleParams vehicle_params_; 
     TrackedSoil soil_; 
@@ -169,13 +136,14 @@ private:
     double z_static_estimate_ = 0.0;
 
     // state
-    glm::dvec3 p_ = glm::dvec3(0.0), vel_ = glm::dvec3(0.0), omega_ = glm::dvec3(0.0);
+    glm::dvec3 position_ = glm::dvec3(0.0);
+    glm::dvec3 velocity_ = glm::dvec3(0.0);
+    glm::dvec3 angular_velocity_ = glm::dvec3(0.0);
     glm::dmat3 R_ = glm::dmat3(1.0);
 
-    TrackSpeeds sprocket_;
+    TrackSpeeds sprocket_speeds_;
     std::array<std::vector<std::array<double, 2>>, 2> j_;
     double g_scale_ = 1.0;
-    double elapsed_time_ = 0.0;
 
     // scratch buffers (avoid per-step allocation)
     std::vector<double> z_, zp_, pn_;
@@ -189,7 +157,7 @@ private:
     double recenter_distance_ = 0.0;
     TerrainRefresh terrain_refresh_;
 
-    void SetMavsParams();
+    void SetMavsParams(double dt);
     RenderingAsset vehicle_asset_;
     RenderingAsset track_asset_;
     void UpdateMavsAnimations(environment::Environment* env);
@@ -202,7 +170,8 @@ private:
     void UpdateTerrain(environment::Environment* env, float dt);
     void ResetTerrain(environment::Environment* env);
 
-    TrackSpeeds GetSprocketSpeedsFromTsb(double throttle, double steer, double brake) const;
+    double yaw_trim_ = 0.0;
+    TrackSpeeds GetSprocketSpeedsFromTsb(double throttle, double steer, double brake, double dt) const;
 
     // track shoe animation
     void BuildTrackPath();

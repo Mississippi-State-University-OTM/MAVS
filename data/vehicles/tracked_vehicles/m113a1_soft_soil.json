@@ -6,7 +6,10 @@
     "Track Width": 0.38,
     "Track Contact Length": 2.67,
     "Sprocket Radius": 0.2985,
-    "Max Sprocket Speed": 65.0
+    "Max Sprocket Speed": 65.0,
+    "Lateral Force Scale": 8.0,
+    "Static Vertical Deflection": 0.03,
+    "Max Vertical Deflection": 0.15
   },
 
   "Soil": {

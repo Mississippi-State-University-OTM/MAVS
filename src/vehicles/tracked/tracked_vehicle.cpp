@@ -509,11 +509,11 @@ TrackDiag TrackedVehicle::TrackForces(int k, double dt, glm::dvec3& F, glm::dvec
     // ---- track compliance: each element is backed by a spring (road wheels / suspension / belt)
     //      that lets it deflect up toward the hull so the track conforms to the terrain.
     //      track_static_defl <= 0 gives the old rigid-plate behaviour.
-    const double track_static_defl = 0.03;  // [m] element deflection under static load on flat ground
-    const double track_max_travel = 0.15;   // [m] bump stop: beyond this the element is rigid again
+    //const double track_static_defl = 0.03;  // [m] element deflection under static load on flat ground
+    //const double track_max_travel = 0.15;   // [m] bump stop: beyond this the element is rigid again
     const double p_static = vehicle_params_.mass * sim_options_.gravity /
         (2.0 * vehicle_params_.track_width * vehicle_params_.track_contact_length);
-    const double track_k = track_static_defl > 0.0 ? p_static / track_static_defl : 0.0;  // [Pa/m]
+    const double track_k = vehicle_params_.track_static_defl > 0.0 ? p_static / vehicle_params_.track_static_defl : 0.0;  // [Pa/m]
 
     // ---- pass 1: sinkage and normal pressure (rut read before any update)
     for (size_t e = 0; e < ne; ++e) {
@@ -534,7 +534,7 @@ TrackDiag TrackedVehicle::TrackForces(int k, double dt, glm::dvec3& F, glm::dvec
         double delta = 0.0;
         if (track_k > 0.0 && soil_p(z_rigid) > 0.0) {
             const double s_zero = zp > 0 ? zp * (1.0 - soil_.rebound) : 0.0;  // sinkage where soil_p hits 0
-            double hi = std::min(track_max_travel, z_rigid - s_zero);
+            double hi = std::min(vehicle_params_.track_max_travel, z_rigid - s_zero);
             if (soil_p(z_rigid - hi) - track_k * hi >= 0.0) {
                 delta = hi;  // on the bump stop
             } else {
@@ -573,7 +573,6 @@ TrackDiag TrackedVehicle::TrackForces(int k, double dt, glm::dvec3& F, glm::dvec
     const double a = angular_velocity_.z * dt;
     const double ca = std::cos(a), sa = std::sin(a);
     const double eps_v = 0.01 * sim_options_.v_eps;
-    const double lateral_scale = 8.0;   // 1.0 = isotropic shear; >1 = more lateral grip
     double contact_count = 0, sink_sum = 0;
     for (size_t e = 0; e < ne; ++e) {
         const double jx = ca * j[e][0] + sa * j[e][1];
@@ -597,7 +596,7 @@ TrackDiag TrackedVehicle::TrackForces(int k, double dt, glm::dvec3& F, glm::dvec
             dx = jnx / den;
             dy = jny / den;
         }
-        const glm::dvec3 f(-tau * A_ * dx, -lateral_scale * tau * A_ * dy, pn_[e] * A_);
+        const glm::dvec3 f(-tau * A_ * dx, -vehicle_params_.lateral_force_scale * tau * A_ * dy, pn_[e] * A_);
         F += f;
         M += glm::cross(rb[e], f);
         d.thrust += f.x;

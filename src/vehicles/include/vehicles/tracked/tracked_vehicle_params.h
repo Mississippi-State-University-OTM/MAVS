@@ -31,6 +31,9 @@ struct TrackedVehicleParams {
     double internal_friction = 0.0; // Coulomb drivetrain torque per side [N m]
     double internal_viscous = 0.0; // viscous drivetrain loss per side [N m s/rad]
     double max_sprocket_speed = 25.0; // max rotational speed of the sprocket in rad/s
+    double track_static_defl = 0.03; // deflection of the track under static normal load, meters
+    double track_max_travel = 0.15; // max vertical displacement of a track element, meters
+    double lateral_force_scale = 8.0; // lateral force empirical scaling constant, unitless, 1.0 = isotropic shear; >1 = more lateral grip
 
     glm::dvec3 InertiaDiag() const;
 

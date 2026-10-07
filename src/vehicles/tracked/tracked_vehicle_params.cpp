@@ -47,6 +47,15 @@ void TrackedVehicleParams::ParseJsonObject(const rapidjson::Value& vehicle) {
     if (vehicle.HasMember("Max Sprocket Speed") && vehicle["Max Sprocket Speed"].IsNumber()) {
         max_sprocket_speed = vehicle["Max Sprocket Speed"].GetDouble();
     }
+    if (vehicle.HasMember("Lateral Force Scale") && vehicle["Lateral Force Scale"].IsNumber()) {
+        lateral_force_scale = vehicle["Lateral Force Scale"].GetDouble();
+    }
+    if (vehicle.HasMember("Static Vertical Deflection") && vehicle["Static Vertical Deflection"].IsNumber()) {
+        track_static_defl = vehicle["Static Vertical Deflection"].GetDouble();
+    }
+    if (vehicle.HasMember("Max Vertical Deflection") && vehicle["Max Vertical Deflection"].IsNumber()) {
+        track_max_travel = vehicle["Max Vertical Deflection"].GetDouble();
+    }
 }
 
 void TrackedVehicleParams::Load(std::string input_file) {

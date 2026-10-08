@@ -62,6 +62,10 @@ public:
     // world_frame = false returns them in the body frame (relative to GetPosition()/GetRotationMatrix()).
     void GetTrackShoePoses(std::vector<TrackShoePose>& out, bool world_frame = true) const;
 
+    void SetPosition(double x, double y, double z); // override the base class method
+
+    void SetOrientation(double w, double x, double y, double z); // override the base class method
+
 private:
     // ---- moving terrain window
 // Called after the terrain origin moves; must refill the heights for the new window

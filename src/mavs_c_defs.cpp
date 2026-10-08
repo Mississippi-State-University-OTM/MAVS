@@ -672,22 +672,22 @@ extern "C" {
 
 	//---------------------- Tracked Vehicle Functions -----------------------------------------------------//
 
-	EXPORT_CMD mavs::vehicle::tracked::TrackedVehicle* NewMavsTrackedVehicle() {
+	EXPORT_CMD mavs::vehicle::Vehicle* NewMavsTrackedVehicle() {
 		mavs::vehicle::tracked::TrackedVehicle* tracked = new mavs::vehicle::tracked::TrackedVehicle;
 		return tracked;
 	}
 
-	EXPORT_CMD void LoadTrackedVehicle(mavs::vehicle::tracked::TrackedVehicle* tracked, char* infile) {
-		//mavs::vehicle::tracked::TrackedVehicle* tracked = static_cast<mavs::vehicle::tracked::TrackedVehicle*>(veh);
+	EXPORT_CMD void LoadTrackedVehicle(mavs::vehicle::Vehicle* veh, char* infile) {
+		mavs::vehicle::tracked::TrackedVehicle* tracked = static_cast<mavs::vehicle::tracked::TrackedVehicle*>(veh);
 		std::string file_to_load(infile);
 		tracked->Load(file_to_load);
 	}
-
+	/*
 	EXPORT_CMD void UpdateTrackedVehicle(mavs::vehicle::tracked::TrackedVehicle* tracked, mavs::environment::Environment* env, float throttle, float steering, float brake, float dt) {
 		//mavs::vehicle::tracked::TrackedVehicle* tracked = static_cast<mavs::vehicle::tracked::TrackedVehicle*>(veh);
 		tracked->Update(env, throttle, steering, brake, dt);
 	}
-
+	
 	EXPORT_CMD void SetTrackedVehicleInitialPose(mavs::vehicle::tracked::TrackedVehicle* tracked, float x_init, float y_init, float yaw_init) {
 		//mavs::vehicle::tracked::TrackedVehicle* tracked = static_cast<mavs::vehicle::tracked::TrackedVehicle*>(veh);
 		tracked->SetInitialPose((double)x_init, (double)y_init, (double)yaw_init);
@@ -721,7 +721,7 @@ extern "C" {
 		float speed = tracked->GetSpeed();
 		return speed;
 	}
-
+	*/
 	// --------------------------------------------------------------------------------------------------//
 
 

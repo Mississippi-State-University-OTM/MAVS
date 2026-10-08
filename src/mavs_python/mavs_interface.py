@@ -219,18 +219,18 @@ mavs_lib.AddPlotToTrajectory.argtypes =  [ctypes.c_void_p, ctypes.c_int, ctypes.
 mavs_lib.NewMavsTrackedVehicle.restype = ctypes.c_void_p
 mavs_lib.LoadTrackedVehicle.restype = ctypes.c_void_p
 mavs_lib.LoadTrackedVehicle.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
-mavs_lib.UpdateTrackedVehicle.restype = ctypes.c_void_p
-mavs_lib.UpdateTrackedVehicle.argtypes = [ctypes.c_void_p,ctypes.c_void_p,ctypes.c_float,ctypes.c_float,ctypes.c_float]
-mavs_lib.SetTrackedVehicleInitialPose.restype = ctypes.c_void_p
-mavs_lib.SetTrackedVehicleInitialPose.argtypes = [ctypes.c_void_p,ctypes.c_float,ctypes.c_float]
-mavs_lib.GetTrackedVehiclePosition.restype = ctypes.POINTER(ctypes.c_float)
-mavs_lib.GetTrackedVehiclePosition.argtypes = [ctypes.c_void_p]
-mavs_lib.GetTrackedVehicleOrientation.restype = ctypes.POINTER(ctypes.c_float)
-mavs_lib.GetTrackedVehicleOrientation.argtypes = [ctypes.c_void_p]
-mavs_lib.GetTrackedVehicleSpeed.restype = ctypes.c_float
-mavs_lib.GetTrackedVehicleSpeed.argtypes = [ctypes.c_void_p]
-mavs_lib.GetTrackedVehicleHeading.restype = ctypes.c_float
-mavs_lib.GetTrackedVehicleHeading.argtypes = [ctypes.c_void_p]
+# mavs_lib.UpdateTrackedVehicle.restype = ctypes.c_void_p
+# mavs_lib.UpdateTrackedVehicle.argtypes = [ctypes.c_void_p,ctypes.c_void_p,ctypes.c_float,ctypes.c_float,ctypes.c_float]
+# mavs_lib.SetTrackedVehicleInitialPose.restype = ctypes.c_void_p
+# mavs_lib.SetTrackedVehicleInitialPose.argtypes = [ctypes.c_void_p,ctypes.c_float,ctypes.c_float]
+# mavs_lib.GetTrackedVehiclePosition.restype = ctypes.POINTER(ctypes.c_float)
+# mavs_lib.GetTrackedVehiclePosition.argtypes = [ctypes.c_void_p]
+# mavs_lib.GetTrackedVehicleOrientation.restype = ctypes.POINTER(ctypes.c_float)
+# mavs_lib.GetTrackedVehicleOrientation.argtypes = [ctypes.c_void_p]
+# mavs_lib.GetTrackedVehicleSpeed.restype = ctypes.c_float
+# mavs_lib.GetTrackedVehicleSpeed.argtypes = [ctypes.c_void_p]
+# mavs_lib.GetTrackedVehicleHeading.restype = ctypes.c_float
+# mavs_lib.GetTrackedVehicleHeading.argtypes = [ctypes.c_void_p]
 #------ Vehicle functions -----#
 mavs_lib.ViewRp3dDebug.restype = ctypes.c_void_p
 mavs_lib.ViewRp3dDebug.argtypes = [ctypes.c_char_p]
@@ -3719,46 +3719,46 @@ class MavsVehicle(object):
             mavs_lib.DeleteMavsVehicle(self.vehicle)
         self.vehicle=None
 
-class MavsTrackedVehicle(object):
+class MavsTrackedVehicle(MavsVehicle):
     def __init__(self):
         """MavsRp3dVehicle constructor."""
-        #MavsVehicle.__init__(self)
-        ## vehicle (void): Pointer to a MavsRp3dVehicle.
-        self.tracked_vehicle = mavs_lib.NewMavsTrackedVehicle()
+        MavsVehicle.__init__(self)
+        self.vehicle = mavs_lib.NewMavsTrackedVehicle()
     def Load(self, tracked_veh_file):
-        mavs_lib.LoadTrackedVehicle(self.tracked_vehicle,PyStringToChar(tracked_veh_file));
-    def Update(self,env,throttle,steering, brake, dt):
-        """Update the vehicle model.
+        mavs_lib.LoadTrackedVehicle(self.vehicle,PyStringToChar(tracked_veh_file));
+    # def Update(self,env,throttle,steering, brake, dt):
+    #     """Update the vehicle model.
 
-        Apply throttle and steering and move the vehicle.
+    #     Apply throttle and steering and move the vehicle.
 
-        Parameters:
-        env (MavsEnvironment): The MAVS environment.
-        throttle (float): Throttle from 0 to 1.
-        steering (float): Steering from -1 to 1.
-        dt (float): The time step in seconds.
-        """
-        mavs_lib.UpdateTrackedVehicle(self.tracked_vehicle, env.obj, ctypes.c_float(throttle), ctypes.c_float(steering), ctypes.c_float(brake), ctypes.c_float(dt))
-        self.position = self.GetPosition()
-        self.orientation = self.GetOrientation()
+    #     Parameters:
+    #     env (MavsEnvironment): The MAVS environment.
+    #     throttle (float): Throttle from 0 to 1.
+    #     steering (float): Steering from -1 to 1.
+    #     dt (float): The time step in seconds.
+    #     """
+    #     mavs_lib.UpdateTrackedVehicle(self.vehicle, env.obj, ctypes.c_float(throttle), ctypes.c_float(steering), ctypes.c_float(brake), ctypes.c_float(dt))
+    #     self.position = self.GetPosition()
+    #     self.orientation = self.GetOrientation()
     def SetInitialPose(self, x_init, y_init, yaw_init):
-        mavs_lib.SetTrackedVehicleInitialPose(self.tracked_vehicle, ctypes.c_float(x_init), ctypes.c_float(y_init), ctypes.c_float(yaw_init))
+         mavs_lib.SetMavsVehiclePosition(self.vehicle, ctypes.c_float(x_init), ctypes.c_float(y_init), ctypes.c_float(0.0))
+         mavs_lib.SetMavsVehicleHeading(self.vehicle, ctypes.c_float(yaw_init))
         
-    def GetHeading(self):
-        return mavs_lib.GetTrackedVehicleHeading(self.tracked_vehicle)
+    # def GetHeading(self):
+    #     return mavs_lib.GetTrackedVehicleHeading(self.tracked_vehicle)
     
-    def GetSpeed(self):
-        return mavs_lib.GetTrackedVehicleSpeed(self.tracked_vehicle)
+    # def GetSpeed(self):
+    #     return mavs_lib.GetTrackedVehicleSpeed(self.tracked_vehicle)
     
-    def GetPosition(self):
-        data = mavs_lib.GetTrackedVehiclePosition(self.tracked_vehicle)
-        p = [data[0],data[1],data[2]]
-        return p
+    # def GetPosition(self):
+    #     data = mavs_lib.GetTrackedVehiclePosition(self.tracked_vehicle)
+    #     p = [data[0],data[1],data[2]]
+    #     return p
     
-    def GetOrientation(self):
-        data = mavs_lib.GetTrackedVehicleOrientation(self.tracked_vehicle)
-        o = [data[0],data[1],data[2], data[3]]
-        return o
+    # def GetOrientation(self):
+    #     data = mavs_lib.GetTrackedVehicleOrientation(self.tracked_vehicle)
+    #     o = [data[0],data[1],data[2], data[3]]
+    #     return o
 
 class MavsRp3d(MavsVehicle):
     """MavsRp3d class.

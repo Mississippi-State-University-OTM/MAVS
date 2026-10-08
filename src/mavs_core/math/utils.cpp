@@ -51,6 +51,12 @@ glm::mat3x4 ScaleAffine(glm::mat3x4 rot_scale, float x_scale, float y_scale, flo
 	return rot_scale;
 }
 
+double YawFromQuaternion(glm::dquat q) {
+	double siny_cosp = 2.0 * (q.w * q.z + q.x * q.y);
+	double cosy_cosp = 1.0 - 2.0 * (q.y * q.y + q.z * q.z);
+	return std::atan2(siny_cosp, cosy_cosp);
+}
+
 glm::mat3x4 SetAffineOffset(glm::mat3x4 rot_scale, float x_off, float y_off, float z_off) {
 	rot_scale[0][3] = x_off; rot_scale[1][3] = y_off; rot_scale[2][3] = z_off;
 	return rot_scale;

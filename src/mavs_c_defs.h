@@ -109,11 +109,11 @@ EXPORT_CMD void SetMavsAnimationPosition(mavs::raytracer::Animation *anim, float
 EXPORT_CMD void SetMavsAnimationHeading(mavs::raytracer::Animation *anim, float heading);
 
 //-------TRACKED VEHICLE FUNCTIONS -----------------------------------------------------//
-EXPORT_CMD mavs::vehicle::tracked::TrackedVehicle* NewMavsTrackedVehicle();
+EXPORT_CMD mavs::vehicle::Vehicle* NewMavsTrackedVehicle();
 
-EXPORT_CMD void LoadTrackedVehicle(mavs::vehicle::tracked::TrackedVehicle* tracked, char* infile);
+EXPORT_CMD void LoadTrackedVehicle(mavs::vehicle::Vehicle* tracked, char* infile);
 
-EXPORT_CMD void UpdateTrackedVehicle(mavs::vehicle::tracked::TrackedVehicle* tracked, mavs::environment::Environment* env, float throttle, float steering, float brake, float dt);
+/*EXPORT_CMD void UpdateTrackedVehicle(mavs::vehicle::tracked::TrackedVehicle* tracked, mavs::environment::Environment* env, float throttle, float steering, float brake, float dt);
 
 EXPORT_CMD void SetTrackedVehicleInitialPose(mavs::vehicle::tracked::TrackedVehicle* tracked, float x_init, float y_init, float yaw_init);
 
@@ -123,7 +123,7 @@ EXPORT_CMD float* GetTrackedVehicleOrientation(mavs::vehicle::tracked::TrackedVe
 
 EXPORT_CMD float GetTrackedVehicleHeading(mavs::vehicle::tracked::TrackedVehicle* tracked);
 
-EXPORT_CMD float GetTrackedVehicleSpeed(mavs::vehicle::tracked::TrackedVehicle* tracked);
+EXPORT_CMD float GetTrackedVehicleSpeed(mavs::vehicle::tracked::TrackedVehicle* tracked);*/
 
 //-------------------------------------------------------------------------------------//
 

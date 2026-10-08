@@ -3,6 +3,7 @@
 #include "vehicles/tracked/tracked_math_utils.h"
 #include "rapidjson/document.h"
 #include "rapidjson/istreamwrapper.h"
+#include "mavs_core/math/utils.h"
 // c++ includes
 #include <stdexcept>
 #include <algorithm>
@@ -410,6 +411,25 @@ void TrackedVehicle::GetTrackShoePoses(std::vector<TrackShoePose>& out, bool wor
             sp.index = j;
         }
     }
+}
+
+void TrackedVehicle::SetPosition(double x, double y, double z) {
+    current_state_.pose.position.x = x;
+    current_state_.pose.position.y = y;
+    current_state_.pose.position.z = z;
+    initial_position_x_ = x;
+    initial_position_y_ = y;
+}
+
+/**
+ * Manually seet the orientation of the vehicle in ENU coordinates.
+ */
+void TrackedVehicle::SetOrientation(double w, double x, double y, double z) {
+    current_state_.pose.quaternion.w = w;
+    current_state_.pose.quaternion.x = x;
+    current_state_.pose.quaternion.y = y;
+    current_state_.pose.quaternion.z = z;
+    initial_yaw_ = mavs::math::YawFromQuaternion(glm::dquat(w, x, y, z));
 }
 
 // ------- All the real physics stuff is happening down here ------- //

@@ -58,6 +58,8 @@ glm::mat3 GetIdentity();
 
 glm::mat3x4 GetRotFromEuler(glm::vec3 euler_angles);
 
+double YawFromQuaternion(glm::dquat q);
+
 /** 
 * Conversion, euler angles to quaternion 
 * \param pitch Input rotation about y-axis, radians

@@ -36,7 +36,7 @@
     "rut_dx": 0.0,
     "gravity": 9.806,
     "max_dt": 2.0E-3,
-    "debug_render": true
+    "debug_render": false
   },
 
   "Terrain": {

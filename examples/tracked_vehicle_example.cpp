@@ -10,7 +10,7 @@
 static float throttle = 0.0f;
 static float steering = 0.0f;
 static float braking = 0.0f;
-static float cstep = 0.001f;
+static float cstep = 0.01f;
 
 static void UpdateDrivingCommand(std::vector<bool> keyboard_commands) {
 	
@@ -52,13 +52,17 @@ int main(int argc, char** argv) {
     mavs::raytracer::embree::EmbreeTracer scene;
     scene.Load(scene_file);
     mavs::environment::Environment env;
+	env.SetDateTime(2026, 10, 8, 12, 30, 14, 6);
+	env.SetFog(0.02);
+	env.SetCloudCover(0.85);
 	env.SetRaytracer(&scene);
-	float theta = -3.14159f / 3.0f;// 0.0f;
-	float view_rad = 8.0f;
+	//float theta = -3.14159f / 3.0f;// 0.0f;
+	///float view_rad = 8.0f;
 	//float theta = -1.570796f/4.0f;
-	//glm::vec3 sensor_offset(-8.0f, 3.0f, 2.0f);
-	glm::vec3 sensor_offset(-view_rad*cosf(theta), -view_rad*sinf(theta), 2.0f);
-	glm::quat sensor_orient(cosf(0.5f * theta), 0.0f, 0.0f, sinf(0.5f * theta));
+	glm::vec3 sensor_offset(-8.0f, 3.0f, 2.0f);
+	glm::quat sensor_orient(1.0, 0.0f, 0.0f, 0.0);
+	//glm::vec3 sensor_offset(-view_rad*cosf(theta), -view_rad*sinf(theta), 2.0f);
+	//glm::quat sensor_orient(cosf(0.5f * theta), 0.0f, 0.0f, sinf(0.5f * theta));
 	glm::vec3 position(0.0f, 0.0f, 1.0f);
 	glm::quat orient(1.0f, 0.0f, 0.0f, 0.0f);
 	mavs::sensor::camera::RgbCamera camera;
@@ -74,7 +78,7 @@ int main(int argc, char** argv) {
 	tracked_veh.Update(&env, throttle, steering, braking, 0.0000001f);
 
 	// simulation setup 
-	float dt = 0.01f; // 100 Hz
+	double dt = 1.0 / 120.0; // 0.01f; // 100 Hz
 	int nsteps = 0;
 	double t_total = 0.0;
 	double t_start = omp_get_wtime();
@@ -86,7 +90,7 @@ int main(int argc, char** argv) {
 		tracked_veh.Update(&env, throttle, steering, braking, dt);
 		t_total += omp_get_wtime() - t0;
 
-		if (nsteps % 5 == 0) { // 20 Hz
+		if (nsteps % 4 == 0) { // 30 Hz
 			//theta += 0.01f;
 			//glm::vec3 sensor_offset(-view_rad * cosf(theta), -view_rad * sinf(theta), 2.0f);
 			//glm::quat sensor_orient(cosf(0.5f * theta), 0.0f, 0.0f, sinf(0.5f * theta));

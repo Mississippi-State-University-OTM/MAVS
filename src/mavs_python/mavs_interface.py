@@ -3726,39 +3726,9 @@ class MavsTrackedVehicle(MavsVehicle):
         self.vehicle = mavs_lib.NewMavsTrackedVehicle()
     def Load(self, tracked_veh_file):
         mavs_lib.LoadTrackedVehicle(self.vehicle,PyStringToChar(tracked_veh_file));
-    # def Update(self,env,throttle,steering, brake, dt):
-    #     """Update the vehicle model.
-
-    #     Apply throttle and steering and move the vehicle.
-
-    #     Parameters:
-    #     env (MavsEnvironment): The MAVS environment.
-    #     throttle (float): Throttle from 0 to 1.
-    #     steering (float): Steering from -1 to 1.
-    #     dt (float): The time step in seconds.
-    #     """
-    #     mavs_lib.UpdateTrackedVehicle(self.vehicle, env.obj, ctypes.c_float(throttle), ctypes.c_float(steering), ctypes.c_float(brake), ctypes.c_float(dt))
-    #     self.position = self.GetPosition()
-    #     self.orientation = self.GetOrientation()
     def SetInitialPose(self, x_init, y_init, yaw_init):
          mavs_lib.SetMavsVehiclePosition(self.vehicle, ctypes.c_float(x_init), ctypes.c_float(y_init), ctypes.c_float(0.0))
          mavs_lib.SetMavsVehicleHeading(self.vehicle, ctypes.c_float(yaw_init))
-        
-    # def GetHeading(self):
-    #     return mavs_lib.GetTrackedVehicleHeading(self.tracked_vehicle)
-    
-    # def GetSpeed(self):
-    #     return mavs_lib.GetTrackedVehicleSpeed(self.tracked_vehicle)
-    
-    # def GetPosition(self):
-    #     data = mavs_lib.GetTrackedVehiclePosition(self.tracked_vehicle)
-    #     p = [data[0],data[1],data[2]]
-    #     return p
-    
-    # def GetOrientation(self):
-    #     data = mavs_lib.GetTrackedVehicleOrientation(self.tracked_vehicle)
-    #     o = [data[0],data[1],data[2], data[3]]
-    #     return o
 
 class MavsRp3d(MavsVehicle):
     """MavsRp3d class.

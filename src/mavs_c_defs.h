@@ -43,7 +43,6 @@ SOFTWARE.
 #include <mavs_core/terrain_generator/terrain_elevation_functions.h>
 #include <mavs_core/plotting/mavs_plotting.h>
 #include "vehicles/controllers/pure_pursuit_controller.h"
-#include "vehicles/tracked/tracked_vehicle.h"
 #include <simulation/ortho_viewer.h>
 #include <simulation/ortho_viewer.h>
 #include <simulation/rp3d_vehicle_viewer.h>
@@ -112,18 +111,6 @@ EXPORT_CMD void SetMavsAnimationHeading(mavs::raytracer::Animation *anim, float 
 EXPORT_CMD mavs::vehicle::Vehicle* NewMavsTrackedVehicle();
 
 EXPORT_CMD void LoadTrackedVehicle(mavs::vehicle::Vehicle* tracked, char* infile);
-
-/*EXPORT_CMD void UpdateTrackedVehicle(mavs::vehicle::tracked::TrackedVehicle* tracked, mavs::environment::Environment* env, float throttle, float steering, float brake, float dt);
-
-EXPORT_CMD void SetTrackedVehicleInitialPose(mavs::vehicle::tracked::TrackedVehicle* tracked, float x_init, float y_init, float yaw_init);
-
-EXPORT_CMD float* GetTrackedVehiclePosition(mavs::vehicle::tracked::TrackedVehicle* tracked);
-
-EXPORT_CMD float* GetTrackedVehicleOrientation(mavs::vehicle::tracked::TrackedVehicle* tracked);
-
-EXPORT_CMD float GetTrackedVehicleHeading(mavs::vehicle::tracked::TrackedVehicle* tracked);
-
-EXPORT_CMD float GetTrackedVehicleSpeed(mavs::vehicle::tracked::TrackedVehicle* tracked);*/
 
 //-------------------------------------------------------------------------------------//
 

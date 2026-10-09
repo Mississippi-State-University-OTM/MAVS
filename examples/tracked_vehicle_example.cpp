@@ -99,7 +99,6 @@ int main(int argc, char** argv) {
 			camera.SetPose(tracked_veh.GetPosition(), tracked_veh.GetOrientation());
 			camera.Update(&env, 0.03);
 			camera.Display();
-			
 		}
 		
 		nsteps++;

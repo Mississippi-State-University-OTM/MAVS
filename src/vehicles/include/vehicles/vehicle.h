@@ -66,7 +66,7 @@ class Vehicle : public Communicator {
   /**
    * Manually set the position of the vehicle in cartesian ENU coordinates.
    */
-  void SetPosition(double x, double y, double z){
+  virtual void SetPosition(double x, double y, double z){
     current_state_.pose.position.x = x;
     current_state_.pose.position.y = y;
     current_state_.pose.position.z = z;
@@ -75,7 +75,7 @@ class Vehicle : public Communicator {
   /**
    * Manually seet the orientation of the vehicle in ENU coordinates.
    */
-  void SetOrientation(double w, double x, double y, double z){
+  virtual void SetOrientation(double w, double x, double y, double z){
     current_state_.pose.quaternion.w = w;
     current_state_.pose.quaternion.x = x;
     current_state_.pose.quaternion.y = y;

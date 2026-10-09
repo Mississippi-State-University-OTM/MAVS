@@ -1,11 +1,11 @@
 {
   "Vehicle": {
-    "Mass": 1156.0,
-    "CG Height": 0.75,
+    "Mass": 11000.0,
+    "CG Height": 0.985,
     "Tread": 2.16,
     "Track Width": 0.38,
     "Track Contact Length": 2.67,
-    "Sprocket Radius": 0.2985,
+    "Sprocket Radius": 0.267,
     "Max Sprocket Speed": 65.0,
     "Lateral Force Scale": 8.0,
     "Static Vertical Deflection": 0.01,
@@ -40,11 +40,11 @@
   },
 
   "Terrain": {
-    "xmin": -16.0,
-    "xmax": 16.0,
-    "ymin": -16.0,
-    "ymax": 16.0,
-    "resolution": 0.04
+    "xmin": -20.0,
+    "xmax": 20.0,
+    "ymin": -20.0,
+    "ymax": 20.0,
+    "resolution": 0.05
   },
 
   "Vehicle Mesh": {
@@ -52,7 +52,7 @@
     "Rotate Y to Z": false,
     "Rotate X to Y": false,
     "Rotate Y to X": false,
-    "Offset": [ 0.0, 0.0, 0.55 ],
+    "Offset": [ 0.0, 0.0, 0.315 ],
     "Scale": [ 1.0, 1.0, 1.0 ]
   },
 

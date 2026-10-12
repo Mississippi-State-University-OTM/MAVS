@@ -1,8 +1,14 @@
 // project includes
 #include "vehicles/tracked/tracked_vehicle.h"
 #include "vehicles/tracked/tracked_math_utils.h"
+#ifdef Bool
+#undef Bool
+#endif
 #include "rapidjson/document.h"
 #include "rapidjson/istreamwrapper.h"
+#ifdef Bool
+#undef Bool
+#endif
 #include "mavs_core/math/utils.h"
 // c++ includes
 #include <stdexcept>
@@ -10,6 +16,9 @@
 #include <iostream>
 #include <fstream>
 #include <limits>
+
+
+
 
 namespace mavs {
 namespace vehicle {

@@ -1,7 +1,13 @@
 #ifndef TRACKED_SOIL_H
 #define TRACKED_SOIL_H
+#ifdef Bool
+#undef Bool
+#endif
 //project includes 
 #include "rapidjson/document.h"
+#ifdef Bool
+#undef Bool
+#endif
 // c++ includes
 #include <string>
 

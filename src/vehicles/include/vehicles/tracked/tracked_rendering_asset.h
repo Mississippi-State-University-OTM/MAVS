@@ -20,7 +20,7 @@ struct RenderingAsset {
     bool rotate_x_to_y = false;;
     bool rotate_y_to_z = false;
 
-    void RenderingAsset::ParseJsonObject(const rapidjson::Value& asset);
+    void ParseJsonObject(const rapidjson::Value& asset);
 };
 
 }  // namespace tracked

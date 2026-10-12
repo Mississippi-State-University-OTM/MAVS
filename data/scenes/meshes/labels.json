@@ -230,7 +230,7 @@
     [ "vehicles/forester/forester_single_wheel.obj", "vehicle" ],
     [ "vehicles/forester/forester_vehicle_nowheel.obj", "vehicle" ],
     [ "vehicles/forester/forester_vehicle_nowheel_rotated.obj", "vehicle" ],
-    [ "vehicles/m113a1/m113a1_notrack_transformed.obj", "vehicle" ],
+    [ "vehicles/m113a1/m113a1_corrected.obj", "vehicle" ],
     [ "vehicles/m113a1/m113a_track_pad.obj", "vehicle" ],
     [ "vehicles/mrzr4/mrzr4.obj", "vehicle" ],
     [ "vehicles/mrzr4/mrzr_no_wheel_rot.obj", "vehicle" ],

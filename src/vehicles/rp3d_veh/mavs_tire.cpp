@@ -240,7 +240,7 @@ rp3d::Vector3 MavsTire::Update(environment::Environment *env, float dt, rp3d::Tr
 		current_slip_ = slip;
 		float alpha = 0.0f;
 		if (fabs(vx) > 0.001f) {
-			alpha = (float)atan(std::min(std::max((double)(vy / fabs(vx)), -mavs::kPi_2), mavs::kPi_2))-steer_angle;
+			alpha = (float)atan(std::min(std::max((double)(vy / fabs(vx)), -mavs::kPi_2), mavs::kPi_2)); // -steer_angle;
 		}
 
 		// get the combined lateral and longitudinal forces on the tire

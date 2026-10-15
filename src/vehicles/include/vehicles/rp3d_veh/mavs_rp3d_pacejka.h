@@ -122,11 +122,28 @@ public:
 	*/
 	void UseCombinedSlipWeighting(bool use) { use_weighting_ = use; }
 
+	/**
+	* Set the parameters that tie lateral friction to soil strength on clay and sand.
+	* Clay: the peak lateral coefficient is the gross traction coefficient from the
+	* clay traction equation evaluated at clay_ref_slip (near maximum pull).
+	* Sand: the peak lateral coefficient is sand_mu_max*(1-exp(-Ns/sand_N0)),
+	* where Ns is the Turnage sand numeric.
+	* Both are floored at mu_min.
+	* \param clay_ref_slip Reference slip for the clay lateral coefficient (default 0.2)
+	* \param sand_mu_max Peak lateral coefficient on strong sand (default 0.7)
+	* \param sand_N0 Sand numeric at which ~63% of sand_mu_max is reached (default 5)
+	* \param mu_min Minimum lateral coefficient on very weak soil (default 0.05)
+	*/
+	void SetSoftSoilLateralParams(float clay_ref_slip, float sand_mu_max, float sand_N0, float mu_min);
+
 private:
 	void SetCoeffs(float W, float delta);
 	float GetCrolla(float alpha, float beta);
 	rp3d::Vector2 ApplyCombinedSlipWeighting(rp3d::Vector2 f, float slip, float alpha) const;
 	rp3d::Vector2 ApplyFrictionLimit(rp3d::Vector2 f, float fx_max, float fy_max) const;
+	float GetClayLateralCoeff(float Nc) const;
+	float GetSandLateralCoeff(float W, float delta) const;
+	float GetSandNumeric(float W, float delta) const;
 	float B_;
 	float C_;
 	float D_;
@@ -146,6 +163,12 @@ private:
 	float Cxa_;
 	float Byk_;
 	float Cyk_;
+
+	// soil-strength dependent lateral friction
+	float clay_ref_slip_;
+	float sand_mu_max_;
+	float sand_N0_;
+	float soft_mu_min_;
 };
 
 } // namespace mavs_rp3d

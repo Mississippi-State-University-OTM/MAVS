@@ -51,6 +51,57 @@ MavsPacejka::MavsPacejka() {
 	Cxa_ = 1.0f;
 	Byk_ = 8.0f;
 	Cyk_ = 1.0f;
+
+	// soil-strength dependent lateral friction defaults
+	clay_ref_slip_ = 0.2f;
+	sand_mu_max_ = 0.7f;
+	sand_N0_ = 5.0f;
+	soft_mu_min_ = 0.05f;
+}
+
+void MavsPacejka::SetSoftSoilLateralParams(float clay_ref_slip, float sand_mu_max, float sand_N0, float mu_min) {
+	clay_ref_slip_ = std::max(1.0e-3f, clay_ref_slip);
+	sand_mu_max_ = std::max(0.0f, sand_mu_max);
+	sand_N0_ = std::max(1.0e-3f, sand_N0);
+	soft_mu_min_ = std::max(0.0f, mu_min);
+}
+
+float MavsPacejka::GetClayLateralCoeff(float Nc) const {
+	// Soil shear strength is treated as isotropic, so the peak side force coefficient
+	// is taken as the gross traction coefficient (pull + motion resistance) from the
+	// same clay traction equation, evaluated at a reference slip near maximum pull.
+	// Motion resistance is not subtracted because it acts longitudinally.
+	// See: Melzer, K.-J. (1976). Performance of Towed Wheels Operating in Turned Mode on Soft Soils — A Pilot Study. 
+	// Miscellaneous Paper M-76-17. U.S. Army Engineer Waterways Experiment Station, 
+	// Mobility and Environmental Systems Laboratory, Vicksburg, MS. August 1976. DTIC accession ADA028909.
+	float Ssp = (float)(21.0 / pow(Nc, 2.5));
+	float mu = (float)(0.5*log10(clay_ref_slip_ / Ssp) * pow(1.0f + b_ / d_, 0.25f));
+	return std::min(1.0f, std::max(soft_mu_min_, mu));
+}
+
+float MavsPacejka::GetSandNumeric(float W, float delta) const {
+	// Turnage / VTI sand numeric, Mason et al. (2018) Eq 9:
+	//   Ns = G*(b*d)^1.5 * delta / (W*h)
+	// Dimensionless when G is in Pa/m, lengths in m, and W in N.
+	// G ~= CI/3.47 (Turnage 1995) gives G in psi/in for CI in psi, i.e. the 3.47 is a
+	// length in inches. In SI: G[Pa/m] = CI[Pa] / (3.47 in * 0.0254 m/in).
+	float G = CI_ / (3.47f * 0.0254f);
+	float Ns = (float)(G * pow(b_*d_, 1.5) * delta / (W * h_));
+	return std::max(0.0f, Ns);
+}
+
+// see: Turnage, G. W. (1972). Performance of Soils Under Tire Loads, Report 8: 
+// Application of Test Results to Tire Selection for Off-Road Vehicles. 
+// Technical Report No. 3-666. 
+// U.S. Army Engineer Waterways Experiment Station, Vicksburg, MS. 
+// September 1972. NTIS/DTIC AD-751 750.
+// AND
+// Durham, G.N., 1976. Powered Wheels in the Turned Mode Operating on Yielding Soils. 
+// Technical Report M-76-9, U.S. Army Engineer Waterways Experiment Station, Vicksburg, Mississippi.
+float MavsPacejka::GetSandLateralCoeff(float W, float delta) const {
+	float Ns = GetSandNumeric(W, delta);
+	float mu = sand_mu_max_ * (1.0f - expf(-Ns / sand_N0_));
+	return std::max(soft_mu_min_, mu);
 }
 
 void MavsPacejka::SetSlipAngleCrossover(float angle) {
@@ -180,32 +231,36 @@ rp3d::Vector2 MavsPacejka::GetCombinedTraction(float W, float delta, float slip,
 			if (traction < 0.0f) traction = 0.0f;
 			if (slip < 0.0f) traction = -traction;
 		}
-		float fy = -W * GetCrolla(alpha, high_slip_angle_cutoff_radians_);
+		float mu_lat = GetClayLateralCoeff(Nc);
+		float fy = -W * mu_lat * GetCrolla(alpha, high_slip_angle_cutoff_radians_);
 		f = rp3d::Vector2(traction, fy);
 		fx_max = W;
-		fy_max = W;
+		fy_max = W * mu_lat;
 	}
 	else if (surface_type_ == "sand") {
-		// Improved sinkage algorithms for powered and unpowered, wheeled vehicles operating on sand Eq 2
-		float G = (CI_ / 3.47f)/6894.76f;
-		//A unified equation for predicting traction for wheels on sand over a range of braked, towed, and powered operations, Eqs 9-10
-		float dbp = 0.0f;
-		if (slip != 0.0f) {
-			float Ns = G * pow(b_*d_, 1.5)*delta / (W*h_);
+		float Ns = GetSandNumeric(W, delta);
+		// VTI gross traction equation, as given in Mason et al. (2018),
+		// "A unified equation for predicting traction for wheels on sand over a range of
+		// braked, towed, and powered operations", Eqs 9-10:
+		//   T/W = X - X*Y/(Ns + 10 + Y),  X = 0.66,  Y = 4.71 + 1.72/slip
+		// This is a powered-wheel equation, so braking is evaluated with |slip| and mirrored.
+		float gross = 0.0f;
+		float abs_slip = fabs(slip);
+		if (abs_slip > 1.0e-6f) {
 			float X = 0.66f;
-			float Y = 4.71f + 1.72f / slip;
-			float denom = Ns + 10.0f + Y;
-			// negative slip can drive the denominator to zero; skip the term if so
-			if (fabs(denom) > 1.0e-3f) dbp = X * Y / denom;
+			float Y = 4.71f + 1.72f / abs_slip;
+			gross = X - X * Y / (Ns + 10.0f + Y);
+			if (slip < 0.0f) gross = -gross;
 		}
 		// New algorithms for predictinglongitudinal motion resistance of wheels on dry sand, Eq 1
 		float X_m = 0.44f - 0.002287f*W;
 		float mr = X_m + sqrt(X_m*X_m + 0.0000457f*W + 0.08f) + 0.05f*(delta / h_);
-		float traction = std::min(1.0f, std::max(-1.0f, dbp - mr));
-		float fy = GetCrolla(alpha, high_slip_angle_cutoff_radians_);
+		float traction = std::min(1.0f, std::max(-1.0f, gross - mr));
+		float mu_lat = GetSandLateralCoeff(W, delta);
+		float fy = mu_lat * GetCrolla(alpha, high_slip_angle_cutoff_radians_);
 		f = rp3d::Vector2(W*traction, -W*fy);
 		fx_max = W;
-		fy_max = W;
+		fy_max = W * mu_lat;
 	}
 	else { // dry, wet, ice, snow
 		//adjust coeffs

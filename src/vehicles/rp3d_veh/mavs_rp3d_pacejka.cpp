@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #include <vehicles/rp3d_veh/mavs_rp3d_pacejka.h>
 #include <math.h>
+#include <algorithm>
 #include <iostream>
 #include <mavs_core/math/constants.h>
 
@@ -37,9 +38,23 @@ MavsPacejka::MavsPacejka() {
 	d_ = 0.5f;
 	h_ = d_ / 3.0f;
 	high_slip_angle_cutoff_radians_ = (float)(15.0*mavs::kDegToRad);
+	B_ = 10.0f;
+	C_ = 1.9f;
+	D_ = 1.0f;
+	E_ = 0.97f;
+	D_lat_ = 1.0f;
+
+	// combined slip defaults; starting points, tune against data
+	friction_limit_ = FrictionLimit::kEllipse;
+	use_weighting_ = true;
+	Bxa_ = 10.0f;
+	Cxa_ = 1.0f;
+	Byk_ = 8.0f;
+	Cyk_ = 1.0f;
 }
 
 void MavsPacejka::SetSlipAngleCrossover(float angle) {
+	// angle is in degrees
 	high_slip_angle_cutoff_radians_ = (float)(angle*mavs::kDegToRad);
 }
 
@@ -56,6 +71,14 @@ void MavsPacejka::SetSurfaceType(std::string type) {
 void MavsPacejka::SetSurfaceProperties(std::string type, float CI) {
 	surface_type_ = type;
 	CI_ = CI;
+}
+
+void MavsPacejka::SetCombinedSlipWeights(float Bxa, float Cxa, float Byk, float Cyk) {
+	Bxa_ = Bxa;
+	Cxa_ = Cxa;
+	Byk_ = Byk;
+	Cyk_ = Cyk;
+	use_weighting_ = true;
 }
 
 float MavsPacejka::GetCrolla(float alpha, float beta) {
@@ -89,41 +112,6 @@ void MavsPacejka::SetCoeffs(float W, float delta) {
 		E_ = 1.0f;
 		D_lat_ = D_;
 	}
-	else if (surface_type_ == "sand") {
-		// Fit of  pacejka equation to the brixius equation
-		float B_n = (CI_*b_*d_ / W)*(1.0f + 5.0f*delta / h_) / (1.0f + 3.0f*b_ / d_);
-		if (B_n > 5.0f) {
-			B_ = 1.6f*(float)(log(0.119f*(B_n - 4.033f))*exp(-0.113*(B_n - 4.033f))) + 4.906f;
-			C_ = 1.213f*(1.0f - exp(-0.0765f*(B_n - 2.846f)));
-			D_ = 1.0f;
-			E_ = 1.0925f + 0.721f / pow(B_n - 4.693f, 0.981f);
-			D_lat_ = 1.0f;
-		}
-		else {
-			B_ = 10.0f;
-			C_ = 1.9f;
-			D_ = 0.0001f;
-			E_ = 0.97f;
-			D_lat_ = 1.0f;
-		}
-	}
-	else if (surface_type_ == "clay") {
-		float M = (CI_*b_*d_ / W)*sqrt(delta / h_) / (1.0f + 0.5f*b_ / d_);
-		if (M > 7.0f) {
-			B_ = 2.556E-5f*M*M + 3.61E-2f*M + 3.064f;
-			C_ = 1.08f - 0.2878f*M - 1.794f / M;
-			D_ = 1.0f;
-			E_ = 1.018f - 59.278f*(float)(exp(-0.0192*M)*sin(6.283f*(M - 4.0f)));
-			D_lat_ = 1.0f;
-		}
-		else { // paved
-			B_ = 10.0f;
-			C_ = 1.9f;
-			D_ = 0.0001f;
-			E_ = 0.97f;
-			D_lat_ = 1.0f;
-		}
-	}
 	else { //dry tarmac
 		B_ = 10.0f;
 		C_ = 1.9f;
@@ -133,61 +121,111 @@ void MavsPacejka::SetCoeffs(float W, float delta) {
 	}
 }
 
+rp3d::Vector2 MavsPacejka::ApplyCombinedSlipWeighting(rp3d::Vector2 f, float slip, float alpha) const {
+	// Pacejka-style combined slip weighting functions.
+	// Both are even functions equal to 1 at zero cross-slip, so sign conventions don't matter.
+	if (!use_weighting_) return f;
+	float Gxa = cosf(Cxa_ * atanf(Bxa_ * alpha));
+	float Gyk = cosf(Cyk_ * atanf(Byk_ * slip));
+	// keep the weights non-negative so a force never reverses direction
+	Gxa = std::max(0.0f, Gxa);
+	Gyk = std::max(0.0f, Gyk);
+	return rp3d::Vector2(f.x * Gxa, f.y * Gyk);
+}
+
+rp3d::Vector2 MavsPacejka::ApplyFrictionLimit(rp3d::Vector2 f, float fx_max, float fy_max) const {
+	if (friction_limit_ == FrictionLimit::kNone || fx_max <= 0.0f || fy_max <= 0.0f) return f;
+	if (friction_limit_ == FrictionLimit::kEllipse) {
+		float u = f.x / fx_max;
+		float v = f.y / fy_max;
+		float r2 = u * u + v * v;
+		if (r2 > 1.0f) {
+			float s = 1.0f / sqrtf(r2);
+			f.x *= s;
+			f.y *= s;
+		}
+	}
+	else { // longitudinal priority
+		f.x = std::max(-fx_max, std::min(fx_max, f.x));
+		float u = f.x / fx_max;
+		float fy_avail = fy_max * sqrtf(std::max(0.0f, 1.0f - u * u));
+		f.y = std::max(-fy_avail, std::min(fy_avail, f.y));
+	}
+	return f;
+}
+
 rp3d::Vector2 MavsPacejka::GetCombinedTraction(float W, float delta, float slip, float alpha) {
+	rp3d::Vector2 f(0.0f, 0.0f);
+	float fx_max = 0.0f;
+	float fy_max = 0.0f;
+
+	if (W <= 0.0f) return f;
+
 	if (surface_type_ == "clay") {
 		// Equations 1-8 from: 
 		// Improving accuracy of vehicle-terrain interface algorithms for wheeled
 		// vehicles on fine - grained soils through Bayesian calibration
-		float Nc = (float)(CI_*b_*d_ / (W*pow(1.0-delta / h_,1.5) * pow(1.0f + b_ / d_,0.75)));
+		// guard against deflection >= section height, which would make pow() return NaN
+		float defl_ratio = std::min(0.99f, std::max(0.0f, delta / h_));
+		float Nc = (float)(CI_*b_*d_ / (W*pow(1.0 - defl_ratio, 1.5) * pow(1.0f + b_ / d_, 0.75)));
 		float Ssp = (float)(21.0 / pow(Nc, 2.5));
-		//float Ncz = Nc* pow(1.0f + b_ / d_, 0.75);
-		float dbp = 0.5f*log10(slip / Ssp);
 		float mr = 12.0f / (Nc*Nc) + 0.007f;
-		float traction = std::min(1.0f, std::max(-1.0f,(float)(dbp * pow(1.0f + b_ / d_, 0.25f)) - mr));
-		//float fy = erf(0.5f*alpha / high_slip_angle_cutoff_radians_);
-		float fy = GetCrolla(alpha, high_slip_angle_cutoff_radians_);
-		rp3d::Vector2 f(W*traction, -W*fy);
-		return f;
-	}/*
-	else if (surface_type_ == "sand") {
-		rp3d::Vector2 f(0.0f, 0.0f);
-		if (W > 0.0f) {
-			// Improved sinkage algorithms for powered and unpowered, wheeled vehicles operating on sand Eq 2
-			float G = (CI_ / 3.47f)/6894.76f;
-			//A unified equation for predicting traction for wheels on sand over a range of braked, towed, and powered operations, Eqs 9-10
-			float dbp = 0.0f;
-			if (slip != 0.0f) {
-				float Ns = G * pow(b_*d_, 1.5)*delta / (W*h_);
-				float X = 0.66f;
-				float Y = 4.71f + 1.72f / slip;
-				dbp = X * Y / (Ns + 10.0f + Y);
-			}
-			// New algorithms for predictinglongitudinal motion resistance of wheels on dry sand, Eq 1
-			float X_m = 0.44 - 0.002287*W;
-			float mr = X_m + sqrt(X_m*X_m + 0.0000457*W + 0.08f) + 0.05f*(delta / h_);
-			float traction = std::min(1.0f, std::max(-1.0f, dbp - mr));
-			//float fy = erf(0.5f*alpha / high_slip_angle_cutoff_radians_);
-			float fy = GetCrolla(alpha, high_slip_angle_cutoff_radians_);
-			f = rp3d::Vector2(W*traction, -W*fy);
+		// The model is for driven wheels (positive slip). log10 is undefined for slip <= 0,
+		// so evaluate with |slip| and mirror the result for braking.
+		float abs_slip = fabs(slip);
+		float traction = 0.0f;
+		if (abs_slip > 1.0e-6f) {
+			float dbp = 0.5f*log10(abs_slip / Ssp);
+			traction = W * std::min(1.0f, std::max(-1.0f, (float)(dbp * pow(1.0f + b_ / d_, 0.25f)) - mr));
+			if (traction < 0.0f) traction = 0.0f;
+			if (slip < 0.0f) traction = -traction;
 		}
-		return f;
-	}*/
-	else {
-		
+		float fy = -W * GetCrolla(alpha, high_slip_angle_cutoff_radians_);
+		f = rp3d::Vector2(traction, fy);
+		fx_max = W;
+		fy_max = W;
+	}
+	else if (surface_type_ == "sand") {
+		// Improved sinkage algorithms for powered and unpowered, wheeled vehicles operating on sand Eq 2
+		float G = (CI_ / 3.47f)/6894.76f;
+		//A unified equation for predicting traction for wheels on sand over a range of braked, towed, and powered operations, Eqs 9-10
+		float dbp = 0.0f;
+		if (slip != 0.0f) {
+			float Ns = G * pow(b_*d_, 1.5)*delta / (W*h_);
+			float X = 0.66f;
+			float Y = 4.71f + 1.72f / slip;
+			float denom = Ns + 10.0f + Y;
+			// negative slip can drive the denominator to zero; skip the term if so
+			if (fabs(denom) > 1.0e-3f) dbp = X * Y / denom;
+		}
+		// New algorithms for predictinglongitudinal motion resistance of wheels on dry sand, Eq 1
+		float X_m = 0.44f - 0.002287f*W;
+		float mr = X_m + sqrt(X_m*X_m + 0.0000457f*W + 0.08f) + 0.05f*(delta / h_);
+		float traction = std::min(1.0f, std::max(-1.0f, dbp - mr));
+		float fy = GetCrolla(alpha, high_slip_angle_cutoff_radians_);
+		f = rp3d::Vector2(W*traction, -W*fy);
+		fx_max = W;
+		fy_max = W;
+	}
+	else { // dry, wet, ice, snow
 		//adjust coeffs
 		SetCoeffs(W, delta);
 
 		// longitudinal
 		float Bs = B_ * slip;
 		float fx = W * D_ * sin(C_*atan(Bs - E_ * (Bs - atan(Bs))));
-		//float fx0 = W * D_;
 
-		// lateral forces & combined forces
-		//float fy = fy0 * sqrt(1.0f - pow(fx / fx0, 2));
-		float fy = -W*GetCrolla(alpha, high_slip_angle_cutoff_radians_);
-		rp3d::Vector2 f(fx, fy);
-		return f;
+		// lateral
+		float fy = -W * D_lat_ * GetCrolla(alpha, high_slip_angle_cutoff_radians_);
+		f = rp3d::Vector2(fx, fy);
+		fx_max = W * D_;
+		fy_max = W * D_lat_;
 	}
+
+	// combined slip: soft reduction, then hard cap at the friction ellipse
+	f = ApplyCombinedSlipWeighting(f, slip, alpha);
+	f = ApplyFrictionLimit(f, fx_max, fy_max);
+	return f;
 }
 
 

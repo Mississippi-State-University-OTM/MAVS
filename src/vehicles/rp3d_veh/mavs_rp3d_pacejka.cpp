@@ -52,31 +52,58 @@ MavsPacejka::MavsPacejka() {
 	Byk_ = 8.0f;
 	Cyk_ = 1.0f;
 
-	// soil-strength dependent lateral friction defaults
-	clay_ref_slip_ = 0.2f;
-	sand_mu_max_ = 0.7f;
-	sand_N0_ = 5.0f;
+	// combined slip defaults for clay and sand; soft soils run at higher slip,
+	// so the lateral reduction with longitudinal slip is gentler than on pavement
+	Bxa_soft_ = 10.0f;
+	Cxa_soft_ = 1.0f;
+	Byk_soft_ = 2.0f;
+	Cyk_soft_ = 1.0f;
+
+	// soil-strength dependent lateral friction defaults (tunable, see Get*LateralCoeff)
+	clay_mu_max_ = 0.9f;
+	clay_N_half_ = 20.0f;
+	sand_mu_max_ = 0.8f;
+	sand_N_half_ = 15.0f;
 	soft_mu_min_ = 0.05f;
 }
 
-void MavsPacejka::SetSoftSoilLateralParams(float clay_ref_slip, float sand_mu_max, float sand_N0, float mu_min) {
-	clay_ref_slip_ = std::max(1.0e-3f, clay_ref_slip);
-	sand_mu_max_ = std::max(0.0f, sand_mu_max);
-	sand_N0_ = std::max(1.0e-3f, sand_N0);
+void MavsPacejka::SetSoftSoilCombinedSlipWeights(float Bxa, float Cxa, float Byk, float Cyk) {
+	Bxa_soft_ = Bxa;
+	Cxa_soft_ = Cxa;
+	Byk_soft_ = Byk;
+	Cyk_soft_ = Cyk;
+	use_weighting_ = true;
+}
+
+void MavsPacejka::SetClayLateralParams(float mu_max, float N_half) {
+	clay_mu_max_ = std::max(0.0f, mu_max);
+	clay_N_half_ = std::max(1.0e-3f, N_half);
+}
+
+void MavsPacejka::SetSandLateralParams(float mu_max, float N_half) {
+	sand_mu_max_ = std::max(0.0f, mu_max);
+	sand_N_half_ = std::max(1.0e-3f, N_half);
+}
+
+void MavsPacejka::SetSoftSoilMinLateral(float mu_min) {
 	soft_mu_min_ = std::max(0.0f, mu_min);
 }
 
+float MavsPacejka::GetSaturatingCoeff(float N, float mu_max, float N_half) const {
+	// Hyperbolic saturation: rises with mobility number but approaches mu_max slowly,
+	// so the coefficient keeps responding to soil strength over the usual CI range.
+	float n = std::max(0.0f, N);
+	return std::max(soft_mu_min_, mu_max * n / (n + N_half));
+}
+
 float MavsPacejka::GetClayLateralCoeff(float Nc) const {
-	// Soil shear strength is treated as isotropic, so the peak side force coefficient
-	// is taken as the gross traction coefficient (pull + motion resistance) from the
-	// same clay traction equation, evaluated at a reference slip near maximum pull.
-	// Motion resistance is not subtracted because it acts longitudinally.
-	// See: Melzer, K.-J. (1976). Performance of Towed Wheels Operating in Turned Mode on Soft Soils — A Pilot Study. 
-	// Miscellaneous Paper M-76-17. U.S. Army Engineer Waterways Experiment Station, 
+	// Peak side force coefficient increases with mobility number on clay and sand:
+	// Melzer, K.-J. (1976). Performance of Towed Wheels Operating in Turned Mode on Soft Soils - A Pilot Study.
+	// Miscellaneous Paper M-76-17. U.S. Army Engineer Waterways Experiment Station,
 	// Mobility and Environmental Systems Laboratory, Vicksburg, MS. August 1976. DTIC accession ADA028909.
-	float Ssp = (float)(21.0 / pow(Nc, 2.5));
-	float mu = (float)(0.5*log10(clay_ref_slip_ / Ssp) * pow(1.0f + b_ / d_, 0.25f));
-	return std::min(1.0f, std::max(soft_mu_min_, mu));
+	// The functional form and the constants clay_mu_max_ and clay_N_half_ are tuning choices,
+	// not values taken from that report.
+	return GetSaturatingCoeff(Nc, clay_mu_max_, clay_N_half_);
 }
 
 float MavsPacejka::GetSandNumeric(float W, float delta) const {
@@ -99,9 +126,9 @@ float MavsPacejka::GetSandNumeric(float W, float delta) const {
 // Durham, G.N., 1976. Powered Wheels in the Turned Mode Operating on Yielding Soils. 
 // Technical Report M-76-9, U.S. Army Engineer Waterways Experiment Station, Vicksburg, Mississippi.
 float MavsPacejka::GetSandLateralCoeff(float W, float delta) const {
-	float Ns = GetSandNumeric(W, delta);
-	float mu = sand_mu_max_ * (1.0f - expf(-Ns / sand_N0_));
-	return std::max(soft_mu_min_, mu);
+	// The functional form and the constants sand_mu_max_ and sand_N_half_ are tuning
+	// choices; only the sand numeric itself comes from the literature.
+	return GetSaturatingCoeff(GetSandNumeric(W, delta), sand_mu_max_, sand_N_half_);
 }
 
 void MavsPacejka::SetSlipAngleCrossover(float angle) {
@@ -172,12 +199,16 @@ void MavsPacejka::SetCoeffs(float W, float delta) {
 	}
 }
 
-rp3d::Vector2 MavsPacejka::ApplyCombinedSlipWeighting(rp3d::Vector2 f, float slip, float alpha) const {
+rp3d::Vector2 MavsPacejka::ApplyCombinedSlipWeighting(rp3d::Vector2 f, float slip, float alpha, bool soft_soil) const {
 	// Pacejka-style combined slip weighting functions.
 	// Both are even functions equal to 1 at zero cross-slip, so sign conventions don't matter.
 	if (!use_weighting_) return f;
-	float Gxa = cosf(Cxa_ * atanf(Bxa_ * alpha));
-	float Gyk = cosf(Cyk_ * atanf(Byk_ * slip));
+	float Bxa = soft_soil ? Bxa_soft_ : Bxa_;
+	float Cxa = soft_soil ? Cxa_soft_ : Cxa_;
+	float Byk = soft_soil ? Byk_soft_ : Byk_;
+	float Cyk = soft_soil ? Cyk_soft_ : Cyk_;
+	float Gxa = cosf(Cxa * atanf(Bxa * alpha));
+	float Gyk = cosf(Cyk * atanf(Byk * slip));
 	// keep the weights non-negative so a force never reverses direction
 	Gxa = std::max(0.0f, Gxa);
 	Gyk = std::max(0.0f, Gyk);
@@ -278,7 +309,8 @@ rp3d::Vector2 MavsPacejka::GetCombinedTraction(float W, float delta, float slip,
 	}
 
 	// combined slip: soft reduction, then hard cap at the friction ellipse
-	f = ApplyCombinedSlipWeighting(f, slip, alpha);
+	bool soft_soil = (surface_type_ == "clay" || surface_type_ == "sand");
+	f = ApplyCombinedSlipWeighting(f, slip, alpha, soft_soil);
 	f = ApplyFrictionLimit(f, fx_max, fy_max);
 	return f;
 }

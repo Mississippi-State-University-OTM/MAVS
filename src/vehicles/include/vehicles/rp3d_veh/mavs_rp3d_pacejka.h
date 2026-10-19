@@ -123,25 +123,44 @@ public:
 	void UseCombinedSlipWeighting(bool use) { use_weighting_ = use; }
 
 	/**
-	* Set the parameters that tie lateral friction to soil strength on clay and sand.
-	* Clay: the peak lateral coefficient is the gross traction coefficient from the
-	* clay traction equation evaluated at clay_ref_slip (near maximum pull).
-	* Sand: the peak lateral coefficient is sand_mu_max*(1-exp(-Ns/sand_N0)),
-	* where Ns is the Turnage sand numeric.
-	* Both are floored at mu_min.
-	* \param clay_ref_slip Reference slip for the clay lateral coefficient (default 0.2)
-	* \param sand_mu_max Peak lateral coefficient on strong sand (default 0.7)
-	* \param sand_N0 Sand numeric at which ~63% of sand_mu_max is reached (default 5)
-	* \param mu_min Minimum lateral coefficient on very weak soil (default 0.05)
+	* Set the combined-slip weighting coefficients used on clay and sand.
+	* Soft soils operate at much higher longitudinal slip than pavement (peak traction
+	* at 20-40% slip), so the lateral force falls off more slowly with slip.
+	* Same form as SetCombinedSlipWeights. Defaults: Bxa=10, Cxa=1, Byk=2, Cyk=1.
 	*/
-	void SetSoftSoilLateralParams(float clay_ref_slip, float sand_mu_max, float sand_N0, float mu_min);
+	void SetSoftSoilCombinedSlipWeights(float Bxa, float Cxa, float Byk, float Cyk);
+
+	/**
+	* Set the peak lateral coefficient curve for clay:
+	*   mu_lat = mu_max * Nc / (Nc + N_half)
+	* where Nc is the clay mobility number. Defaults: mu_max=0.9, N_half=20.
+	* \param mu_max Peak lateral coefficient approached on very strong clay
+	* \param N_half Mobility number at which mu_lat = mu_max/2
+	*/
+	void SetClayLateralParams(float mu_max, float N_half);
+
+	/**
+	* Set the peak lateral coefficient curve for sand:
+	*   mu_lat = mu_max * Ns / (Ns + N_half)
+	* where Ns is the Turnage sand numeric. Defaults: mu_max=0.8, N_half=15.
+	* \param mu_max Peak lateral coefficient approached on very strong sand
+	* \param N_half Sand numeric at which mu_lat = mu_max/2
+	*/
+	void SetSandLateralParams(float mu_max, float N_half);
+
+	/**
+	* Set the minimum peak lateral coefficient on very weak clay or sand. Default 0.05.
+	* \param mu_min Minimum lateral coefficient
+	*/
+	void SetSoftSoilMinLateral(float mu_min);
 
 private:
 	void SetCoeffs(float W, float delta);
 	float GetCrolla(float alpha, float beta);
-	rp3d::Vector2 ApplyCombinedSlipWeighting(rp3d::Vector2 f, float slip, float alpha) const;
+	rp3d::Vector2 ApplyCombinedSlipWeighting(rp3d::Vector2 f, float slip, float alpha, bool soft_soil) const;
 	rp3d::Vector2 ApplyFrictionLimit(rp3d::Vector2 f, float fx_max, float fy_max) const;
 	float GetClayLateralCoeff(float Nc) const;
+	float GetSaturatingCoeff(float N, float mu_max, float N_half) const;
 	float GetSandLateralCoeff(float W, float delta) const;
 	float GetSandNumeric(float W, float delta) const;
 	float B_;
@@ -164,10 +183,17 @@ private:
 	float Byk_;
 	float Cyk_;
 
+	// combined slip on clay and sand
+	float Bxa_soft_;
+	float Cxa_soft_;
+	float Byk_soft_;
+	float Cyk_soft_;
+
 	// soil-strength dependent lateral friction
-	float clay_ref_slip_;
+	float clay_mu_max_;
+	float clay_N_half_;
 	float sand_mu_max_;
-	float sand_N0_;
+	float sand_N_half_;
 	float soft_mu_min_;
 };
 

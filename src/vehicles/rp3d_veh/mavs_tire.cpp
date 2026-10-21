@@ -250,7 +250,8 @@ rp3d::Vector3 MavsTire::Update(environment::Environment *env, float dt, rp3d::Tr
 		else {
 			pacejka_.SetSurfaceProperties(env->GetSurfaceType(), env->GetSurfaceRCI());
 		}
-		rp3d::Vector2 tire_forces = pacejka_.GetCombinedTraction(normal_force, dz, slip, alpha);
+		//rp3d::Vector2 tire_forces = pacejka_.GetCombinedTraction(normal_force, dz, slip, alpha);
+		rp3d::Vector2 tire_forces = pacejka_.GetCombinedTraction(normal_force, dz, slip, alpha, vx);
 
 		//update the angular velocity of the tire
 		angular_velocity_ = angular_velocity_ + (dt / moment_)*(torque - tire_forces.x*radius_) - dt * viscous_friction;

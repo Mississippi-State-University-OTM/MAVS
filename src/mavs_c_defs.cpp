@@ -713,6 +713,12 @@ extern "C" {
 		return d;
 	}
 
+	EXPORT_CMD int GetRp3dNumTires(mavs::vehicle::Vehicle* veh) {
+		mavs::vehicle::Rp3dVehicle* vehicle = static_cast<mavs::vehicle::Rp3dVehicle*>(veh);
+		int num_tires = vehicle->GetNumTires();
+		return num_tires;
+	}
+
 	EXPORT_CMD float GetRp3dVehicleVegResistance(mavs::vehicle::Vehicle* veh) {
 		mavs::vehicle::Rp3dVehicle* vehicle = static_cast<mavs::vehicle::Rp3dVehicle*>(veh);
 		float vr = vehicle->GetCurrentVegResistance();

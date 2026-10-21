@@ -8,16 +8,24 @@
       1.85,
       1.2
     ],
-    "Drag Coefficient": 28.2,
-    "Collisions": true
+    "Drag Coefficient": 2.45,
+    "Collisions": false
   },
+
   "Powertrain": {
     "Final Drive Ratio": 3.3,
+    "Gear Ratios": [ 2.48, 1.48, 1.0, 0.75 ],
     "Max Engine Torque": 583.0,
     "Max Engine Rpm": 4500.0,
     "Max Braking Torque": 3200.0,
     "Idle Rpm": 1000.0
   },
+
+  "Radial Spring Tire Model": {
+    "Num Slices": 3,
+    "Theta Step": 1.5
+  },
+
   "Axles": [
     {
       "Longitudinal Offset": 1.53386,
@@ -30,13 +38,13 @@
       "Steered": true,
       "Powered": true,
       "Tire": {
-        "Spring Constant": 322369.0,
+        "Spring Constant": 150000.0,
         "Damping Constant": 51870.0,
         "Radius": 0.39243,
         "Width": 0.2413,
         "Section Height": 0.17526,
-        "High Slip Crossover Angle": 5.0,
-        "Viscous Friction Coefficient": 0.05
+        "High Slip Crossover Angle": 15.0,
+        "Viscous Friction Coefficient": 0.14
       }
     },
     {
@@ -50,13 +58,13 @@
       "Steered": false,
       "Powered": true,
       "Tire": {
-        "Spring Constant": 322369.0,
+        "Spring Constant": 150000.0,
         "Damping Constant": 51870.0,
         "Radius": 0.39243,
         "Width": 0.2413,
         "Section Height": 0.17526,
-        "High Slip Crossover Angle": 5.0,
-        "Viscous Friction Coefficient": 0.05
+        "High Slip Crossover Angle": 15.0,
+        "Viscous Friction Coefficient": 0.14
       }
     }
   ],

@@ -272,6 +272,8 @@ EXPORT_CMD float * GetRp3dLookTo(mavs::vehicle::Vehicle* veh);
 
 EXPORT_CMD float GetRp3dVehicleTireDeflection(mavs::vehicle::Vehicle* veh, int i);
 
+EXPORT_CMD int GetRp3dNumTires(mavs::vehicle::Vehicle* veh);
+
 EXPORT_CMD void SetRp3dTerrain(mavs::vehicle::Vehicle* veh, char *soil_type, float soil_strength, char *terrain_type, float terrain_param1, float terrain_param2);
 
 EXPORT_CMD void SetRp3dGravity(mavs::vehicle::Vehicle* veh, float gx, float gy, float gz);

@@ -250,6 +250,8 @@ mavs_lib.GetRp3dTireSteeringAngle.argtypes = [ctypes.c_void_p, ctypes.c_int]
 mavs_lib.GetRp3dTireSteeringAngle.restype = ctypes.c_float
 mavs_lib.GetRp3dTireForces.argtypes = [ctypes.c_void_p, ctypes.c_int]
 mavs_lib.GetRp3dTireForces.restype = ctypes.POINTER(ctypes.c_float)
+mavs_lib.GetRp3dNumTires.argtypes = [ctypes.c_void_p]
+mavs_lib.GetRp3dNumTires.restype = ctypes.c_int
 mavs_lib.SetRp3dExternalForce.argtypes = [ctypes.c_void_p, ctypes.c_float, ctypes.c_float, ctypes.c_float]
 mavs_lib.GetRp3dLookTo.argtypes = [ctypes.c_void_p]
 mavs_lib.GetRp3dLookTo.restype = ctypes.POINTER(ctypes.c_float)
@@ -3784,6 +3786,14 @@ class MavsRp3d(MavsVehicle):
         lt = mavs_lib.GetRp3dLookTo(self.vehicle)
         look_to = [lt[0],lt[1],lt[2]]
         return look_to
+    def GetNumTires(self):
+        """ Get the Number of tires on the vehicle
+
+        Returns:
+        num_tires (int): number of tires ont he vehicle.
+        """
+        num_tires = mavs_lib.GetRp3dNumTires(self.vehicle)
+        return num_tires
     def GetTireDeflection(self,i):
         """ Tire deflection as a fraction of section height.
 

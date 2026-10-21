@@ -190,6 +190,11 @@ void Rp3dVehicle::Load(std::string input_file) {
 		if (d["Powertrain"].HasMember("Idle Rpm")) {
 			powertrain_.SetIdleRpm(d["Powertrain"]["Idle Rpm"].GetFloat());
 		}
+		if (d["Powertrain"].HasMember("Gear Ratios")) {
+			std::vector<float> g;
+			for (auto& x : d["Powertrain"]["Gear Ratios"].GetArray()) g.push_back(x.GetFloat());
+			powertrain_.SetGearRatios(g);
+		}
 	}
 	
 	num_tire_slices_ = 3;

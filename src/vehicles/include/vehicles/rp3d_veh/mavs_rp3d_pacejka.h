@@ -65,6 +65,26 @@ public:
 	rp3d::Vector2 GetCombinedTraction(float normal_force, float deflection, float slip, float lat_slip);
 
 	/**
+	* Same as above, with the longitudinal velocity of the wheel center along the
+	* tire heading. On clay and sand, motion resistance opposes this velocity and is
+	* ramped linearly to zero for |long_vel| below the regularization speed, so a
+	* coasting vehicle decelerates and a stationary vehicle does not creep.
+	* Prefer this overload for clay and sand.
+	* \param normal_force Current normal force in Newtons
+	* \param deflection Current tire deflection in meters
+	* \param slip Current tire longitudinal slip
+	* \param lat_slip Current slip angle in radians
+	* \param long_vel Longitudinal velocity of the wheel center in m/s, positive forward
+	*/
+	rp3d::Vector2 GetCombinedTraction(float normal_force, float deflection, float slip, float lat_slip, float long_vel);
+
+	/**
+	* Set the speed below which soft-soil motion resistance is ramped to zero. Default 0.2 m/s.
+	* \param v_reg Regularization speed in m/s
+	*/
+	void SetMotionResistanceRegularization(float v_reg);
+
+	/**
 	* Set the tire parameters.
 	* These will be used in the friction calcuation for sand and clay
 	* \param width Tire width in meters
@@ -163,6 +183,8 @@ private:
 	float GetSaturatingCoeff(float N, float mu_max, float N_half) const;
 	float GetSandLateralCoeff(float W, float delta) const;
 	float GetSandNumeric(float W, float delta) const;
+	float GetSandMaxGrossTraction(float W, float delta) const;
+	rp3d::Vector2 ComputeTraction(float W, float delta, float slip, float alpha, float mr_dir);
 	float B_;
 	float C_;
 	float D_;
@@ -195,6 +217,9 @@ private:
 	float sand_mu_max_;
 	float sand_N_half_;
 	float soft_mu_min_;
+
+	// motion resistance direction regularization speed, m/s
+	float mr_v_reg_;
 };
 
 } // namespace mavs_rp3d

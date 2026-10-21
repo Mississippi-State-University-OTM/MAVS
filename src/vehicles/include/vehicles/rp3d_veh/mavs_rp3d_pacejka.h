@@ -45,6 +45,12 @@ namespace mavs_rp3d {
 class MavsPacejka {
 public:
 	/// Method used to cap the combined tire force
+	/// Definition of the longitudinal slip passed to GetCombinedTraction
+	enum class SlipConvention {
+		kIstvs,          ///< s = 1 - Vv/Vw (ISTVS). Goes to -infinity for a locked wheel.
+		kNormalizedByMax ///< s = (Vw - Vv)/max(|Vw|,|Vv|). Bounded to [-1, 1]; -1 for a locked wheel.
+	};
+
 	enum class FrictionLimit {
 		kNone,                 ///< No cap, forces are independent
 		kEllipse,              ///< Scale both components equally onto the friction ellipse
@@ -83,6 +89,25 @@ public:
 	* \param v_reg Regularization speed in m/s
 	*/
 	void SetMotionResistanceRegularization(float v_reg);
+
+	/**
+	* Set the definition of the longitudinal slip supplied by the caller. Only affects
+	* sand towed and braked motion resistance. Default kNormalizedByMax, which is what
+	* MavsTire::CalcSlip computes.
+	* \param convention The slip convention
+	*/
+	void SetSlipConvention(SlipConvention convention) { slip_convention_ = convention; }
+
+	/**
+	* Set an optional speed factor on sand motion resistance:
+	*   MR(v) = MR * (1 + k_v * (|v|/v_ref)^2)
+	* The Williams et al. (2019) equations were fit to tests below about 4-5 m/s and have
+	* no speed term, so this is a calibration hook. Default k_v = 0 (no speed effect).
+	* Only active through the GetCombinedTraction overload that takes long_vel.
+	* \param k_v Speed coefficient
+	* \param v_ref Reference speed in m/s (default 4)
+	*/
+	void SetSandMotionResistanceSpeedFactor(float k_v, float v_ref = 4.0f);
 
 	/**
 	* Set the tire parameters.
@@ -184,7 +209,10 @@ private:
 	float GetSandLateralCoeff(float W, float delta) const;
 	float GetSandNumeric(float W, float delta) const;
 	float GetSandMaxGrossTraction(float W, float delta) const;
-	rp3d::Vector2 ComputeTraction(float W, float delta, float slip, float alpha, float mr_dir);
+	float GetSandCpCiRatio(float W, float delta) const;
+	float ToIstvsSlip(float slip) const;
+	float GetSandMotionResistance(float cp_ci, float s_istvs) const;
+	rp3d::Vector2 ComputeTraction(float W, float delta, float slip, float alpha, float mr_dir, float speed);
 	float B_;
 	float C_;
 	float D_;
@@ -220,6 +248,11 @@ private:
 
 	// motion resistance direction regularization speed, m/s
 	float mr_v_reg_;
+
+	// sand motion resistance
+	SlipConvention slip_convention_;
+	float sand_mr_kv_;
+	float sand_mr_vref_;
 };
 
 } // namespace mavs_rp3d

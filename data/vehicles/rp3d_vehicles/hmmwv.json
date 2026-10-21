@@ -43,7 +43,7 @@
         "Radius": 0.39243,
         "Width": 0.2413,
         "Section Height": 0.17526,
-        "High Slip Crossover Angle": 15.0,
+        "High Slip Crossover Angle": 10.0,
         "Viscous Friction Coefficient": 0.14
       }
     },
@@ -63,7 +63,7 @@
         "Radius": 0.39243,
         "Width": 0.2413,
         "Section Height": 0.17526,
-        "High Slip Crossover Angle": 15.0,
+        "High Slip Crossover Angle": 10.0,
         "Viscous Friction Coefficient": 0.14
       }
     }

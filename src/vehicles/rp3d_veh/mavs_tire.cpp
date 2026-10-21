@@ -121,36 +121,19 @@ void MavsTire::CalcDamping() {
 }
 
 float MavsTire::CalcSlip(float vx) {
-	float slip = 0.0f;
+	// Longitudinal slip, normalized by the larger of the wheel and ground speeds:
+	//   slip = (rw - vx) / max(|rw|, |vx|),  clamped to [-1, 1]
+	// Slip has the sign of the force the wheel pushes with. Forward driving and reverse
+	// braking give positive slip; forward braking and reverse driving give negative slip.
+	// A wheel locked while moving gives -1 (forward) or +1 (reverse).
+	// For rw >= 0 and vx >= 0 this is identical to the previous implementation; it also
+	// fixes reverse travel with a locked wheel (rw = 0, vx < 0), which previously gave 0.
 	float rw = radius_ * angular_velocity_;
-	
-	//if (vx < 0.0f && rw < 0.0f) {
-	if (rw < 0.0f) {
-		if (vx < rw) {
-			if (vx != 0.0f) {
-				slip = (rw / vx) - 1.0f;
-			}
-		}
-		else {
-			if (rw != 0.0f) {
-				slip = 1.0f - (vx / rw);
-			}
-		}
-		slip = -1.0f*slip;
-	}
-	else {
-		if (vx > rw) {
-			if (vx != 0.0f && !startup_) {
-				slip = (rw / vx) - 1.0f;
-			}
-		}
-		else {
-			if (rw != 0.0f) {
-				slip = 1.0f - (vx / rw);
-			}
-		}
-	}
-	//std::cout << "Slip calculation " << rw << " " << vx << " " << slip << std::endl;
+	// During startup, ignore braking slip from a wheel that has not yet spun up
+	if (startup_ && rw >= 0.0f && vx > rw) return 0.0f;
+	float denom = std::max(fabsf(rw), fabsf(vx));
+	if (denom <= 0.0f) return 0.0f;
+	float slip = (rw - vx) / denom;
 	slip = std::min(1.0f, std::max(slip, -1.0f));
 	return slip;
 }

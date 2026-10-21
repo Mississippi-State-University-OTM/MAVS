@@ -67,6 +67,16 @@ MavsPacejka::MavsPacejka() {
 	soft_mu_min_ = 0.05f;
 
 	mr_v_reg_ = 0.2f;
+
+	// MavsTire::CalcSlip returns (Vw - Vv)/max(|Vw|,|Vv|), clamped to [-1, 1]
+	slip_convention_ = SlipConvention::kNormalizedByMax;
+	sand_mr_kv_ = 0.0f;
+	sand_mr_vref_ = 4.0f;
+}
+
+void MavsPacejka::SetSandMotionResistanceSpeedFactor(float k_v, float v_ref) {
+	sand_mr_kv_ = std::max(0.0f, k_v);
+	sand_mr_vref_ = std::max(0.1f, v_ref);
 }
 
 void MavsPacejka::SetMotionResistanceRegularization(float v_reg) {
@@ -123,21 +133,77 @@ float MavsPacejka::GetSandNumeric(float W, float delta) const {
 	return std::max(0.0f, Ns);
 }
 
-float MavsPacejka::GetSandMaxGrossTraction(float W, float delta) const {
-	// Maximum gross traction coefficient on dry sand from the DROVE data,
-	// Mason et al. (2018), Eq 6:  Max = 0.42 + 0.009 / (CP/CI)
+float MavsPacejka::GetSandCpCiRatio(float W, float delta) const {
+	// Ratio of contact pressure to cone index, the primary variable of the DROVE-based
+	// sand equations (Mason et al. 2018; Williams et al. 2019).
 	// CP is the contact pressure on a rigid flat surface. It is estimated here from the
 	// tire geometry: footprint length l = 2*sqrt(delta*(d - delta)) (chord of the deflected
 	// tire) and width b, so CP ~= W / (b*l). This is an approximation; the real footprint
 	// is somewhat smaller than b*l, which would give a slightly higher CP.
-	// CP/CI is clamped to the 0.05-0.9 range covered by the powered-wheel data.
+	// CP/CI is clamped to 0.05-0.9, roughly the range covered by the data.
 	float defl = std::min(0.5f * d_, std::max(0.0f, delta));
 	float l = 2.0f * sqrtf(defl * (d_ - defl));
 	float area = b_ * l;
 	float ratio = 0.9f;
 	if (area > 1.0e-6f && CI_ > 0.0f) ratio = (W / area) / CI_;
-	ratio = std::min(0.9f, std::max(0.05f, ratio));
-	return 0.42f + 0.009f / ratio;
+	return std::min(0.9f, std::max(0.05f, ratio));
+}
+
+float MavsPacejka::GetSandMaxGrossTraction(float W, float delta) const {
+	// Maximum gross traction coefficient on dry sand from the DROVE data,
+	// Mason et al. (2018), Eq 6:  Max = 0.42 + 0.009 / (CP/CI)
+	return 0.42f + 0.009f / GetSandCpCiRatio(W, delta);
+}
+
+float MavsPacejka::ToIstvsSlip(float slip) const {
+	// Convert the caller's slip to ISTVS slip s = 1 - Vv/Vw. The two conventions agree
+	// for slip >= 0. For a wheel turning slower than the vehicle, the normalized-by-max
+	// convention gives (Vw - Vv)/Vv, which is the braked slip sb, and s = sb/(1 + sb).
+	if (slip_convention_ == SlipConvention::kNormalizedByMax && slip < 0.0f) {
+		float sb = std::max(-0.999f, slip);
+		return sb / (1.0f + sb);
+	}
+	return slip;
+}
+
+float MavsPacejka::GetSandMotionResistance(float r, float s) const {
+	// Williams, J.M., Vahedifard, F., Mason, G.L., Priddy, J.D. (2019). New algorithms for
+	// predicting longitudinal motion resistance of wheels on dry sand. Journal of Defense
+	// Modeling and Simulation 16(3), 283-295. Slip in the paper is in percent; here it is
+	// a fraction, so s/100 in the paper is s here.
+	//   Towed   (Eq 9):  MR = 0.21*CP/CI - 0.75*s  + 0.04   (s <= 0, ISTVS slip)
+	//   Powered (Eq 10): MR = 0.40*CP/CI + 0.60*s  - 0.03   (s > 0)
+	//   Braked  (Eq 11): MR = 0.10*CP/CI - 0.90*sb + 0.18   (sb = Vw/Vv - 1 = s/(1-s))
+	// Towed and braked MR is the full net resisting force (minus the drawbar pull), so for
+	// s <= 0 there is no separate gross traction term. Powered MR is gross traction minus
+	// drawbar pull and is subtracted from the VTI gross traction.
+	float towed0 = 0.21f * r + 0.04f;
+	float mr = 0.0f;
+	if (s > 0.0f) {
+		// The powered data start at 5% slip. Blend linearly from the towed value at zero
+		// slip to the powered value at 5% slip so the force is continuous through s = 0.
+		const float s_blend = 0.05f;
+		// Slip is also capped at 0.55, the largest slip in the powered data, rather than
+		// extrapolating the linear slip term to a fully spinning wheel.
+		float powered = 0.40f * r + 0.60f * std::min(0.55f, std::max(s, s_blend)) - 0.03f;
+		if (s < s_blend) {
+			float t = s / s_blend;
+			mr = (1.0f - t) * towed0 + t * powered;
+		}
+		else {
+			mr = powered;
+		}
+	}
+	else {
+		// Towed applies near zero slip, braked at large braking slip. Taking the smaller of
+		// the two follows the towed line until it meets the braked curve, then the braked
+		// curve, which levels off at a locked wheel (sb = -1) instead of growing without bound.
+		float towed = towed0 - 0.75f * s;
+		float sb = s / (1.0f - s);
+		float braked = 0.10f * r - 0.90f * sb + 0.18f;
+		mr = std::min(towed, braked);
+	}
+	return std::max(0.0f, mr);
 }
 
 // see: Turnage, G. W. (1972). Performance of Soils Under Tire Loads, Report 8: 
@@ -263,23 +329,26 @@ rp3d::Vector2 MavsPacejka::GetCombinedTraction(float W, float delta, float slip,
 	// Legacy interface: the direction of travel is unknown, so motion resistance is
 	// assumed to oppose forward travel at full strength. Use the overload with
 	// long_vel on clay and sand.
-	return ComputeTraction(W, delta, slip, alpha, 1.0f);
+	return ComputeTraction(W, delta, slip, alpha, 1.0f, 0.0f);
 }
 
 rp3d::Vector2 MavsPacejka::GetCombinedTraction(float W, float delta, float slip, float alpha, float long_vel) {
 	// Motion resistance opposes the direction of travel. Below mr_v_reg_ it is ramped
 	// linearly to zero so it cannot push a stationary vehicle or cause chatter.
 	float mr_dir = std::min(1.0f, std::max(-1.0f, long_vel / mr_v_reg_));
-	return ComputeTraction(W, delta, slip, alpha, mr_dir);
+	return ComputeTraction(W, delta, slip, alpha, mr_dir, fabs(long_vel));
 }
 
-rp3d::Vector2 MavsPacejka::ComputeTraction(float W, float delta, float slip, float alpha, float mr_dir) {
+rp3d::Vector2 MavsPacejka::ComputeTraction(float W, float delta, float slip, float alpha, float mr_dir, float speed) {
 	rp3d::Vector2 f(0.0f, 0.0f);
 	float fx_max = 0.0f;
 	float fy_max = 0.0f;
 	// Motion resistance force on soft soil, kept separate from the tractive force so the
 	// combined-slip weighting (which models loss of grip) does not reduce it.
 	float mr_force = 0.0f;
+	// Most negative net force (along the direction of travel) a driving sand wheel may
+	// produce: that of the same wheel rolling freely (towed). Zero means no floor.
+	float sand_drive_floor = 0.0f;
 
 	if (W <= 0.0f) return f;
 
@@ -317,28 +386,45 @@ rp3d::Vector2 MavsPacejka::ComputeTraction(float W, float delta, float slip, flo
 		// "A unified equation for predicting traction for wheels on sand over a range of
 		// braked, towed, and powered operations", Eqs 9-10:
 		//   T/W = X - X*Y/(Ns + 10 + Y),  X = 0.66,  Y = 4.71 + 1.72/slip
-		// This is a powered-wheel equation, so braking is evaluated with |slip| and mirrored.
-		float gross = 0.0f;
+		// Used for driving wheels only. For towed and braked wheels the Williams et al.
+		// motion resistance below is the full net force, so the gross term is zero.
+		// The sand relations depend on the operating mode relative to the direction of
+		// travel. MavsTire::CalcSlip gives slip the sign of the force the wheel pushes with,
+		// so in reverse, driving slip is negative and braking slip is positive. The wheel is
+		// driving when slip and travel direction agree; at standstill (mr_dir == 0) any
+		// nonzero slip means the wheel is spinning up, i.e. driving.
 		float abs_slip = fabs(slip);
-		if (abs_slip > 1.0e-6f) {
+		bool driving = (fabs(mr_dir) < 1.0e-3f) ? (abs_slip > 1.0e-6f) : (slip * mr_dir > 0.0f);
+		float gross = 0.0f;
+		if (driving && abs_slip > 1.0e-6f) {
 			float X = 0.66f;
 			float Y = 4.71f + 1.72f / abs_slip;
 			gross = X - X * Y / (Ns + 10.0f + Y);
 			// The VTI equation keeps rising past the 50% slip covered by the data and can
 			// approach 0.66, which over-predicts slope climbing. Cap it at the measured
-			// maximum (Mason et al. 2018, Eq 6) when powered, and at the measured minimum
-			// of about -0.5 (Mason et al. 2018, Sec 4.1) when braking.
-			if (slip > 0.0f) {
-				gross = std::min(gross, GetSandMaxGrossTraction(W, delta));
-			}
-			else {
-				gross = -std::min(gross, 0.5f);
-			}
+			// maximum (Mason et al. 2018, Eq 6).
+			gross = std::min(gross, GetSandMaxGrossTraction(W, delta));
+			// gross traction acts in the direction the wheel pushes
+			if (slip < 0.0f) gross = -gross;
 		}
-		// New algorithms for predictinglongitudinal motion resistance of wheels on dry sand, Eq 1
-		float X_m = 0.44f - 0.002287f*W;
-		float mr = X_m + sqrt(X_m*X_m + 0.0000457f*W + 0.08f) + 0.05f*(delta / h_);
+		// Motion resistance from Williams et al. (2019), evaluated with the slip in the
+		// travel frame (positive = powered, negative = towed/braked), opposing the motion,
+		// with an optional speed factor.
+		float s_mode = driving ? abs_slip : -abs_slip;
+		float mr = GetSandMotionResistance(GetSandCpCiRatio(W, delta), ToIstvsSlip(s_mode));
+		if (sand_mr_kv_ > 0.0f) {
+			float vr = speed / sand_mr_vref_;
+			mr *= 1.0f + sand_mr_kv_ * vr * vr;
+		}
 		mr_force = -W * mr * mr_dir;
+		if (driving && fabs(mr_dir) >= 1.0e-3f) {
+			float towed0 = GetSandMotionResistance(GetSandCpCiRatio(W, delta), 0.0f);
+			if (sand_mr_kv_ > 0.0f) {
+				float vr = speed / sand_mr_vref_;
+				towed0 *= 1.0f + sand_mr_kv_ * vr * vr;
+			}
+			sand_drive_floor = W * towed0 * fabs(mr_dir);
+		}
 		float mu_lat = GetSandLateralCoeff(W, delta);
 		float fy = mu_lat * GetCrolla(alpha, high_slip_angle_cutoff_radians_);
 		f = rp3d::Vector2(W*gross, -W*fy);
@@ -365,6 +451,16 @@ rp3d::Vector2 MavsPacejka::ComputeTraction(float W, float delta, float slip, flo
 	f = ApplyCombinedSlipWeighting(f, slip, alpha, soft_soil);
 	if (soft_soil) {
 		f.x = std::min(W, std::max(-W, f.x + mr_force));
+		// A driven wheel must not resist motion more than the same wheel rolling freely.
+		// Without this floor, a spinning wheel that is also cornering (where the combined-
+		// slip weighting cuts its gross traction but not its slip-dependent motion
+		// resistance) acts as a brake; on a steered wheel that braking force points
+		// across the turn and can reverse the yaw. The DROVE powered data also have
+		// positive drawbar pull throughout (Williams et al. 2019, Table 3).
+		if (sand_drive_floor > 0.0f) {
+			float dir = (mr_dir > 0.0f) ? 1.0f : -1.0f;
+			if (f.x * dir < -sand_drive_floor) f.x = -sand_drive_floor * dir;
+		}
 	}
 	f = ApplyFrictionLimit(f, fx_max, fy_max);
 	return f;

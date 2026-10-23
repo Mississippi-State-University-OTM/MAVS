@@ -3,7 +3,7 @@
 
 newmtl Material.001
 Ka 0.200000 0.200000 0.200000
-Kd 0.25 0.25 0.25
+Kd 0.5 0.5 0.5
 Ks 0.4 0.4 0.4
 Tr 1.000000
 illum 2
@@ -13,7 +13,7 @@ map_Kd m113a1_wheels.bmp
 
 newmtl material_0
 Ka 0.200000 0.200000 0.200000
-Kd 0.25 0.25 0.25
+Kd 0.5 0.5 0.5
 Ks 0.4 0.4 0.4
 Tr 1.000000
 illum 2

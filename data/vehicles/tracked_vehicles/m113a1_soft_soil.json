@@ -48,7 +48,7 @@
   },
 
   "Vehicle Mesh": {
-    "File": "vehicles/m113a1/m113a1_corrected.obj",
+    "File": "vehicles/m113a1/m113a1_no_roadwheels.obj",
     "Rotate Y to Z": false,
     "Rotate X to Y": false,
     "Rotate Y to X": false,

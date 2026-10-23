@@ -29,6 +29,7 @@
 #include <functional>
 #include <string>
 #include <vector>
+#include <map>
 // mavs includes
 #include <vehicles/vehicle.h>
 #include "glm/glm.hpp"
@@ -62,6 +63,16 @@ public:
     // world_frame = false returns them in the body frame (relative to GetPosition()/GetRotationMatrix()).
     void GetTrackShoePoses(std::vector<TrackShoePose>& out, bool world_frame = true) const;
 
+    // Poses of all layout wheels: left track first (indices 0..m-1, in "Wheels" input order),
+    // then right (m..2m-1). With no Track Layout, the two default end wheels are returned.
+    // world_frame = false returns them in the body frame. Spin is synced to the shoes.
+    void GetTrackWheelPoses(std::vector<TrackWheelPose>& out, bool world_frame = true) const;
+    int GetNumWheelsPerTrack() const { return static_cast<int>(track_wheels_.size()); }
+
+    // Spin angle [rad, wrapped to [0, 2 pi)] about body +y of a non-slipping wheel of the given
+    // radius on track k (0 = left, 1 = right).
+    double GetWheelSpinAngle(int k, double radius) const;
+
     void SetPosition(double x, double y, double z); // override the base class method
 
     void SetOrientation(double w, double x, double y, double z); // override the base class method
@@ -92,10 +103,6 @@ private:
 
     // Belt travel [m] along the path since start, wrapped to [0, path length).
     double GetTrackPhase(int k) const { return track_phase_[k]; }
-
-    // Spin angle [rad] about body +y of a non-slipping wheel of the given radius on track k
-    // (use it to spin sprocket/idler/road-wheel meshes in sync with the shoes).
-    double GetWheelSpinAngle(int k, double radius) const { return track_phase_[k] / radius; }
 
     // cmd = (left, right): sprocket speeds [rad/s] (Speed) or torques [N m] (Torque).
     void Step(double dt, TrackSpeeds cmd);
@@ -164,6 +171,10 @@ private:
     void SetMavsParams(double dt);
     RenderingAsset vehicle_asset_;
     RenderingAsset track_asset_;
+    RenderingAsset idler_asset_;
+    RenderingAsset sprocket_asset_;
+    RenderingAsset road_wheel_asset_;
+    std::map<int, RenderingAsset> wheel_asset_map_;
     void UpdateMavsAnimations(environment::Environment* env);
     bool vehicle_loaded_ = false;
     std::vector<int> actor_ids_;
@@ -184,6 +195,10 @@ private:
     int num_shoes_ = 0;
     double shoe_pitch_ = 0.0;
     std::array<double, 2> track_phase_{ 0.0, 0.0 };
+    // Unwrapped belt travel [m]. track_phase_ wraps at the path length, which is not a whole
+    // number of wheel turns, so wheel spin must come from this instead to avoid jumps.
+    std::array<double, 2> belt_travel_{ 0.0, 0.0 };
+    std::vector<TrackWheel> track_wheels_;   // wheels actually used (layout or default), input order
 
     // debug rendering
     mavs::vehicle::tracked::TrackedRender tracked_debug_render_;

@@ -53,8 +53,8 @@ int main(int argc, char** argv) {
     scene.Load(scene_file);
     mavs::environment::Environment env;
 	env.SetDateTime(2026, 10, 8, 12, 30, 14, 6);
-	env.SetFog(0.02);
-	env.SetCloudCover(0.85);
+	env.SetFog(0.02f);
+	env.SetCloudCover(0.85f);
 	env.SetRaytracer(&scene);
 	//float theta = -3.14159f / 3.0f;// 0.0f;
 	///float view_rad = 8.0f;
@@ -87,7 +87,7 @@ int main(int argc, char** argv) {
 		UpdateDrivingCommand(camera.GetKeyCommands());
 
 		double t0 = omp_get_wtime();
-		tracked_veh.Update(&env, throttle, steering, braking, dt);
+		tracked_veh.Update(&env, throttle, steering, braking, (float)dt);
 		t_total += omp_get_wtime() - t0;
 
 		if (nsteps % 4 == 0) { // 30 Hz

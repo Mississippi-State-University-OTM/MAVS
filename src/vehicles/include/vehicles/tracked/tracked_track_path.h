@@ -58,6 +58,20 @@ struct TrackShoePose {
     int index = 0;  // shoe index along the belt
 };
 
+// Pose of one wheel (sprocket, idler, road wheel or return roller) from the Track Layout.
+// Wheel frame: origin at the wheel centre (in y, the middle of the track width), axes
+// parallel to the body frame, then spun by spin_angle about body +y. Positive spin is the
+// forward-driving direction (a road wheel rolling forward). The wheel's own mesh should
+// have its axle along y and its origin at the hub.
+struct TrackWheelPose {
+    glm::dvec3 position = glm::dvec3(0.0);
+    glm::dquat orientation = glm::dquat(1.0, 0.0, 0.0, 0.0);
+    double spin_angle = 0.0;  // [rad] in [0, 2 pi), about body +y
+    double radius = 0.0;      // [m] pitch-line radius from the layout
+    int track = 0;            // 0 = left, 1 = right
+    int index = 0;            // index into the Track Layout "Wheels" list (same order as the input)
+};
+
 class TrackPath {
 public:
     void Build(std::vector<TrackWheel> w) {

@@ -88,6 +88,21 @@ void TrackedVehicle::Load(std::string input_file) {
         track_asset_.ParseJsonObject(pad_mesh);
     }
 
+    if (d.HasMember("Idler Mesh") && d["Idler Mesh"].IsObject()) {
+        const rapidjson::Value& idler_mesh = d["Idler Mesh"];
+        idler_asset_.ParseJsonObject(idler_mesh);
+    }
+
+    if (d.HasMember("Sprocket Mesh") && d["Sprocket Mesh"].IsObject()) {
+        const rapidjson::Value& sprocket_mesh = d["Sprocket Mesh"];
+        sprocket_asset_.ParseJsonObject(sprocket_mesh);
+    }
+
+    if (d.HasMember("Road Wheel Mesh") && d["Road Wheel Mesh"].IsObject()) {
+        const rapidjson::Value& road_wheel_mesh = d["Road Wheel Mesh"];
+        road_wheel_asset_.ParseJsonObject(road_wheel_mesh);
+    }
+
     // Optional belt layout for track-shoe animation
     if (d.HasMember("Track Layout") && d["Track Layout"].IsObject()) {
         const rapidjson::Value& tl = d["Track Layout"];
@@ -102,6 +117,20 @@ void TrackedVehicle::Load(std::string input_file) {
                 wheel.z = wv[1].GetDouble();
                 wheel.radius = wv[2].GetDouble();
                 track_layout_.wheels.push_back(wheel);
+            }
+        }
+        if (tl.HasMember("Wheel Types") && tl["Wheel Types"].IsArray()) {
+            for (int wt = 0; wt < (int)tl["Wheel Types"].Size(); wt++) {
+                std::string wheel_type = tl["Wheel Types"][wt].GetString();
+                if (wheel_type == "idler") {
+                    wheel_asset_map_[wt] = idler_asset_;
+                }
+                else if (wheel_type == "sprocket") {
+                    wheel_asset_map_[wt] = sprocket_asset_;
+                }
+                else if (wheel_type == "road") {
+                    wheel_asset_map_[wt] = road_wheel_asset_;
+                }
             }
         }
         if (tl.HasMember("Number of Shoes") && tl["Number of Shoes"].IsInt())
@@ -245,6 +274,20 @@ void TrackedVehicle::InitAnimation(environment::Environment* env) {
         track_pad_ids_.push_back(nanim);
         nanim++;
     }
+    std::vector<TrackWheelPose> tracked_wheel_poses;
+    GetTrackWheelPoses(tracked_wheel_poses);
+    for (size_t sp = 0; sp < tracked_wheel_poses.size(); sp++) {
+        int idx = (int)sp % (int)wheel_asset_map_.size();
+        RenderingAsset asset;
+        if (wheel_asset_map_.count(idx) > 0) {
+            //std::cout << idx << " " << wheel_asset_map_[idx].mesh_file << std::endl;
+            asset = wheel_asset_map_[idx];
+        }
+        std::vector<int> shoe_id = env->AddActor(asset.mesh_file, asset.rotate_y_to_z, asset.rotate_x_to_y, asset.rotate_y_to_x, asset.offset, asset.scale);
+        track_pad_ids_.push_back(nanim);
+        nanim++;
+    }
+
     // Center the local height map on the start position before sampling it,
     // otherwise SetPose reads heights from wherever position_ happened to be
     position_ = glm::dvec3(initial_position_x_, initial_position_y_, 0.0);
@@ -313,8 +356,16 @@ void TrackedVehicle::UpdateMavsAnimations(environment::Environment* env) {
         env->SetActorPosition(actor_ids_[actor_idx], current_state_.pose.position, current_state_.pose.quaternion);
         std::vector<TrackShoePose> shoe_poses;
         GetTrackShoePoses(shoe_poses, true);
+        int nanim = 0;
         for (size_t sp = 0; sp < shoe_poses.size(); sp++) {
-            env->SetActorPosition(track_pad_ids_[sp], shoe_poses[sp].position, shoe_poses[sp].orientation);
+            env->SetActorPosition(track_pad_ids_[nanim], shoe_poses[sp].position, shoe_poses[sp].orientation);
+            nanim++;
+        }
+        std::vector<TrackWheelPose> wheel_poses;
+        GetTrackWheelPoses(wheel_poses);
+        for (size_t sp = 0; sp < wheel_poses.size(); sp++) {
+            env->SetActorPosition(track_pad_ids_[nanim], wheel_poses[sp].position, wheel_poses[sp].orientation);
+            nanim++;
         }
     }
 }
@@ -372,6 +423,7 @@ void TrackedVehicle::BuildTrackPath() {
         wheels = { TrackWheel{ -h, r, r }, TrackWheel{ h, r, r } };
     }
     track_path_.Build(wheels);
+    track_wheels_ = wheels;   // Build() takes a copy, so this keeps the input order
 
     const double L = track_path_.Length();
     if (track_layout_.num_shoes > 0) {
@@ -418,6 +470,42 @@ void TrackedVehicle::GetTrackShoePoses(std::vector<TrackShoePose>& out, bool wor
             sp.orientation = glm::normalize(q);
             sp.track = k;
             sp.index = j;
+        }
+    }
+}
+
+double TrackedVehicle::GetWheelSpinAngle(int k, double radius) const {
+    if (!(radius > 0.0)) return 0.0;
+    const double two_pi = 2.0 * 3.14159265358979323846;
+    double a = std::fmod(belt_travel_[k] / radius, two_pi);
+    if (a < 0.0) a += two_pi;
+    return a;
+}
+
+void TrackedVehicle::GetTrackWheelPoses(std::vector<TrackWheelPose>& out, bool world_frame) const {
+    const int m = static_cast<int>(track_wheels_.size());
+    out.resize(static_cast<size_t>(2 * m));
+    const glm::dquat q_hull = glm::quat_cast(R_);
+    const glm::dvec3 Y(0.0, 1.0, 0.0);
+    for (int k = 0; k < 2; ++k) {
+        for (int i = 0; i < m; ++i) {
+            const TrackWheel& w = track_wheels_[i];
+            // wheel centre in the track frame (x forward, z up, origin at the contact-patch centre)
+            glm::dvec3 pos = track_center_[k] + glm::dvec3(w.x, 0.0, w.z);
+            const double spin = GetWheelSpinAngle(k, w.radius);
+            // positive rotation about +y carries the front of the wheel downward = rolling forward
+            glm::dquat q = glm::angleAxis(spin, Y);
+            if (world_frame) {
+                pos = position_ + R_ * pos;
+                q = q_hull * q;
+            }
+            TrackWheelPose& wp = out[static_cast<size_t>(k) * m + i];
+            wp.position = pos;
+            wp.orientation = glm::normalize(q);
+            wp.spin_angle = spin;
+            wp.radius = w.radius;
+            wp.track = k;
+            wp.index = i;
         }
     }
 }
@@ -735,8 +823,11 @@ void TrackedVehicle::Step(double dt, TrackSpeeds cmd) {
     }
 
     // advance the belt for animation: belt speed relative to the hull
-    for (int k = 0; k < 2; ++k)
-        track_phase_[k] = track_path_.Wrap(track_phase_[k] + vehicle_params_.sprocket_radius * sprocket_speeds_[k] * dt);
+    for (int k = 0; k < 2; ++k) {
+        const double ds = vehicle_params_.sprocket_radius * sprocket_speeds_[k] * dt;
+        track_phase_[k] = track_path_.Wrap(track_phase_[k] + ds);
+        belt_travel_[k] += ds;
+    }
 
     // rigid body, semi-implicit Euler
     const glm::dvec3 F_w = R_ * F_b + glm::dvec3(0.0, 0.0, -vehicle_params_.mass * sim_options_.gravity * g_scale_);

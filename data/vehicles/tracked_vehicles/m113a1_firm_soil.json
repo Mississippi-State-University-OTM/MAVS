@@ -48,7 +48,7 @@
   },
 
   "Vehicle Mesh": {
-    "File": "vehicles/m113a1/m113a1_corrected.obj",
+    "File": "vehicles/m113a1/m113a1_no_roadwheels.obj",
     "Rotate Y to Z": false,
     "Rotate X to Y": false,
     "Rotate Y to X": false,
@@ -65,6 +65,33 @@
     "Scale": [ 1.0, 1.0, 1.0 ]
   },
 
+  "Idler Mesh": {
+    "File": "vehicles/mrzr4/mrzr_single_wheel.obj",
+    "Rotate Y to Z": true,
+    "Rotate X to Y": false,
+    "Rotate Y to X": false,
+    "Offset": [ 0.0, 0.0, 0.0 ],
+    "Scale": [ 1.0, 1.0, 1.0 ]
+  },
+
+  "Sprocket Mesh": {
+    "File": "vehicles/mrzr4/mrzr_single_wheel.obj",
+    "Rotate Y to Z": true,
+    "Rotate X to Y": false,
+    "Rotate Y to X": false,
+    "Offset": [ 0.0, 0.0, 0.0 ],
+    "Scale": [ 1.0, 1.0, 1.0 ]
+  },
+
+  "Road Wheel Mesh": {
+    "File": "vehicles/mrzr4/mrzr_single_wheel.obj",
+    "Rotate Y to Z": true,
+    "Rotate X to Y": false,
+    "Rotate Y to X": false,
+    "Offset": [ 0.0, 0.0, 0.0 ],
+    "Scale": [ 1.2, 1.2, 1.2 ]
+  },
+
   "Track Layout": {
     "Wheels": [
       [ -1.55, 0.45, 0.254 ],
@@ -73,6 +100,14 @@
       [ 1.148, 0.272725, 0.272725 ],
       [ -0.2222, 0.272725, 0.272725 ],
       [ -0.898, 0.272725, 0.272725 ]
+    ],
+    "Wheel Types": [
+      "idler",
+      "sprocket",
+      "road",
+      "road",
+      "road",
+      "road"
     ],
     "Number of Shoes": 46,
     "Shoe Offset": [ 0.0, 0.0, 0.04 ],

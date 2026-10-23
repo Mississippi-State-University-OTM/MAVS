@@ -25,6 +25,7 @@ SOFTWARE.
 #include <math.h>
 #include <algorithm>
 #include <iostream>
+#include <cstdlib>
 #include <mavs_core/math/constants.h>
 
 namespace mavs {
@@ -72,6 +73,19 @@ MavsPacejka::MavsPacejka() {
 	slip_convention_ = SlipConvention::kNormalizedByMax;
 	sand_mr_kv_ = 0.0f;
 	sand_mr_vref_ = 4.0f;
+
+	// Sand motion resistance scalars (see GetSandMotionResistance). 
+	// These defaults reproduce Williams et al. (2019) exactly.
+	sand_mr_cp_scale_ = 1.0f; 
+	sand_mr_slip_coeff_ = 0.60f;
+}
+
+void MavsPacejka::SetSandMotionResistanceCoeffs(float cp_scale, float powered_slip_coeff) {
+	// cp_scale multiplies every CP/CI term in the towed, powered and braked relations
+	// (0.21, 0.40 and 0.10 in Williams et al.); powered_slip_coeff replaces the 0.60
+	// slip coefficient of the powered relation. Defaults: 1.0 and 0.60.
+	sand_mr_cp_scale_ = std::max(0.0f, cp_scale);
+	sand_mr_slip_coeff_ = std::max(0.0f, powered_slip_coeff);
 }
 
 void MavsPacejka::SetSandMotionResistanceSpeedFactor(float k_v, float v_ref) {
@@ -177,7 +191,16 @@ float MavsPacejka::GetSandMotionResistance(float r, float s) const {
 	// Towed and braked MR is the full net resisting force (minus the drawbar pull), so for
 	// s <= 0 there is no separate gross traction term. Powered MR is gross traction minus
 	// drawbar pull and is subtracted from the VTI gross traction.
-	float towed0 = 0.21f * r + 0.04f;
+	//
+	// Calibration: sand_mr_cp_scale_ multiplies every CP/CI term and sand_mr_slip_coeff_
+	// replaces the 0.60 slip coefficient (defaults 1.0 and 0.60 reproduce the paper).
+	// The relations were fit to wheel loads of 0.187-4.49 kN and cone index of
+	// 50-800 kPa. At heavier wheel loads the CP/CI terms dominate: with the default
+	// coefficients a FED-Alpha model (about 13 kN per wheel) climbs less than the CDT-308
+	// coarse-sand test vehicle did. The CP/CI scale is therefore the first parameter to
+	// calibrate, against measured drawbar-pull-versus-slip data rather than one test.
+	const float rc = sand_mr_cp_scale_ * r;
+	float towed0 = 0.21f * rc + 0.04f;
 	float mr = 0.0f;
 	if (s > 0.0f) {
 		// The powered data start at 5% slip. Blend linearly from the towed value at zero
@@ -185,7 +208,7 @@ float MavsPacejka::GetSandMotionResistance(float r, float s) const {
 		const float s_blend = 0.05f;
 		// Slip is also capped at 0.55, the largest slip in the powered data, rather than
 		// extrapolating the linear slip term to a fully spinning wheel.
-		float powered = 0.40f * r + 0.60f * std::min(0.55f, std::max(s, s_blend)) - 0.03f;
+		float powered = 0.40f * rc + sand_mr_slip_coeff_ * std::min(0.55f, std::max(s, s_blend)) - 0.03f;
 		if (s < s_blend) {
 			float t = s / s_blend;
 			mr = (1.0f - t) * towed0 + t * powered;
@@ -200,7 +223,7 @@ float MavsPacejka::GetSandMotionResistance(float r, float s) const {
 		// curve, which levels off at a locked wheel (sb = -1) instead of growing without bound.
 		float towed = towed0 - 0.75f * s;
 		float sb = s / (1.0f - s);
-		float braked = 0.10f * r - 0.90f * sb + 0.18f;
+		float braked = 0.10f * rc - 0.90f * sb + 0.18f;
 		mr = std::min(towed, braked);
 	}
 	return std::max(0.0f, mr);

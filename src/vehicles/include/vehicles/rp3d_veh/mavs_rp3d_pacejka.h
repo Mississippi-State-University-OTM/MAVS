@@ -199,6 +199,8 @@ public:
 	*/
 	void SetSoftSoilMinLateral(float mu_min);
 
+	void SetSandMotionResistanceCoeffs(float cp_scale, float powered_slip_coeff);
+
 private:
 	void SetCoeffs(float W, float delta);
 	float GetCrolla(float alpha, float beta);
@@ -224,6 +226,8 @@ private:
 	float CI_;
 	float high_slip_angle_cutoff_radians_;
 	std::string surface_type_;
+	float sand_mr_cp_scale_;
+	float sand_mr_slip_coeff_;
 
 	// combined slip
 	FrictionLimit friction_limit_;
